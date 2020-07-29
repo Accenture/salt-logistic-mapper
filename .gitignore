@@ -1,0 +1,36 @@
+*.log
+**/.classpath 
+**/.project 
+**/.cache-main 
+**/.cache-tests 
+**/.settings
+
+# sbt specific
+.cache
+.lib/
+dist/*
+target/
+!target/scala-2.12/salt*
+#target/scala-*/classes
+#target/scala-*/resolution-cache
+#target/scala-*/test-classes
+lib_managed/
+src_managed/
+project/boot/
+project/plugins/project/
+project/project/
+project/target/
+
+# Scala-IDE specific
+.ensime
+.ensime_cache/
+.scala_dependencies
+.worksheet
+
+# IntelliJ specific
+.idea/
+
+# royalmail specific
+logs
+/bin/
+/conf/service-custom.conf
