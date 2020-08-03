@@ -1,11 +1,11 @@
-package de.salt.sce.provider.geo_fr.util
+package de.salt.sce.provider.mapper.util
 
 import java.io.{ByteArrayInputStream, IOException, ObjectInputStream}
 import java.util
 import java.util.zip.GZIPInputStream
 
 import akka.actor.ActorSystem
-import de.salt.sce.provider.fex_ws_de.communication.client.MapperServiceClient
+import de.salt.sce.provider.mapper.client.MapperServiceClient
 import de.salt.sce.provider.model.communication.client.TrackClient
 import de.salt.sce.provider.model.communication.model.{KeyValue, RequestData, TrackContract}
 import de.salt.sce.provider.model.util.Tool

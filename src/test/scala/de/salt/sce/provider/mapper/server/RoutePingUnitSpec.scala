@@ -1,4 +1,4 @@
-package de.salt.sce.provider.geo_fr.communication.server
+package de.salt.sce.provider.mapper.server
 
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.model.headers.BasicHttpCredentials
@@ -25,7 +25,7 @@ class RoutePingUnitSpec extends WordSpec with Matchers
   implicit val s: Serialization = native.Serialization
   implicit val formats: Formats = DefaultFormats + new LoggableSecretSerializer
 
-  Provider.setProviderName("geo_fr")
+  Provider.setProviderName("mapper")
   private val trackPath = config.getString(s"sce.track.${Provider.getName}.rest-server.path.track-path")
   private val ping = config.getString(s"sce.track.${Provider.getName}.rest-server.path.ping")
 

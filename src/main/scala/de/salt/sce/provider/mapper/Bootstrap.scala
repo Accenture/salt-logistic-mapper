@@ -1,6 +1,6 @@
-package de.salt.sce.provider.geo_fr
+package de.salt.sce.provider.mapper
 
-import de.salt.sce.provider.fex_ws_de.communication.client.MapperServiceClient
+import de.salt.sce.provider.mapper.client.MapperServiceClient
 import de.salt.sce.provider.model.{Provider, ProviderStarter}
 
 object Bootstrap extends App with ProviderStarter {
