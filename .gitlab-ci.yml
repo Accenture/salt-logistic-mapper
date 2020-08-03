@@ -1,4 +1,4 @@
-# Version S13
+# Version S21
 
 # Gitlab Cache Settings
 cache:
@@ -28,23 +28,6 @@ build:
   tags:
     - d4s-devbox-logistic-1
 
-man-unit-test:
-  stage: QA-1
-  artifacts:
-    expire_in: '1 day'
-    paths:
-      - "target/scala-2.12/test-classes"
-      - "target/scala-2.12/coverage-report"
-      - "target/scala-2.12/scoverage-report"
-  except:
-    - tags
-  script:
-    - .gitlab/S-QA-1-man-unit-test.sh
-  tags:
-    - d4s-devbox-logistic-1
-  when:
-    manual
-
 unit-test:
   stage: QA-1
   artifacts:
@@ -53,8 +36,6 @@ unit-test:
       - "target/scala-2.12/test-classes"
       - "target/scala-2.12/coverage-report"
       - "target/scala-2.12/scoverage-report"
-  only:
-    - tags
   script:
     - .gitlab/S-QA-1-unit-test.sh
   tags:
@@ -99,7 +80,7 @@ man-code-analys:
       - "sbt-cache"
     policy: pull
   dependencies:
-    - man-unit-test
+    - unit-test
   except:
     - tags
   script:
