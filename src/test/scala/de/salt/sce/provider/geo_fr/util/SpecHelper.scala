@@ -5,9 +5,8 @@ import java.util
 import java.util.zip.GZIPInputStream
 
 import akka.actor.ActorSystem
-import de.salt.sce.provider.geo_fr.communication.client.GeodisTrackClient
+import de.salt.sce.provider.fex_ws_de.communication.client.MapperServiceClient
 import de.salt.sce.provider.model.communication.client.TrackClient
-import de.salt.sce.provider.model.communication.model.secret.{LoggableSecret, LoggableSecretPassword}
 import de.salt.sce.provider.model.communication.model.{KeyValue, RequestData, TrackContract}
 import de.salt.sce.provider.model.util.Tool
 import de.salt.sce.provider.model.{ActorService, Provider}
@@ -15,8 +14,8 @@ import org.apache.commons.codec.binary.Hex.decodeHex
 
 object SpecHelper {
   def beforeAll(system: ActorSystem): Unit = {
-    Provider.setProviderName("geo_fr")
-    TrackClient.subClassProps = GeodisTrackClient.props
+    Provider.setProviderName("mapper")
+    TrackClient.subClassProps = MapperServiceClient.props
     ActorService.setActorSystem(system)
     ActorService.createActorHierarchy()
   }
@@ -31,7 +30,7 @@ object SpecHelper {
       remoteFilename = "",
       encoding = "", // 3 Fedex mock tracking numbers: 449044304137821,149331877648230,122816215025810
       payload = "504B0304140000000800E6799B505EAFBCE3260000002F000000070000006D795F6461746105C1490100200C0330433C7AB115FFC6489287C408BD150FF36C76775219875239E2856E890F504B01021300140000000800E6799B505EAFBCE3260000002F0000000700000000000000000000000000000000006D795F64617461504B05060000000001000100350000004B0000000000",
-      custprops =  List(
+      custprops = List(
         KeyValue("service", "api/zoomclient/recherche-envoi"),
         KeyValue("api-key", "616b6d161cc342b092b6e192ea659349"),
         KeyValue("id", "EGGERROL")))

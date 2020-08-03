@@ -28,7 +28,6 @@ libraryDependencies += "de.salt.sce" %% "sce-model-webservices" % "0.4.13"
 libraryDependencies += "com.typesafe.akka" %% "akka-http-testkit" % "10.1.10" % "test"
 libraryDependencies += "com.typesafe.akka" %% "akka-testkit" % "2.5.26" % "test"
 
-libraryDependencies += "com.google.code.gson" % "gson" % "2.8.6"
 
 // Scalatest :: http://www.scalatest.org
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % "test"
