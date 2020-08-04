@@ -22,7 +22,7 @@ if [ -z "$SONAR_TOKEN" ]; then
     printf "%s\n" "Variable SONAR_TOKEN is unset"; ERROR=1
 fi
 if [ -z "$SONAR_URL" ]; then
-    printf "%s\n" "Variable FOSSA_API_KEY is unset"; ERROR=1
+    printf "%s\n" "Variable SONAR_URL is unset"; ERROR=1
 fi
 if [ -z "$OWNCLOUD_ENDPOINT" ]; then
     printf "%s\n" "Variable OWNCLOUD_ENDPOINT is unset"; ERROR=1
