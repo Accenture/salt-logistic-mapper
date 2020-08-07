@@ -46,10 +46,13 @@ class RouteTrackIntegrationSpec extends WordSpec with Matchers
     s"testing is service returns correct response when becomes correct request [$path]" in {
       import de.heikoseeberger.akkahttpjson4s.Json4sSupport._ // should be visible only in this method where no deserialization to string is performed
 
+      val key1:String = "20170516_093419_20160719_141122_ROTH-IFTSTA"
+      val value1:String = "UNB+UNOA:1+EURPROD:UPS+ROTH-DE-IFTSTA:02+160714:1243+00000000044975++IFTSTA'UNG+IFTSTA+EURPROD:UPS+ROTH-DE-IFTSTA:"
+
       val trackRequest = TrackProviderRequest(
         id = UUID.randomUUID().toString,
         configName = "ups",
-        lines = Map("key1" -> "value1", "key2" -> "value2")
+        lines = Map(key1 -> value1)
       )
 
       Post(path, trackRequest) ~>

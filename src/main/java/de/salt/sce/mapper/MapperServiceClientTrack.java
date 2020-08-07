@@ -1,7 +1,12 @@
 package de.salt.sce.mapper;
 
 
+import de.salt.sce.mapper.server.communication.model.Requests.TrackProviderRequest;
+import de.salt.sce.mapper.server.communication.model.Responses;
+import de.salt.sce.mapper.server.communication.model.Responses.TrackResponseProtocol;
 import de.salt.sce.mapper.server.pojo.UtilObjectResponse;
+import scala.collection.immutable.HashMap;
+import scala.collection.immutable.Map;
 
 public class MapperServiceClientTrack {
 
@@ -10,7 +15,11 @@ public class MapperServiceClientTrack {
      *
      * @return {@link UtilObjectResponse}
      */
-    public static UtilObjectResponse buildUtilObjectResponse() {
-        return new UtilObjectResponse();
-    }
+    public static TrackResponseProtocol buildUtilObjectResponse(TrackProviderRequest requestData) {
+
+        return new TrackResponseProtocol(
+                new HashMap<String,String>(),
+                new HashMap<String,String>()
+        );
+   }
 }

@@ -5,8 +5,8 @@ import akka.http.scaladsl.model.{StatusCode, StatusCodes}
 object Responses {
 
   case class TrackResponseProtocol(
-                                    success: Map[String, String] = Map[String, String](),
-                                    error: Map[String, String] = Map[String, String]()
+                                    success: Map[String, String] ,
+                                    error: Map[String, String]
                                   ) {
     /**
      * Override for logging:

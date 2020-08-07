@@ -10,6 +10,7 @@ import de.salt.sce.mapper.server.pojo.UtilObjectResponse
 import de.salt.sce.mapper.server.util.LazyConfig
 import org.json4s.{DefaultFormats, Formats}
 
+import scala.collection.immutable.HashMap
 import scala.util.{Failure, Success, Try}
 
 /**
@@ -47,15 +48,11 @@ class TrackClient extends Actor with LazyLogging with LazyConfig {
       senderRef ! {
         try {
           doCreateResponse(trackReq.header, trackReq) match {
-            case Success(uoResponse) =>
+            case Success(trackResponseProtocol) =>
               // send response back to SAP with status OK
-              //TODO converse uoResponse to TrackResponseProtocol, or use direct TrackResponseProtocol
               InternalResponse(
                 id = "id",
-                extResponse = TrackResponseProtocol(
-                  success = Map.apply("key1" -> "value1"),
-                  error = Map.apply("key2" -> "value2")
-                ),
+                extResponse = trackResponseProtocol,
                 statusCode = StatusCodes.OK
               )
 
@@ -67,6 +64,8 @@ class TrackClient extends Actor with LazyLogging with LazyConfig {
               InternalResponse(
                 id = "id",
                 extResponse = TrackResponseProtocol(
+                  success = new HashMap[String, String],
+                  error =  new HashMap[String, String]
                 ), statusCode = StatusCodes.InternalServerError
               )
           }
@@ -90,8 +89,8 @@ class TrackClient extends Actor with LazyLogging with LazyConfig {
    * @return Success: response containing status of reference IDs.
    *         Failure if connection could not be established.
    */
-  protected def doCreateResponse(header: Seq[HttpHeader], requestData: TrackProviderRequest): Try[UtilObjectResponse] = {
-    Success(MapperServiceClientTrack.buildUtilObjectResponse())
+  protected def doCreateResponse(header: Seq[HttpHeader], requestData: TrackProviderRequest): Try[TrackResponseProtocol] = {
+    Success(MapperServiceClientTrack.buildUtilObjectResponse(requestData))
   }
 
   protected def getHeader(headers: Seq[HttpHeader], headerName: String): String = {
