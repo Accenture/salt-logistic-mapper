@@ -1,0 +1,43 @@
+// =====================================================================================================================
+// = Packager
+// =====================================================================================================================
+enablePlugins(DockerPlugin, JavaAppPackaging, AshScriptPlugin)    // App packager
+import com.typesafe.sbt.packager.docker._
+
+executableScriptName := "{{executable-script-name}}"
+dockerLabels ++= Map("version" -> version.value)
+maintainer := "SALT Software GmbH<wrh@salt-solutions.de>"        // TODO: Need an email for "To" address
+dockerBaseImage := "swugit1.salt-solutions.de:4567/data4service/devops/d4s-devbox/base:2"
+dockerApiVersion := Some(DockerApiVersion(1, 40))
+dockerPermissionStrategy := DockerPermissionStrategy.CopyChown
+
+//dockerChmodType := DockerChmodType.Custom
+daemonUserUid in Docker := None
+daemonUser in Docker    := "root"
+// TODO: Check this to make non root: https://github.com/sbt/sbt-native-packager/issues/1189
+dockerCommands ++= Seq(
+  Cmd("ARG", s"script=${executableScriptName.value}"),
+  Cmd("RUN", s"find . -type f -name '${executableScriptName.value}' -exec chmod +x -- {} +")
+)
+
+// use filterNot to return all items that do NOT meet the criteria
+//dockerCommands := dockerCommands.value.filterNot {
+//  // ExecCmd is a case class, and args is a varargs variable, so you need to bind it with @
+//  case ExecCmd("RUN", args @ _*) => args.contains("chown")
+//  // don't filter the rest; don't filter out anything that doesn't match a pattern
+//  case cmd                       => false
+//}
+
+// application.conf
+mappings in Universal += {
+  val conf = (resourceDirectory in Compile).value / "application.conf"
+  conf -> "conf/application.conf"
+}
+bashScriptExtraDefines += """addJava "-Dconfig.file=${app_home}/../conf/application.conf""""
+
+// logback.xml
+//mappings in Universal += {
+//  val log = (resourceDirectory in Compile).value / "logback.xml"
+//  log -> "conf/logback.xml"
+//}
+//bashScriptExtraDefines += """addJava "-Dlogback.configurationFile=${app_home}/../conf/logback.xml""""

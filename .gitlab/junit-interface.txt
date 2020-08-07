@@ -1,0 +1,5 @@
+// =====================================================================================================================
+// = JUnit Interface
+// =====================================================================================================================
+libraryDependencies += "net.aichler" % "jupiter-interface" % JupiterKeys.jupiterVersion.value % Test
+testOptions += Tests.Argument(jupiterTestFramework, "-q", "-v")

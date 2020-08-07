@@ -1,0 +1,223 @@
+# Version S21
+
+# Gitlab Cache Settings
+cache:
+  untracked: false
+  paths:
+    - "sbt-cache"
+
+stages:
+  - BUILD
+  - QA-1
+  - QA-2
+  - STASH
+  - DEPLOY
+  - DEPLOY-1
+  - QA-POST
+  - DEPLOY-2
+
+build:
+  stage: BUILD
+  artifacts:
+    expire_in: '1 day'
+    paths:
+      - "target"
+      - "project"
+  script:
+    - .gitlab/S-BUILD-build.sh
+  tags:
+    - d4s-devbox-logistic-1
+
+unit-test:
+  stage: QA-1
+  artifacts:
+    expire_in: '1 day'
+    paths:
+      - "target/scala-2.12/test-classes"
+      - "target/scala-2.12/coverage-report"
+      - "target/scala-2.12/scoverage-report"
+  script:
+    - .gitlab/S-QA-1-unit-test.sh
+  tags:
+    - d4s-devbox-logistic-1
+
+man-foss-analys:
+  stage: QA-1
+  cache:
+    paths:
+      - "sbt-cache"
+    policy: pull
+  dependencies:
+    - build
+  except:
+    - tags
+  script:
+    - .gitlab/S-QA-1-man-foss-analys.sh
+  tags:
+    - d4s-devbox-logistic-1
+  when:
+    manual
+
+foss-analysis:
+  stage: QA-1
+  cache:
+    paths:
+      - "sbt-cache"
+    policy: pull
+  dependencies:
+    - build
+  only:
+    - tags
+  script:
+    - .gitlab/S-QA-1-foss-analysis.sh
+  tags:
+    - d4s-devbox-logistic-1
+
+man-code-analys:
+  stage: QA-2
+  cache:
+    paths:
+      - "sbt-cache"
+    policy: pull
+  dependencies:
+    - unit-test
+  except:
+    - tags
+  script:
+    - .gitlab/S-QA-2-man-code-analys.sh
+  tags:
+    - d4s-devbox-logistic-1
+  when:
+    manual
+
+code-analysis:
+  stage: QA-2
+  cache:
+    paths:
+      - "sbt-cache"
+    policy: pull
+  dependencies:
+    - unit-test
+  needs:
+    - build
+    - unit-test
+  only:
+    - tags
+  script:
+    - .gitlab/S-QA-2-code-analys.sh
+  tags:
+    - d4s-devbox-logistic-1
+
+jar-push:
+  stage: STASH
+  cache:
+    paths:
+      - "sbt-cache"
+    policy: pull
+  dependencies:
+    - build
+  only:
+    - tags
+  script:
+    - .gitlab/S-STASH-jar-push.sh
+  tags:
+    - d4s-devbox-logistic-1
+
+image-push:
+  stage: STASH
+  cache: {}
+  dependencies:
+    - build
+  image:
+    name: registry.hub.docker.com/griffinplus/gitlab-kaniko
+  only:
+    - tags
+  script:
+    - .gitlab/S-STASH-image-push.sh
+  tags:
+    - d4s-devbox-logistic-1
+
+man-image-push:
+  stage: STASH
+  cache: {}
+  dependencies:
+    - build
+  except:
+    - tags
+  image:
+    name: registry.hub.docker.com/griffinplus/gitlab-kaniko
+  script:
+    - .gitlab/S-STASH-man-image-push.sh
+  tags:
+    - d4s-devbox-logistic-1
+  when:
+    manual
+
+man-dev-deploy:
+  stage: DEPLOY
+  cache: {}
+  dependencies: []
+  except:
+    - tags
+  script:
+    - .gitlab/S-DEPLOY-man-dev-deploy.sh
+  tags:
+    - d4s-devbox-logistic-1
+  when:
+    manual
+
+dev-deploy:
+  stage: DEPLOY-1
+  cache: {}
+  only:
+    - tags
+  script:
+    - .gitlab/S-DEPLOY-1-dev-deploy.sh
+  tags:
+    - d4s-devbox-logistic-1
+  when:
+    manual
+
+test-deploy:
+  stage: DEPLOY-1
+  cache: {}
+  only:
+    - tags
+  script:
+    - .gitlab/S-DEPLOY-1-test-deploy.sh
+  tags:
+    - d4s-devbox-logistic-1
+
+int-test:
+  stage: QA-POST
+  only:
+    - tags
+  script:
+    - .gitlab/S-QA-POST-int-test.sh
+  tags:
+    - d4s-devbox-logistic-1
+
+foss-report:
+  stage: QA-POST
+  cache:
+    paths:
+      - "sbt-cache"
+    policy: pull
+  only:
+    - tags
+  script:
+    - .gitlab/S-QA-POST-foss-report.sh
+  tags:
+    - d4s-devbox-logistic-1
+
+man-demo-deploy:
+  stage: DEPLOY-2
+  cache: {}
+  only:
+    - tags
+  script:
+    - .gitlab/S-DEPLOY-2-man-demo-deploy.sh
+  tags:
+    - d4s-devbox-logistic-1
+  when:
+    manual

@@ -1,0 +1,11 @@
+version: 2
+cli:
+  server: https://app.fossa.com
+  fetcher: custom
+  project: sce-{{project-name}}
+analyze:
+  modules:
+    - name: root
+      type: sbt
+      target: root:compile
+      path: .

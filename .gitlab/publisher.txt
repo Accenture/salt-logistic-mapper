@@ -1,0 +1,11 @@
+// =====================================================================================================================
+// = Publisher
+// =====================================================================================================================
+publishTo := Some("Artifactory Realm" at "http://artifactory.apps.d4s.salt-solutions.de/artifactory/{{artifactory-realm}}")
+credentials += Credentials("Artifactory Realm", "artifactory.apps.d4s.salt-solutions.de", "{{artifactory-user}}", "{{artifactory-token}}")
+publishConfiguration := publishConfiguration.value.withOverwrite(true)
+publishLocalConfiguration := publishLocalConfiguration.value.withOverwrite(true)
+publishArtifact in Test := false
+publishArtifact in (Compile, packageDoc) := false
+publishArtifact in (Compile, packageSrc) := false
+scalacOptions in(Compile, doc) := Seq("-groups", "-implicits")
