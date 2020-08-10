@@ -13,6 +13,7 @@ import de.salt.sce.mapper.server.communication.model.Responses.{InternalResponse
 import de.salt.sce.mapper.server.util.LazyConfig
 import org.json4s.{DefaultFormats, Serialization, native}
 
+import scala.collection.immutable.HashMap
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
 import scala.language.postfixOps
@@ -46,6 +47,8 @@ class TrackServer extends Actor with LazyLogging with LazyConfig {
       sender() ! InternalResponse(
         id = "id",
         TrackResponseProtocol(
+          success = new HashMap[String, String],
+          error =  new HashMap[String, String]
         ),
         statusCode = StatusCodes.InternalServerError)
   }

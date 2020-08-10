@@ -6,11 +6,9 @@ import com.typesafe.scalalogging.LazyLogging
 import de.salt.sce.mapper.MapperServiceClientTrack
 import de.salt.sce.mapper.server.communication.model.Requests.TrackProviderRequest
 import de.salt.sce.mapper.server.communication.model.Responses.{InternalResponse, TrackResponseProtocol}
-import de.salt.sce.mapper.server.pojo.UtilObjectResponse
 import de.salt.sce.mapper.server.util.LazyConfig
 import org.json4s.{DefaultFormats, Formats}
 
-import scala.collection.immutable.HashMap
 import scala.util.{Failure, Success, Try}
 
 /**
@@ -52,7 +50,10 @@ class TrackClient extends Actor with LazyLogging with LazyConfig {
               // send response back to SAP with status OK
               InternalResponse(
                 id = "id",
-                extResponse = trackResponseProtocol,
+                extResponse = TrackResponseProtocol(
+                  success = Map("key1" -> "value1"),
+                  error = Map("key2" -> "value2")
+                ),
                 statusCode = StatusCodes.OK
               )
 
@@ -64,8 +65,8 @@ class TrackClient extends Actor with LazyLogging with LazyConfig {
               InternalResponse(
                 id = "id",
                 extResponse = TrackResponseProtocol(
-                  success = new HashMap[String, String],
-                  error =  new HashMap[String, String]
+                  success = Map("key1" -> "value1"),
+                  error = Map("key2" -> "value2")
                 ), statusCode = StatusCodes.InternalServerError
               )
           }
