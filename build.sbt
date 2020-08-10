@@ -7,6 +7,8 @@ version := "0.0.1"
 organization := "de.salt.sce"
 scalaVersion := "2.12.3"
 
+resolvers += Resolver.sonatypeRepo("snapshots")
+
 lazy val root = project in file("")
 
 // Remove feature warning
@@ -50,8 +52,5 @@ libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % "test"
 libraryDependencies += "org.junit.jupiter" % "junit-jupiter-engine" % "5.0.0" % "test"
 libraryDependencies += "org.mockito" % "mockito-junit-jupiter" % "2.23.0" % "test"
 libraryDependencies += "org.assertj" % "assertj-core" % "3.11.1" % "test"
-
-//resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/"
-//resolvers += Resolver.sonatypeRepo("snapshots")
 
 libraryDependencies += "org.smooks" % "smooks-all" % "2.0.0-SNAPSHOT"
