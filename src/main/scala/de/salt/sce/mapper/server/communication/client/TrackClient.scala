@@ -91,7 +91,7 @@ class TrackClient extends Actor with LazyLogging with LazyConfig {
    *         Failure if connection could not be established.
    */
   protected def doCreateResponse(header: Seq[HttpHeader], requestData: TrackProviderRequest): Try[TrackResponseProtocol] = {
-    Success(MapperServiceClientTrack.buildUtilObjectResponse(requestData))
+    Success(MapperServiceClientTrack.buildUtilObjectResponse(requestData, config))
   }
 
   protected def getHeader(headers: Seq[HttpHeader], headerName: String): String = {

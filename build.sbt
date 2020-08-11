@@ -7,8 +7,6 @@ version := "0.0.1"
 organization := "de.salt.sce"
 scalaVersion := "2.12.3"
 
-resolvers += Resolver.sonatypeRepo("snapshots")
-
 lazy val root = project in file("")
 
 // Remove feature warning
@@ -42,9 +40,6 @@ libraryDependencies += "org.apache.logging.log4j" %% "log4j-api-scala" % "12.0"
 libraryDependencies += "commons-codec" % "commons-codec" % "1.13"
 libraryDependencies += "org.json4s" %% "json4s-native" % "3.6.7"
 libraryDependencies += "de.heikoseeberger" %% "akka-http-json4s" % "1.28.0"
-// Akka HTTP :: https://doc.akka.io/docs/akka-http/current/scala/http/index.html
-//libraryDependencies += "com.typesafe.akka" %% "akka-http-testkit" % "10.1.10" % "test"
-//libraryDependencies += "com.typesafe.akka" %% "akka-testkit" % "2.5.26" % "test"
 
 // Scalatest :: http://www.scalatest.org
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % "test"
@@ -53,4 +48,9 @@ libraryDependencies += "org.junit.jupiter" % "junit-jupiter-engine" % "5.0.0" % 
 libraryDependencies += "org.mockito" % "mockito-junit-jupiter" % "2.23.0" % "test"
 libraryDependencies += "org.assertj" % "assertj-core" % "3.11.1" % "test"
 
-libraryDependencies += "org.smooks" % "smooks-all" % "2.0.0-SNAPSHOT"
+libraryDependencies += "commons-io" % "commons-io" % "2.5"
+libraryDependencies += "commons-validator" % "commons-validator" % "1.6"
+libraryDependencies += "org.apache.commons" % "commons-lang3" % "3.4"
+
+libraryDependencies += "org.milyn" % "milyn-smooks-all" % "1.7.1"
+
