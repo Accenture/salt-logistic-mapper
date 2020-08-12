@@ -101,7 +101,7 @@ function prepare-fossa() {
 function foss-analysis() {
   prepare-fossa
   printf "Perform Fossa Analysis\n"
-  fossa analyze --verbose -T "Logistik"
+  fossa analyze --verbose -T "SSG Logistik"
 }
 
 function prepare-sonarqube() {
