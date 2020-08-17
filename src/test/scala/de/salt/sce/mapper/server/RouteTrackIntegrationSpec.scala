@@ -7,6 +7,7 @@ import akka.http.scaladsl.model.headers.BasicHttpCredentials
 import akka.http.scaladsl.model.{HttpRequest, StatusCodes}
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.testkit.{RouteTestTimeout, ScalatestRouteTest}
+import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.LazyLogging
 import de.salt.sce.mapper.server.communication.model.Requests.TrackProviderRequest
 import de.salt.sce.mapper.server.communication.model.Responses.TrackResponseProtocol
@@ -23,6 +24,8 @@ class RouteTrackIntegrationSpec extends WordSpec with Matchers
   with ScalatestRouteTest with LazyConfig
   with LazyLogging {
 
+  import com.typesafe.config.ConfigFactory
+
   private val validCredentials = BasicHttpCredentials(
     config.getString("sce.track.mapper.rest-server.auth.username"),
     config.getString("sce.track.mapper.rest-server.auth.password")
@@ -31,7 +34,7 @@ class RouteTrackIntegrationSpec extends WordSpec with Matchers
   implicit val s: Serialization = native.Serialization
   implicit val formats: Formats = DefaultFormats + new LoggableSecretSerializer
 
-  implicit def default(implicit system: ActorSystem): RouteTestTimeout = RouteTestTimeout(20.seconds)
+  implicit def default(implicit system: ActorSystem): RouteTestTimeout = RouteTestTimeout(2000.seconds)
 
   private val path = s"/${config.getString("sce.track.mapper.rest-server.path.track-path")}/${config.getString("sce.track.mapper.rest-server.path.track-ext")}"
   private var route: Route = _
