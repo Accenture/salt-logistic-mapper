@@ -21,6 +21,7 @@ import org.xml.sax.SAXException;
 import javax.xml.transform.stream.StreamSource;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
@@ -56,7 +57,6 @@ public class MessageParser {
 	 */
 
 	public JavaResult getBean(byte[] data, String config) throws SmooksException, IOException, SAXException {
-
 		smooks = new Smooks(config);
 
 		ExecutionContext executionContext = smooks.createExecutionContext();
@@ -69,37 +69,6 @@ public class MessageParser {
 		smooks.filterSource(executionContext, new StreamSource(new ByteArrayInputStream(data)), javaResult);
 
 		return javaResult;
-	}
-
-	/**
-	 * Reads a file and outputs it to byte format
-	 * 
-	 * @param inputFile
-	 * @param encoding
-	 * @return
-	 * @throws IOException
-	 */
-	private static byte[] readInputMessage(String inputFile, String encoding) throws IOException {
-		/*
-		 * 2015-10-30 WRH Content ist nicht sauber und muss erst gefiltert
-		 * werden.
-		 */
-
-		// Make sure the file is UTF-8 encoded
-		File file = new File(inputFile);
-		String content = FileUtils.readFileToString(file, encoding);
-
-		// Filter content
-		CharSequence target = "\"";
-		CharSequence replacement = "*";
-		content = content.replace(target, replacement);
-
-		// DEV: debug
-		// Rewrite file with new encoding
-		// FileUtils.write(file, content, "UTF-8");
-		// DevHelper.pause("first step---");
-		byte[] b = content.getBytes("UTF-8");
-		return b;
 	}
 
 	/**
@@ -124,12 +93,11 @@ public class MessageParser {
 			String fileName,
 			byte[] fileContent
 	) {
-		List<TrackContract> trackContracts = new ArrayList<TrackContract>();
-		String smooksConfig = "classpath:" + config;
+		List<TrackContract> trackContracts = new ArrayList<>();
 		JavaResult result;
 
 		try {
-			result = this.getBean(fileContent, smooksConfig);
+			result = this.getBean(fileContent, config);
 
 			switch (messageType) {
 				case "edifact":
@@ -163,6 +131,7 @@ public class MessageParser {
 			throw new ParserFailedException();
 		} catch (Exception e) {
 			log.error("General exception: " + e.getMessage() + " - " + fileName);
+			log.debug(ExceptionUtils.getStackTrace(e.getCause()));
 			throw new ParserFailedException();
 		}
 		return trackContracts;
@@ -262,7 +231,7 @@ public class MessageParser {
 	 * @param dienstleister
 	 */
 	private List<TrackContract> mapStatusCSV(List<PaketCSV> shipment, String dienstleister) {
-		List<TrackContract> trackContracts = new ArrayList<TrackContract>();
+		List<TrackContract> trackContracts = new ArrayList<>();
 		// Shipment list
 		for (PaketCSV paket : shipment) {
 

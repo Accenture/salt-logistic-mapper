@@ -41,6 +41,10 @@ libraryDependencies += "commons-codec" % "commons-codec" % "1.13"
 libraryDependencies += "org.json4s" %% "json4s-native" % "3.6.7"
 libraryDependencies += "de.heikoseeberger" %% "akka-http-json4s" % "1.28.0"
 
+libraryDependencies += "com.google.code.gson" % "gson" % "2.8.6"
+
+
+
 // Scalatest :: http://www.scalatest.org
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % "test"
 
