@@ -9,7 +9,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.io.FileUtils.writeStringToFile;
 
 /**
- * Writig smooks configuration files in given path
+ * Writing smooks configuration files in given path.
  */
 public class ConfigResponseWriter {
 
@@ -17,8 +17,8 @@ public class ConfigResponseWriter {
 
     /**
      * Storing smooks configuration files in local path.
-     * Replacing in config giles {$PATH} to Absolute path to file.
-     * This needs to
+     * Replacing in config files PLACEHOLDER to Absolute path to file.
+     * This needs for smooks. Sometimes smooks configs contain 2 or more files, with links( or include) another files.
      *
      * @param rootFolder     Path in local filesystem
      * @param configResponse {@link ConfigResponse} content to store.

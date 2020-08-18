@@ -9,11 +9,26 @@ import org.slf4j.Logger;
 import java.io.IOException;
 import java.util.Optional;
 
+import static de.salt.sce.mapper.communication.getconfigs.ConfigResponseParser.parseResponse;
+import static de.salt.sce.mapper.communication.getconfigs.ConfigResponseWriter.replaceAndWrite;
 import static org.slf4j.LoggerFactory.getLogger;
 
+/**
+ * Assembly smooks configuration copy functionalities in one place.
+ */
 public class ConfigCopy {
     private static final Logger log = getLogger(ConfigCopy.class);
 
+    /**
+     * Getting smooks files from Microservice and writing in local filesystem.
+     *
+     * @param httpClient          {@link Http}
+     * @param actorMaterializer   {@link ActorMaterializer}
+     * @param config              {@link Config}
+     * @param microserviceName    String
+     * @param rootFolder          String
+     * @param requestTimeoutMills int
+     */
     public static void copy(Http httpClient, ActorMaterializer actorMaterializer, Config config, String microserviceName, String rootFolder, int requestTimeoutMills) {
         String host = config.getString("host");
         String username = config.getString("username");
@@ -28,9 +43,10 @@ public class ConfigCopy {
 
         try {
             if (result.isPresent()) {
-                ConfigResponse configResponse = ConfigResponseParser.parseResponse(result.get());
-
-                ConfigResponseWriter.replaceAndWrite(rootFolder, configResponse);
+                replaceAndWrite(
+                        rootFolder,
+                        parseResponse(result.get())
+                );
             } else {
                 log.error("Could not create smooks config for " + microserviceName);
             }
