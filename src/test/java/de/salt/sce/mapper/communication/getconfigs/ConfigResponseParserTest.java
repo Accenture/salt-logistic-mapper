@@ -1,12 +1,9 @@
 package de.salt.sce.mapper.communication.getconfigs;
 
-import net.bytebuddy.asm.Advice;
 import org.apache.commons.io.IOUtils;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.util.List;
 
 import static de.salt.sce.mapper.communication.getconfigs.ConfigResponseParser.parseResponse;
 import static java.nio.charset.StandardCharsets.UTF_8;
