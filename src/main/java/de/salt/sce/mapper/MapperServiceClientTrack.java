@@ -23,11 +23,13 @@ public class MapperServiceClientTrack {
      */
     public static TrackResponseProtocol buildResponse(TrackProviderRequest requestData, Config config) throws UnsupportedEncodingException {
 
-        //TODO change to lesen von request? or anower way
         String serviceConfigurationName = requestData.configName();
-        String message_type = config.getString(format("mapper-app.providers.%s.parser.message_type", serviceConfigurationName));
-        String encoding = config.getString(format("mapper-app.providers.%s.parser.encoding", serviceConfigurationName));
-        String smooks_config = config.getString(format("mapper-app.providers.%s.parser.smooks_config", serviceConfigurationName));
+
+        //TODO change to lesen von request(TrackProviderRequest) ? or anower way
+        String message_type = "edifact";
+        String encoding = "windows-1252";
+        //TODO configurable from conf
+        String smooks_config = "/smooks/config-ups.xml";
 
         Tuple2<String, String> line = requestData.lines().head();
         MessageParser messageParser = new MessageParser();
