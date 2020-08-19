@@ -6,7 +6,6 @@ import de.salt.sce.mapper.model.TrackContract;
 import de.salt.sce.mapper.parser.MessageParser;
 import de.salt.sce.mapper.server.communication.model.Requests.TrackProviderRequest;
 import de.salt.sce.mapper.server.communication.model.Responses.TrackResponseProtocol;
-import de.salt.sce.mapper.server.pojo.UtilObjectResponse;
 import scala.Tuple2;
 import scala.collection.immutable.HashMap;
 
@@ -18,13 +17,13 @@ import static java.lang.String.format;
 public class MapperServiceClientTrack {
 
     /**
-     * returns UtilObjectResponse.
+     * returns TrackResponseProtocol.
      *
-     * @return {@link UtilObjectResponse}
+     * @return {@link TrackResponseProtocol}
      */
-    public static TrackResponseProtocol buildUtilObjectResponse(TrackProviderRequest requestData, Config config) throws UnsupportedEncodingException {
+    public static TrackResponseProtocol buildResponse(TrackProviderRequest requestData, Config config) throws UnsupportedEncodingException {
 
-
+        //TODO change to lesen von request? or anower way
         String serviceConfigurationName = requestData.configName();
         String message_type = config.getString(format("mapper-app.providers.%s.parser.message_type", serviceConfigurationName));
         String encoding = config.getString(format("mapper-app.providers.%s.parser.encoding", serviceConfigurationName));
@@ -40,6 +39,7 @@ public class MapperServiceClientTrack {
                 line._2.getBytes(encoding)
         );
 
+        //TODO trackContracts -> TrackResponseProtocol
         return new TrackResponseProtocol(
                 new HashMap<String, String>(),
                 new HashMap<String, String>()

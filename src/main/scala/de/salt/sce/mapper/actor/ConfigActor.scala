@@ -3,17 +3,17 @@ package de.salt.sce.mapper.actor
 import java.util.concurrent.TimeUnit.SECONDS
 
 import akka.actor.{Actor, Props}
+import akka.http.javadsl.Http.get
+import akka.stream.ActorMaterializer.create
 import akka.util.Timeout
+import com.typesafe.config.ConfigObject
 import com.typesafe.scalalogging.LazyLogging
+import de.salt.sce.mapper.communication.getconfigs.ConfigCopy
 import de.salt.sce.mapper.server.util.LazyConfig
 import org.json4s.{DefaultFormats, Serialization, native}
-import akka.http.javadsl.Http.get;
+
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration.Duration
-import akka.stream.ActorMaterializer.create
-import com.typesafe.config.ConfigObject
-import de.salt.sce.mapper.Bootstrap.config
-import de.salt.sce.mapper.communication.getconfigs.ConfigCopy
 
 
 object ConfigActor {

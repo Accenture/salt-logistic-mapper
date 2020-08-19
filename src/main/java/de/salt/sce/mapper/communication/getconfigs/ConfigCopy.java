@@ -11,6 +11,7 @@ import java.util.Optional;
 
 import static de.salt.sce.mapper.communication.getconfigs.ConfigResponseParser.parseResponse;
 import static de.salt.sce.mapper.communication.getconfigs.ConfigResponseWriter.replaceAndWrite;
+import static java.lang.String.format;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
@@ -30,7 +31,12 @@ public class ConfigCopy {
      * @param requestTimeoutMills int
      */
     public static void copy(Http httpClient, ActorMaterializer actorMaterializer, Config config, String microserviceName, String rootFolder, int requestTimeoutMills) {
-        String host = config.getString("host");
+        String host = format("%s//%s:%s/%s",
+                config.getString("protocol"),
+                config.getString("endpoint"),
+                config.getString("port"),
+                config.getString("path")
+        );
         String username = config.getString("username");
         String password = config.getString("password");
 
