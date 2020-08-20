@@ -23,6 +23,7 @@ class RouteTrackIntegrationSpec extends WordSpec with Matchers
   with ScalatestRouteTest with LazyConfig
   with LazyLogging {
 
+
   private val validCredentials = BasicHttpCredentials(
     config.getString("sce.track.mapper.rest-server.auth.username"),
     config.getString("sce.track.mapper.rest-server.auth.password")
@@ -31,7 +32,7 @@ class RouteTrackIntegrationSpec extends WordSpec with Matchers
   implicit val s: Serialization = native.Serialization
   implicit val formats: Formats = DefaultFormats + new LoggableSecretSerializer
 
-  implicit def default(implicit system: ActorSystem): RouteTestTimeout = RouteTestTimeout(20.seconds)
+  implicit def default(implicit system: ActorSystem): RouteTestTimeout = RouteTestTimeout(200.seconds)
 
   private val path = s"/${config.getString("sce.track.mapper.rest-server.path.track-path")}/${config.getString("sce.track.mapper.rest-server.path.track-ext")}"
   private var route: Route = _
@@ -46,11 +47,10 @@ class RouteTrackIntegrationSpec extends WordSpec with Matchers
     s"testing is service returns correct response when becomes correct request [$path]" in {
       import de.heikoseeberger.akkahttpjson4s.Json4sSupport._ // should be visible only in this method where no deserialization to string is performed
 
-
       val trackRequest = TrackProviderRequest(
         id = UUID.randomUUID().toString,
         configName = "ups",
-        lines = Map("key1" -> "value1")
+        lines = Map("20170516_093419_20160719_141122_ROTH-IFTSTA" -> "UNB+UNOA:1+EURPROD:UPS+ROTH-DE-IFTSTA:02+160714:1243+00000000044975++IFTSTA'UNG+IFTSTA+EURPROD:UPS+ROTH-DE-IFTSTA:02+160714:1243+00000000044975+UN+D:07B'UNH+00000000806777+IFTSTA:D:07B:UN'BGM+23:UPS::QVD+O4'NAD+DEQ+3F4W57'NAD+BS+3F4W57:01'NAD+DP++++21 HOERNLEWEG:E+WEILHEIM++73235+DE'RFF+CW:1Z3F4W576807747148'CNI+1'LOC+14+:::WENDLINGEN+:::DE'STS+1:D2:21'RFF+AGY:WALCH'RFF+AEL:RESIDENTIAL'RFF+AAN:2'DTM+78:20160714173746:204'UNT+14+00000000806777'UNH+00000000806778+IFTSTA:D:07B:UN'BGM+23:UPS::QVD+O4'NAD+DEQ+562V50'NAD+BS+562V50:01'RFF+CW:1Z562V506807737844'CNI+1'LOC+14+:::BRUSSELS+:::BE'STS+1:E1:101'DTM+78:20160714173339:204'FTX+AVA+02++DELIVERY WILL BE RESCHEDULED.:RESOLUTION'FTX+AVA+MF++THIS PACKAGE IS BEING HELD FOR A FUTURE DELIVERY DATE.:REASON'UNT+12+00000000806778'UNE+2+00000000044975'UNZ+1+00000000044975'")
       )
 
       Post(path, trackRequest) ~>

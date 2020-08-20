@@ -3,3 +3,4 @@
 local
 my-ivy-proxy-releases: http://artifactory.apps.d4s.salt-solutions.de/artifactory/sce-dev-release-virtual/, [organization]/[module]/(scala_[scalaVersion]/)(sbt_[sbtVersion]/)[revision]/[type]s/[artifact](-[classifier]).[ext]
 my-maven-proxy-releases: http://artifactory.apps.d4s.salt-solutions.de/artifactory/sce-dev-release-virtual/
+
