@@ -85,12 +85,14 @@ class AkkaHttpRestServer extends RestServer with LazyLogging with LazyConfig {
           )
           onSuccess(ActorService.getTrackServerActor ? trackRequestWithHeaders) {
             case response: InternalResponse =>
-              logger.trace(s"Response: $response")
-              complete(response.statusCode, response.extResponse)
+              logger.debug(s"Response: $response")
+              complete(response)
 
             case x: Any =>
               logger.error(s"Internal error: Got unexpected response ${x.toString}")
               complete(StatusCodes.InternalServerError, x)
+
+
           }
       }
     }

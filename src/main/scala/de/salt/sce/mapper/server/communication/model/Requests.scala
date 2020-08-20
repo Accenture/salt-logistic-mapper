@@ -11,6 +11,12 @@ object Requests {
 
     def configName: String
 
+    def configFile: String
+
+    def messageType: String
+
+    def encoding: String
+
     def lines: Map[String, String]
 
     def header: Seq[HttpHeader] = Nil
@@ -21,6 +27,9 @@ object Requests {
    */
   case class TrackProviderRequest(id: String,
                                   configName: String,
+                                  configFile: String,
+                                  messageType: String,
+                                  encoding: String,
                                   lines: Map[String, String],
                                   override val header: Seq[HttpHeader] = Nil) extends TrackRequest
 

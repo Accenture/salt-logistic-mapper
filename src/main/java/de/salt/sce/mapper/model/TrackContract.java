@@ -9,7 +9,7 @@ import de.salt.sce.mapper.util.ScalaTool;
  * @author WRH
  * @since 3.0.1
  */
-public class TrackContract {
+public class TrackContract implements java.io.Serializable {
 
     private String statusData;
     private String mandt;

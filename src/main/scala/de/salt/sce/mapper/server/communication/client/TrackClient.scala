@@ -9,6 +9,7 @@ import de.salt.sce.mapper.server.communication.model.Responses.{InternalResponse
 import de.salt.sce.mapper.server.util.LazyConfig
 import org.json4s.{DefaultFormats, Formats}
 
+import scala.collection.mutable
 import scala.util.{Failure, Success, Try}
 
 /**
@@ -47,14 +48,10 @@ class TrackClient extends Actor with LazyLogging with LazyConfig {
         try {
           doCreateResponse(trackReq.header, trackReq) match {
             case Success(trackResponseProtocol) =>
-              // send response back to SAP with status OK
+              // send response back to Microservice with status OK
               InternalResponse(
-                id = "id",
-                extResponse = TrackResponseProtocol(
-                  success = Map("key1" -> "value1"),
-                  error = Map("key2" -> "value2")
-                ),
-                statusCode = StatusCodes.OK
+                id = trackReq.id,
+                extResponse = trackResponseProtocol
               )
 
             case Failure(ex) =>
@@ -63,11 +60,11 @@ class TrackClient extends Actor with LazyLogging with LazyConfig {
               logger.error(errorMsg)
               logger.error(ex.getStackTrace.map(_.toString).mkString("\n"))
               InternalResponse(
-                id = "id",
+                id = "id2",
                 extResponse = TrackResponseProtocol(
-                  success = Map("key1" -> "value1"),
-                  error = Map("key2" -> "value2")
-                ), statusCode = StatusCodes.InternalServerError
+                  success = mutable.HashMap("key12" -> ""),
+                  error = mutable.HashMap("key2" -> new Array[Byte](1))
+                )
               )
           }
         } catch {

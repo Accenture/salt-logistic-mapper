@@ -3,11 +3,13 @@ package de.salt.sce.mapper.server.communication.model
 import akka.http.scaladsl.model.{StatusCode, StatusCodes}
 import de.salt.sce.mapper.model.TrackContract
 
+import scala.collection.mutable
+
 object Responses {
 
   case class TrackResponseProtocol(
-                                    success: Map[String, String] ,
-                                    error: Map[String, String]
+                                    success: mutable.HashMap[String, String],
+                                    error: mutable.HashMap[String, Array[Byte]]
                                   ) {
     /**
      * Override for logging:
@@ -24,8 +26,7 @@ object Responses {
   }
 
   case class InternalResponse(id: String,
-                              extResponse: TrackResponseProtocol,
-                              statusCode: StatusCode = StatusCodes.OK,
+                              extResponse: TrackResponseProtocol
                              )
 
 }
