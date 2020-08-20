@@ -31,7 +31,7 @@ public class ConfigCopy {
      * @param requestTimeoutMills int
      */
     public static void copy(Http httpClient, ActorMaterializer actorMaterializer, Config config, String microserviceName, String rootFolder, int requestTimeoutMills) {
-        String host = format("%s//%s:%s/%s",
+        String host = format("%s://%s:%s/%s",
                 config.getString("protocol"),
                 config.getString("endpoint"),
                 config.getString("port"),
