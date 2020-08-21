@@ -16,7 +16,7 @@ public class MessageParserTest {
 
     @Test
     @DisplayName("UPS testing 1.")
-    public void whenRecieveCorrectUPSFile_thenParseSuccessful_1() throws IOException {
+    public void whenRecieveCorrectUPSFile_thenParseSuccessful_1() throws IOException, ParserFailedException {
         String fileName = "ups/20170516_093419_20160719_141122_ROTH-IFTSTA";
 
         MessageParser messageParser = new MessageParser();
@@ -49,7 +49,7 @@ public class MessageParserTest {
 
     @Test
     @DisplayName("UPS testing 2. Just an another file.")
-    public void whenRecieveCorrectUPSFile_thenParseSuccessful_2() throws IOException {
+    public void whenRecieveCorrectUPSFile_thenParseSuccessful_2() throws IOException, ParserFailedException {
         String fileName = "ups/20160121_181708_ROTH-IFTSTA.266.txt";
 
         MessageParser messageParser = new MessageParser();
@@ -95,7 +95,7 @@ public class MessageParserTest {
 
     @Test
     @DisplayName("DPD testing.")
-    public void whenRecieveCorrectDPDFile_thenParseSuccessful() throws IOException {
+    public void whenRecieveCorrectDPDFile_thenParseSuccessful() throws IOException, ParserFailedException {
         String fileName = "dpd/20160201_170112_STATUSDATA_KD2748208P_D20160201T021335";
 
         MessageParser messageParser = new MessageParser();
@@ -127,7 +127,7 @@ public class MessageParserTest {
 
     @Test
     @DisplayName("AMM testing.")
-    public void whenRecieveCorrectAMMFile_thenParseSuccessful() throws IOException {
+    public void whenRecieveCorrectAMMFile_thenParseSuccessful() throws IOException, ParserFailedException {
         String fileName = "amm/P0815-STAT_IFTSTA-4.txt";
 
         MessageParser messageParser = new MessageParser();
@@ -150,7 +150,7 @@ public class MessageParserTest {
 
     @Test
     @DisplayName("TOF testing.")
-    public void whenRecieveCorrectTOFFile_thenParseSuccessful() throws IOException {
+    public void whenRecieveCorrectTOFFile_thenParseSuccessful() throws IOException, ParserFailedException {
         String fileName = "tof/93449322.ROTHENBE.20140408.AZMX.39471758.11171400.CSV";
 
         MessageParser messageParser = new MessageParser();

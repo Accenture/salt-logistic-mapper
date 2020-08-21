@@ -5,7 +5,7 @@
 
 	<!-- Configure the EDI Reader to parse the message stream into a stream 
 		of SAX events. -->
-	<edi:reader mappingModel="/smooks/mapping-ups.xml" />
+	<edi:reader mappingModel="/smooks/ups/mapping-ups.xml" />
 
 	<!-- Transport bean -->
 	<jb:bean beanId="transport-bean"

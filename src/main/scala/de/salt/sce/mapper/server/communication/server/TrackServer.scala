@@ -46,10 +46,11 @@ class TrackServer extends Actor with LazyLogging with LazyConfig {
       val msg = s"Received unexpected request $req"
       logger.error(msg)
       sender() ! InternalResponse(
-        id = "id",
+        id = "UNKNOWN",
         TrackResponseProtocol(
-          success = mutable.HashMap("key0" -> ""),
-          error = mutable.HashMap("key01" -> new Array[Byte](1))
-        ))
+          success = mutable.HashMap(),
+          error = mutable.HashMap()
+        ),statusCode = StatusCodes.InternalServerError.intValue
+      )
   }
 }

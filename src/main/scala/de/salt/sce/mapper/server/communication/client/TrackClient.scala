@@ -4,7 +4,7 @@ import akka.actor.{Actor, Props}
 import akka.http.scaladsl.model.{HttpHeader, StatusCodes}
 import com.typesafe.scalalogging.LazyLogging
 import de.salt.sce.mapper.MapperServiceClientTrack
-import de.salt.sce.mapper.server.communication.model.Requests.TrackProviderRequest
+import de.salt.sce.mapper.server.communication.model.Requests.{TrackProviderRequest, TrackRequest}
 import de.salt.sce.mapper.server.communication.model.Responses.{InternalResponse, TrackResponseProtocol}
 import de.salt.sce.mapper.server.util.LazyConfig
 import org.json4s.{DefaultFormats, Formats}
@@ -51,32 +51,44 @@ class TrackClient extends Actor with LazyLogging with LazyConfig {
               // send response back to Microservice with status OK
               InternalResponse(
                 id = trackReq.id,
-                extResponse = trackResponseProtocol
+                extResponse = trackResponseProtocol,
+                statusCode = StatusCodes.OK.intValue
               )
 
             case Failure(ex) =>
-              // Failure in subclass. Connection could not be established. Send failure back to SAP.
-              val errorMsg = s"Exception [${ex.getClass}] occurred in subclass during track download: message [${ex.getMessage}]"
-              logger.error(errorMsg)
+              // Failure in subclass. Connection could not be established. Send failure back to Microservice.
+              logger.error(s"Exception [${ex.getClass}] occurred in subclass during track download: message [${ex.getMessage}]")
               logger.error(ex.getStackTrace.map(_.toString).mkString("\n"))
-              InternalResponse(
-                id = "id2",
-                extResponse = TrackResponseProtocol(
-                  success = mutable.HashMap("key12" -> ""),
-                  error = mutable.HashMap("key2" -> new Array[Byte](1))
-                )
-              )
+              buildErrorResponse(trackReq, StatusCodes.InternalServerError.intValue)
           }
         } catch {
           case e: Exception =>
-            val errorMsg = s"Exception [${e.getClass}] occurred during track download: message [${e.getMessage}]"
-            logger.error(errorMsg)
+            logger.error(s"Exception [${e.getClass}] occurred during track download: message [${e.getMessage}]")
             logger.error(e.getStackTrace.map(_.toString).mkString("\n"))
-          //buildErrorResponse(trackReq, errorMsg, StatusCodes.InternalServerError)
+            buildErrorResponse(trackReq, StatusCodes.InternalServerError.intValue)
         }
       }
   }
 
+  /**
+   * Builds an error response based on the given request.
+   * Uses the hash of the request, if there is any.
+   * (Change this if we use multiple requests)
+   *
+   * @param trackRequest complete given request
+   * @param statusCode   http code of error
+   * @return complete response protocol with error protocol
+   */
+  protected def buildErrorResponse(trackRequest: TrackRequest, statusCode: Integer): InternalResponse = {
+    InternalResponse(
+      id = trackRequest.id,
+      extResponse = TrackResponseProtocol(
+        success = mutable.HashMap(),
+        error = mutable.HashMap()
+      ),
+      statusCode = statusCode
+    )
+  }
 
   /**
    * Abstract method to create response. Redefine in subclass.
@@ -97,4 +109,6 @@ class TrackClient extends Actor with LazyLogging with LazyConfig {
       case None => ""
     }
   }
+
+
 }

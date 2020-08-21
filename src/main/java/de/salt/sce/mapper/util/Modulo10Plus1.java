@@ -4,6 +4,8 @@ import de.salt.sce.mapper.exception.FailedModuloCalculationException;
 import org.apache.commons.validator.routines.checkdigit.CheckDigitException;
 import org.apache.commons.validator.routines.checkdigit.EAN13CheckDigit;
 
+import static java.lang.Integer.parseInt;
+
 /**
  * <p>Modulo 10 + 1 Procedure</p>
  * <p>Used for example on GLS Module</p>
@@ -18,12 +20,10 @@ public class Modulo10Plus1 {
         String result;
         try {
             result = checker.calculate(code);
-        } catch (CheckDigitException e) {
-            throw new FailedModuloCalculationException();
-        } catch (NumberFormatException e) {
+        } catch (CheckDigitException | NumberFormatException e) {
             throw new FailedModuloCalculationException();
         }
-        int intResult = Integer.valueOf(result);
+        int intResult = parseInt(result);
 
         if (intResult == 0)
             return 9;
