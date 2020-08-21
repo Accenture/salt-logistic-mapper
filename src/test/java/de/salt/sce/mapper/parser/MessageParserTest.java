@@ -22,7 +22,7 @@ public class MessageParserTest {
         MessageParser messageParser = new MessageParser();
         List<TrackContract> trackContracts = messageParser.parseFile(
                 "ups",
-                "classpath:/smooks/config-ups.xml",
+                "classpath:/smooks/ups/config-ups.xml",
                 "edifact",
                 fileName,
                 getResource(fileName, "windows-1252")
@@ -55,7 +55,7 @@ public class MessageParserTest {
         MessageParser messageParser = new MessageParser();
         List<TrackContract> trackContracts = messageParser.parseFile(
                 "ups",
-                "classpath:/smooks/config-ups.xml",
+                "classpath:/smooks/ups/config-ups.xml",
                 "edifact",
                 fileName,
                 getResource(fileName, "windows-1252")
@@ -85,7 +85,7 @@ public class MessageParserTest {
                 ()->{
                     messageParser.parseFile(
                             "ups",
-                            "classpath:/smooks/config-ups.xml",
+                            "classpath:/smooks/ups/config-ups.xml",
                             "edifact",
                             fileName,
                             getResource(fileName, "windows-1252")
@@ -101,7 +101,7 @@ public class MessageParserTest {
         MessageParser messageParser = new MessageParser();
         List<TrackContract> trackContracts = messageParser.parseFile(
                 "dpd",
-                "classpath:/smooks/config-dpd.xml",
+                "classpath:/smooks/dpd/config-dpd.xml",
                 "csv",
                 fileName,
                 getResource(fileName, "UTF-8")
@@ -126,6 +126,29 @@ public class MessageParserTest {
     }
 
     @Test
+    @DisplayName("Dachser testing.")
+    public void whenRecieveCorrectDachserFile_thenParseSuccessful() throws IOException, ParserFailedException {
+        String fileName = "dachser/Beispiel_EDIFACT_IFTSTA_D01C.txt";
+
+        MessageParser messageParser = new MessageParser();
+        List<TrackContract> trackContracts = messageParser.parseFile(
+                "dachser",
+                "classpath:/smooks/dachser/config-dachser.xml",
+                "edifact",
+                fileName,
+                getResource(fileName, "UTF-8")
+        );
+
+        assertThat(trackContracts).hasSize(9);
+
+        assertThat(trackContracts.get(0).getRefId()).isEqualTo("2006830538");
+        assertThat(trackContracts.get(0).getRefType()).isEqualTo("XSITRA");
+        assertThat(trackContracts.get(0).getStateId()).isEqualTo("45");
+        assertThat(trackContracts.get(0).getTimestamp()).isEqualTo("20130125090000");
+        assertThat(trackContracts.get(0).getEdcid()).isEqualTo("dachser");
+    }
+
+    @Test
     @DisplayName("AMM testing.")
     public void whenRecieveCorrectAMMFile_thenParseSuccessful() throws IOException, ParserFailedException {
         String fileName = "amm/P0815-STAT_IFTSTA-4.txt";
@@ -133,7 +156,7 @@ public class MessageParserTest {
         MessageParser messageParser = new MessageParser();
         List<TrackContract> trackContracts = messageParser.parseFile(
                 "amm",
-                "classpath:/smooks/config-amm.xml",
+                "classpath:/smooks/amm/config-amm.xml",
                 "edifact",
                 fileName,
                 getResource(fileName, "UTF-8")
@@ -156,7 +179,7 @@ public class MessageParserTest {
         MessageParser messageParser = new MessageParser();
         List<TrackContract> trackContracts = messageParser.parseFile(
                 "tof",
-                "classpath:/smooks/config-tof.xml",
+                "classpath:/smooks/tof/config-tof.xml",
                 "csv",
                 fileName,
                 getResource(fileName, "windows-1252")
