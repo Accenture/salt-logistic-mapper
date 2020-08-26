@@ -1,4 +1,4 @@
-package de.salt.sce.mapper.server.communication.client
+package de.salt.sce.mapper.server.communication.actor
 
 import akka.actor.{Actor, Props}
 import akka.http.scaladsl.model.{HttpHeader, StatusCodes}
@@ -15,10 +15,10 @@ import scala.util.{Failure, Success, Try}
 /**
  * Companion Object for TrackClient
  */
-object TrackClient extends LazyLogging {
+object ConfigActor extends LazyLogging {
   final val Name: String = s"track-mapper-client"
 
-  def props: Props = Props(new TrackClient)
+  def props: Props = Props(new ConfigActor)
 }
 
 
@@ -26,7 +26,7 @@ object TrackClient extends LazyLogging {
  * Generic track client :
  * pushes data to Track server
  */
-class TrackClient extends Actor with LazyLogging with LazyConfig {
+class ConfigActor extends Actor with LazyLogging with LazyConfig {
 
   implicit val formats: Formats = DefaultFormats
 

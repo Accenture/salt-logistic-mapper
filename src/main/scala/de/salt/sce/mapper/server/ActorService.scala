@@ -4,7 +4,7 @@ import java.util.concurrent.TimeUnit.MILLISECONDS
 
 import akka.actor.{ActorRef, ActorSelection, ActorSystem}
 import akka.util.Timeout
-import de.salt.sce.mapper.server.communication.client.{TrackClient, TrackClientManager}
+import de.salt.sce.mapper.server.communication.actor.{ConfigActor, ConfigActorManager}
 import de.salt.sce.mapper.server.communication.server.{TrackServer, TrackServerManager}
 import de.salt.sce.mapper.server.util.LazyConfig
 
@@ -27,7 +27,7 @@ object ActorService extends LazyConfig {
     getActorSystem match {
       case Some(s) =>
         s.actorOf(TrackServerManager.props, TrackServerManager.Name)
-        s.actorOf(TrackClientManager.props, TrackClientManager.Name)
+        s.actorOf(ConfigActorManager.props, ConfigActorManager.Name)
       case None =>
         throw new Exception("Actor system is not available")
     }
@@ -66,7 +66,7 @@ object ActorService extends LazyConfig {
       case None =>
         trackClientActor =
           Some(Await.result(
-            getActor(s"/user/${TrackClientManager.Name}/${TrackClient.Name}")
+            getActor(s"/user/${ConfigActorManager.Name}/${ConfigActor.Name}")
               .resolveOne(), defaultDuration))
         trackClientActor.get
     }
