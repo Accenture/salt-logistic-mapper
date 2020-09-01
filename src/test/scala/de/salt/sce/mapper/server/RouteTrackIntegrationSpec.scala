@@ -10,9 +10,8 @@ import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.testkit.{RouteTestTimeout, ScalatestRouteTest}
 import com.typesafe.scalalogging.LazyLogging
 import de.salt.sce.mapper.model.TrackContract
-import de.salt.sce.mapper.server.communication.model.Requests.TrackProviderRequest
-import de.salt.sce.mapper.server.communication.model.Responses.InternalResponse
-import de.salt.sce.mapper.server.communication.model.secret.LoggableSecretSerializer
+import de.salt.sce.mapper.server.communication.model.MapperRequest
+import de.salt.sce.mapper.server.communication.model.MapperResponses.InternalResponse
 import de.salt.sce.mapper.server.communication.server.AkkaHttpRestServer
 import de.salt.sce.mapper.server.util.LazyConfig
 import de.salt.sce.mapper.util.{ObjectSerializer, SpecHelper}
@@ -34,11 +33,11 @@ class RouteTrackIntegrationSpec extends WordSpec with Matchers
   )
 
   implicit val s: Serialization = native.Serialization
-  implicit val formats: Formats = DefaultFormats + new LoggableSecretSerializer
+  implicit val formats: Formats = DefaultFormats
 
   implicit def default(implicit system: ActorSystem): RouteTestTimeout = RouteTestTimeout(200.seconds)
 
-  private val path = s"/${config.getString("sce.track.mapper.rest-server.path.track-path")}/${config.getString("sce.track.mapper.rest-server.path.track-ext")}"
+  private val path = s"/${config.getString("sce.track.mapper.rest-server.path.mapper-path")}/${config.getString("sce.track.mapper.rest-server.path.mapper-ext")}"
   private var route: Route = _
 
   override def beforeAll(): Unit = {
@@ -54,18 +53,18 @@ class RouteTrackIntegrationSpec extends WordSpec with Matchers
       val file: String = "P0815-STAT_IFTSTA-4.txt"
       val content: String = IOUtils.toString(this.getClass.getResourceAsStream(s"/smooks/amm/$file"), UTF_8)
 
-      val trackRequest = TrackProviderRequest(
+      val mapperRequest = MapperRequest(
         id = UUID.randomUUID().toString,
-        configName = "amm",
+        serviceName = "amm",
         configFile = "config-amm.xml",
         messageType = "edifact",
         encoding = "UTF-8",
-        lines = Map(
+        files = Map(
           file -> content,
           "Unknown" -> "Unknown format"
         )
       )
-      Post(path, trackRequest) ~>
+      Post(path, mapperRequest) ~>
         addCredentials(validCredentials) ~> route ~> check {
         logger.debug(s"Response status: $status")
         status shouldEqual StatusCodes.OK
@@ -96,18 +95,18 @@ class RouteTrackIntegrationSpec extends WordSpec with Matchers
       val file: String = "20160201_170112_STATUSDATA_KD2748208P_D20160201T021335"
       val content: String = IOUtils.toString(this.getClass.getResourceAsStream(s"/smooks/dpd/$file"), UTF_8)
 
-      val trackRequest = TrackProviderRequest(
+      val mapperRequest = MapperRequest(
         id = UUID.randomUUID().toString,
-        configName = "dpd",
+        serviceName = "dpd",
         configFile = "config-dpd.xml",
         messageType = "csv",
         encoding = "UTF-8",
-        lines = Map(
+        files = Map(
           file -> content,
           "Unknown" -> "Unknown format"
         )
       )
-      Post(path, trackRequest) ~>
+      Post(path, mapperRequest) ~>
         addCredentials(validCredentials) ~> route ~> check {
         logger.debug(s"Response status: $status")
         status shouldEqual StatusCodes.OK
@@ -140,18 +139,18 @@ class RouteTrackIntegrationSpec extends WordSpec with Matchers
       val file: String = "Beispiel_EDIFACT_IFTSTA_D01C.txt"
       val content: String = IOUtils.toString(this.getClass.getResourceAsStream(s"/smooks/dachser/$file"), UTF_8)
 
-      val trackRequest = TrackProviderRequest(
+      val mapperRequest = MapperRequest(
         id = UUID.randomUUID().toString,
-        configName = "dachser",
+        serviceName = "dachser",
         configFile = "config-dachser.xml",
         messageType = "edifact",
         encoding = "UTF-8",
-        lines = Map(
+        files = Map(
           file -> content,
           "Unknown" -> "Unknown format"
         )
       )
-      Post(path, trackRequest) ~>
+      Post(path, mapperRequest) ~>
         addCredentials(validCredentials) ~> route ~> check {
         logger.debug(s"Response status: $status")
         status shouldEqual StatusCodes.OK
@@ -182,18 +181,18 @@ class RouteTrackIntegrationSpec extends WordSpec with Matchers
       val file: String = "93449323.ROTHENBE.20140703.RZMX.39499687.06313600.CSV"
       val content: String = IOUtils.toString(this.getClass.getResourceAsStream(s"/smooks/tof/$file"), UTF_8)
 
-      val trackRequest = TrackProviderRequest(
+      val mapperRequest = MapperRequest(
         id = UUID.randomUUID().toString,
-        configName = "tof",
+        serviceName = "tof",
         configFile = "config-tof.xml",
         messageType = "csv",
         encoding = "windows-1252",
-        lines = Map(
+        files = Map(
           file -> content,
           "Unknown" -> "Unknown format"
         )
       )
-      Post(path, trackRequest) ~>
+      Post(path, mapperRequest) ~>
         addCredentials(validCredentials) ~> route ~> check {
         logger.debug(s"Response status: $status")
         status shouldEqual StatusCodes.OK
@@ -226,20 +225,20 @@ class RouteTrackIntegrationSpec extends WordSpec with Matchers
     s"testing is ups service returns correct response when becomes correct request [$path]" in {
       import de.heikoseeberger.akkahttpjson4s.Json4sSupport._ // should be visible only in this method where no deserialization to string is performed
 
-      val trackRequest = TrackProviderRequest(
+      val mapperRequest = MapperRequest(
         id = UUID.randomUUID().toString,
-        configName = "ups",
+        serviceName = "ups",
         configFile = "config-ups.xml",
         messageType = "edifact",
         encoding = "windows-1252",
-        lines = Map(
+        files = Map(
           "20170516_093419_20160719_141122_ROTH-IFTSTA" -> "UNB+UNOA:1+EURPROD:UPS+ROTH-DE-IFTSTA:02+160714:1243+00000000044975++IFTSTA'UNG+IFTSTA+EURPROD:UPS+ROTH-DE-IFTSTA:02+160714:1243+00000000044975+UN+D:07B'UNH+00000000806777+IFTSTA:D:07B:UN'BGM+23:UPS::QVD+O4'NAD+DEQ+3F4W57'NAD+BS+3F4W57:01'NAD+DP++++21 HOERNLEWEG:E+WEILHEIM++73235+DE'RFF+CW:1Z3F4W576807747148'CNI+1'LOC+14+:::WENDLINGEN+:::DE'STS+1:D2:21'RFF+AGY:WALCH'RFF+AEL:RESIDENTIAL'RFF+AAN:2'DTM+78:20160714173746:204'UNT+14+00000000806777'UNH+00000000806778+IFTSTA:D:07B:UN'BGM+23:UPS::QVD+O4'NAD+DEQ+562V50'NAD+BS+562V50:01'RFF+CW:1Z562V506807737844'CNI+1'LOC+14+:::BRUSSELS+:::BE'STS+1:E1:101'DTM+78:20160714173339:204'FTX+AVA+02++DELIVERY WILL BE RESCHEDULED.:RESOLUTION'FTX+AVA+MF++THIS PACKAGE IS BEING HELD FOR A FUTURE DELIVERY DATE.:REASON'UNT+12+00000000806778'UNE+2+00000000044975'UNZ+1+00000000044975'",
           "20160123_181643_ROTH-IFTSTA.399" -> "UNB+UNOA:1+EURPROD:UPS+ROTH-DE-IFTSTA:02+160122:2143+00000000034384++IFTSTA'UNG+IFTSTA+EURPROD:UPS+ROTH-DE-IFTSTA:02+160122:2143+00000000034384+UN+D:07B'UNH+00000000638669+IFTSTA:D:07B:UN'BGM+23:UPS::QVD+O4'NAD+DEQ+3F4W57'NAD+BS+3F4W57:01'RFF+CW:1Z3F4W576807071118'CNI+1'LOC+14+:::BASEL+:::CH'STS+1:E1:101'DTM+78:20160123023727:204'FTX+AVA+SR++YOUR PACKAGE IS AT THE CLEARING AGENCY AWAITING FINAL RELEASE.:REASON'UNT+11+00000000638669'UNH+00000000638670+IFTSTA:D:07B:UN'BGM+23:UPS::QVD+O4'NAD+DEQ+3F4W57'NAD+BS+3F4W57:01'RFF+CW:1Z3F4W576807071136'CNI+1'LOC+14+:::BASEL+:::CH'STS+1:E1:101'DTM+78:20160123023727:204'FTX+AVA+SR++YOUR PACKAGE IS AT THE CLEARING AGENCY AWAITING FINAL RELEASE.:REASON'UNT+11+00000000638670'UNE+2+00000000034384'UNZ+1+00000000034384'",
           "Unknown" -> "Unknown format"
         )
       )
 
-      Post(path, trackRequest) ~>
+      Post(path, mapperRequest) ~>
         addCredentials(validCredentials) ~> route ~> check {
         logger.debug(s"Response status: $status")
         status shouldEqual StatusCodes.OK

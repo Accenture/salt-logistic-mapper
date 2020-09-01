@@ -4,8 +4,8 @@ import java.util.concurrent.TimeUnit.MILLISECONDS
 
 import akka.actor.{ActorRef, ActorSelection, ActorSystem}
 import akka.util.Timeout
-import de.salt.sce.mapper.server.communication.actor.{ConfigActor, ConfigActorManager}
-import de.salt.sce.mapper.server.communication.server.{TrackServer, TrackServerManager}
+import de.salt.sce.mapper.server.communication.actor.{MapperClientActor, MapperClientActorManager}
+import de.salt.sce.mapper.server.communication.server.{MapperServer, MapperServerManager}
 import de.salt.sce.mapper.server.util.LazyConfig
 
 import scala.concurrent.Await
@@ -17,30 +17,30 @@ import scala.concurrent.duration.Duration
 object ActorService extends LazyConfig {
   private val defaultDuration = Duration(500, MILLISECONDS)
   var system: ActorSystem = _
-  private var trackServerActor: Option[ActorRef] = None
-  private var trackClientActor: Option[ActorRef] = None
+  private var mapperServerActor: Option[ActorRef] = None
+  private var mapperClientActor: Option[ActorRef] = None
   implicit private val timeout: Timeout = Timeout(defaultDuration)
 
   def createActorHierarchy(): Unit = {
-    trackServerActor = None
-    trackClientActor = None
+    mapperServerActor = None
+    mapperClientActor = None
     getActorSystem match {
       case Some(s) =>
-        s.actorOf(TrackServerManager.props, TrackServerManager.Name)
-        s.actorOf(ConfigActorManager.props, ConfigActorManager.Name)
+        s.actorOf(MapperServerManager.props, MapperServerManager.Name)
+        s.actorOf(MapperClientActorManager.props, MapperClientActorManager.Name)
       case None =>
         throw new Exception("Actor system is not available")
     }
   }
 
-  def getTrackServerActor: ActorRef = {
-    trackServerActor match {
+  def getMapperServerActor: ActorRef = {
+    mapperServerActor match {
       case Some(a) => a
       case None =>
-        trackServerActor = Some(Await.result(
-          getActor(s"/user/${TrackServerManager.Name}/${TrackServer.Name}")
+        mapperServerActor = Some(Await.result(
+          getActor(s"/user/${MapperServerManager.Name}/${MapperServer.Name}")
             .resolveOne(), defaultDuration))
-        trackServerActor.get
+        mapperServerActor.get
     }
   }
 
@@ -60,15 +60,15 @@ object ActorService extends LazyConfig {
 
   def setActorSystem(system: ActorSystem): Unit = this.system = system
 
-  def getTrackClientActor: ActorRef = {
-    trackClientActor match {
+  def getMapperClientActor: ActorRef = {
+    mapperClientActor match {
       case Some(a) => a
       case None =>
-        trackClientActor =
+        mapperClientActor =
           Some(Await.result(
-            getActor(s"/user/${ConfigActorManager.Name}/${ConfigActor.Name}")
+            getActor(s"/user/${MapperClientActorManager.Name}/${MapperClientActor.Name}")
               .resolveOne(), defaultDuration))
-        trackClientActor.get
+        mapperClientActor.get
     }
   }
 }

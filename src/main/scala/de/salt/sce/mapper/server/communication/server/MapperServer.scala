@@ -8,24 +8,23 @@ import akka.pattern.{ask, pipe}
 import akka.util.Timeout
 import com.typesafe.scalalogging.LazyLogging
 import de.salt.sce.mapper.server.ActorService
-import de.salt.sce.mapper.server.communication.model.Requests.TrackProviderRequest
-import de.salt.sce.mapper.server.communication.model.Responses.{InternalResponse, TrackResponseProtocol}
+import de.salt.sce.mapper.server.communication.model.MapperRequest
+import de.salt.sce.mapper.server.communication.model.MapperResponses.{InternalResponse, MapperResponseProtocol}
 import de.salt.sce.mapper.server.util.LazyConfig
 import org.json4s.{DefaultFormats, Serialization, native}
 
-import scala.collection.immutable.HashMap
 import scala.collection.mutable
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
 import scala.language.postfixOps
 
-object TrackServer {
-  final val Name: String = "track-server"
+object MapperServer {
+  final val Name: String = "mapper-server"
 
-  def props: Props = Props(new TrackServer)
+  def props: Props = Props(new MapperServer)
 }
 
-class TrackServer extends Actor with LazyLogging with LazyConfig {
+class MapperServer extends Actor with LazyLogging with LazyConfig {
 
   implicit val s: Serialization = native.Serialization
   implicit val f: DefaultFormats = DefaultFormats
@@ -34,11 +33,11 @@ class TrackServer extends Actor with LazyLogging with LazyConfig {
 
   def receive: Receive = {
     // productive case
-    case trackRequest: TrackProviderRequest =>
+    case mapperRequest: MapperRequest =>
       val senderRef = sender()
-      logger.debug(s"Received request $trackRequest")
+      logger.debug(s"Received request $mapperRequest")
 
-      ask(ActorService.getTrackClientActor, trackRequest)
+      ask(ActorService.getMapperClientActor, mapperRequest)
         .mapTo[InternalResponse] pipeTo senderRef
 
     // catchall: unknown case
@@ -47,10 +46,10 @@ class TrackServer extends Actor with LazyLogging with LazyConfig {
       logger.error(msg)
       sender() ! InternalResponse(
         id = "UNKNOWN",
-        TrackResponseProtocol(
+        MapperResponseProtocol(
           success = mutable.HashMap(),
           error = mutable.HashMap()
-        ),statusCode = StatusCodes.InternalServerError.intValue
+        ), statusCode = StatusCodes.InternalServerError.intValue
       )
   }
 }

@@ -3,8 +3,8 @@ package de.salt.sce.mapper;
 import com.typesafe.config.Config;
 import de.salt.sce.mapper.model.TrackContract;
 import de.salt.sce.mapper.parser.MessageParser;
-import de.salt.sce.mapper.server.communication.model.Requests.TrackProviderRequest;
-import de.salt.sce.mapper.server.communication.model.Responses.TrackResponseProtocol;
+import de.salt.sce.mapper.server.communication.model.MapperRequest;
+import de.salt.sce.mapper.server.communication.model.MapperResponses.MapperResponseProtocol;
 import scala.collection.mutable.HashMap;
 import scala.collection.mutable.Map;
 
@@ -20,18 +20,18 @@ public class MapperServiceClientTrack {
     /**
      * returns TrackResponseProtocol.
      *
-     * @return {@link TrackResponseProtocol}
+     * @return {@link MapperResponseProtocol}
      */
-    public static TrackResponseProtocol buildResponse(TrackProviderRequest requestData, Config config) throws UnsupportedEncodingException {
+    public static MapperResponseProtocol buildResponse(MapperRequest requestData, Config config) throws UnsupportedEncodingException {
 
         MessageParser messageParser = new MessageParser();
-        String serviceConfigurationName = requestData.configName().toLowerCase();
+        String serviceConfigurationName = requestData.serviceName().toLowerCase();
         String smooks_config = config.getString("sce.track.mapper.smooks.config-files-path") + "/" + serviceConfigurationName + "/" + requestData.configFile();
 
         Map<String, String> mapSucess = new HashMap<>();
         Map<String, String> mapErrors = new HashMap<>();
 
-        mapAsJavaMapConverter(requestData.lines()).asJava().forEach(
+        mapAsJavaMapConverter(requestData.files()).asJava().forEach(
                 (k, v) -> {
                     try {
                         List<TrackContract> trackContracts = messageParser.parseFile(
@@ -48,7 +48,7 @@ public class MapperServiceClientTrack {
                 }
         );
 
-        return new TrackResponseProtocol(
+        return new MapperResponseProtocol(
                 mapSucess,
                 mapErrors
         );

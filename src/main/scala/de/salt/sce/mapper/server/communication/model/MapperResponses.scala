@@ -2,9 +2,9 @@ package de.salt.sce.mapper.server.communication.model
 
 import scala.collection.mutable
 
-object Responses {
+object MapperResponses {
 
-  case class TrackResponseProtocol(
+  case class MapperResponseProtocol(
                                     success: mutable.Map[String, String],
                                     error: mutable.Map[String, String]
                                   ) {
@@ -15,7 +15,7 @@ object Responses {
      * @return String containing content of protocols
      */
     override def toString: String = {
-      s"TrackResponseProtocol(" +
+      s"MapperResponseProtocol(" +
         s"Error: [${error.mkString(",")}], " +
         s"Success: [${success.mkString(",")}]" +
         s")"
@@ -23,7 +23,7 @@ object Responses {
   }
 
   case class InternalResponse(id: String,
-                              extResponse: TrackResponseProtocol,
+                              extResponse: MapperResponseProtocol,
                               statusCode: Integer
                              )
 
