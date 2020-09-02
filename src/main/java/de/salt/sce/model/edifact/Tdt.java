@@ -1,7 +1,9 @@
-package de.salt.sce.mapper.model.edifact;
+package de.salt.sce.model.edifact;
 
 
-public class Tdt {
+import java.io.Serializable;
+
+public class Tdt implements Serializable {
 
 	private String transportStageQualifier;
 	

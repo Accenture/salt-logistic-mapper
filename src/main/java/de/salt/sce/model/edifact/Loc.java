@@ -1,6 +1,8 @@
-package de.salt.sce.mapper.model.edifact;
+package de.salt.sce.model.edifact;
 
-public class Loc {
+import java.io.Serializable;
+
+public class Loc implements Serializable {
 
     private String locFuncCodeQualifier;
     private String locNameCode;

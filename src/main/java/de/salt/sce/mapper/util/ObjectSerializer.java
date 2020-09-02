@@ -23,8 +23,8 @@ public class ObjectSerializer {
 
     public static Object deserialize(byte[] bytes) {
         try {
-            try(ByteArrayInputStream b = new ByteArrayInputStream(bytes)){
-                try(ObjectInputStream o = new ObjectInputStream(b)){
+            try (ByteArrayInputStream b = new ByteArrayInputStream(bytes)) {
+                try (ObjectInputStream o = new ObjectInputStream(b)) {
                     return o.readObject();
                 }
             }

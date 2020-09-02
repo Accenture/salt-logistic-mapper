@@ -1,7 +1,9 @@
-package de.salt.sce.mapper.model.edifact;
+package de.salt.sce.model.edifact;
 
 
-public class Dtm {
+import java.io.Serializable;
+
+public class Dtm implements Serializable {
 
 	private String dateTimePeriod;
 

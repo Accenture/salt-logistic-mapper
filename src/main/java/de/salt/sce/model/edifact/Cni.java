@@ -1,7 +1,9 @@
-package de.salt.sce.mapper.model.edifact;
+package de.salt.sce.model.edifact;
 
 
-public class Cni {
+import java.io.Serializable;
+
+public class Cni implements Serializable {
 
 	private String consolidationTtemNumber;
 	private String documentMessageNumber;

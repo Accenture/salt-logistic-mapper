@@ -4,16 +4,16 @@ import java.util.concurrent.TimeUnit.SECONDS
 
 import akka.actor.{Actor, Props}
 import akka.http.scaladsl.model.StatusCodes
+import akka.http.scaladsl.model.StatusCodes.InternalServerError
 import akka.pattern.{ask, pipe}
 import akka.util.Timeout
 import com.typesafe.scalalogging.LazyLogging
 import de.salt.sce.mapper.server.ActorService
 import de.salt.sce.mapper.server.communication.model.MapperRequest
-import de.salt.sce.mapper.server.communication.model.MapperResponses.{InternalResponse, MapperResponseProtocol}
+import de.salt.sce.mapper.server.communication.model.MapperResponses.InternalResponse
 import de.salt.sce.mapper.server.util.LazyConfig
 import org.json4s.{DefaultFormats, Serialization, native}
 
-import scala.collection.mutable
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
 import scala.language.postfixOps
@@ -46,10 +46,9 @@ class MapperServer extends Actor with LazyLogging with LazyConfig {
       logger.error(msg)
       sender() ! InternalResponse(
         id = "UNKNOWN",
-        MapperResponseProtocol(
-          success = mutable.HashMap(),
-          error = mutable.HashMap()
-        ), statusCode = StatusCodes.InternalServerError.intValue
+        cvsResponse = Option.empty,
+        edifactResponse = Option.empty,
+        statusCode = InternalServerError.intValue
       )
   }
 }

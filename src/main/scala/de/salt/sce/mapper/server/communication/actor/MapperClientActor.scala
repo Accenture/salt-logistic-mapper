@@ -2,8 +2,10 @@ package de.salt.sce.mapper.server.communication.actor
 
 import akka.actor.{Actor, Props}
 import akka.http.scaladsl.model.StatusCodes
+import akka.http.scaladsl.model.StatusCodes.InternalServerError
 import com.typesafe.scalalogging.LazyLogging
 import de.salt.sce.mapper.MapperServiceClientTrack
+import de.salt.sce.mapper.MapperServiceClientTrack.buildResponse
 import de.salt.sce.mapper.server.communication.model.MapperRequest
 import de.salt.sce.mapper.server.communication.model.MapperResponses.{InternalResponse, MapperResponseProtocol}
 import de.salt.sce.mapper.server.util.LazyConfig
@@ -46,25 +48,21 @@ class MapperClientActor extends Actor with LazyLogging with LazyConfig {
       senderRef ! {
         try {
           doCreateResponse(mapperRequest) match {
-            case Success(mapperResponseProtocol) =>
+            case Success(internalResponse) =>
               // send response back to Microservice with status OK
-              InternalResponse(
-                id = mapperRequest.id,
-                extResponse = mapperResponseProtocol,
-                statusCode = StatusCodes.OK.intValue
-              )
+              internalResponse
 
             case Failure(ex) =>
               // Failure in subclass. Connection could not be established. Send failure back to Microservice.
               logger.error(s"Exception [${ex.getClass}] occurred in subclass during mapping: message [${ex.getMessage}]")
               logger.error(ex.getStackTrace.map(_.toString).mkString("\n"))
-              buildErrorResponse(mapperRequest, StatusCodes.InternalServerError.intValue)
+              buildErrorResponse(mapperRequest, InternalServerError.intValue)
           }
         } catch {
           case e: Exception =>
             logger.error(s"Exception [${e.getClass}] occurred during mapping: message [${e.getMessage}]")
             logger.error(e.getStackTrace.map(_.toString).mkString("\n"))
-            buildErrorResponse(mapperRequest, StatusCodes.InternalServerError.intValue)
+            buildErrorResponse(mapperRequest, InternalServerError.intValue)
         }
       }
   }
@@ -81,10 +79,8 @@ class MapperClientActor extends Actor with LazyLogging with LazyConfig {
   protected def buildErrorResponse(mapperRequest: MapperRequest, statusCode: Integer): InternalResponse = {
     InternalResponse(
       id = mapperRequest.id,
-      extResponse = MapperResponseProtocol(
-        success = mutable.HashMap(),
-        error = mutable.HashMap()
-      ),
+      cvsResponse = Option.empty,
+      edifactResponse = Option.empty,
       statusCode = statusCode
     )
   }
@@ -95,7 +91,7 @@ class MapperClientActor extends Actor with LazyLogging with LazyConfig {
    * @param requestData incoming request data. Contains connection information.
    * @return Success: response containing mapped files.
    */
-  protected def doCreateResponse(requestData: MapperRequest): Try[MapperResponseProtocol] = {
-    Success(MapperServiceClientTrack.buildResponse(requestData, config))
+  protected def doCreateResponse(requestData: MapperRequest): Try[InternalResponse] = {
+    Success(buildResponse(requestData, config))
   }
 }

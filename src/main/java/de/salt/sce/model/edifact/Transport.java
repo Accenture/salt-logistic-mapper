@@ -1,8 +1,9 @@
-package de.salt.sce.mapper.model.edifact;
+package de.salt.sce.model.edifact;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Transport {
+public class Transport implements Serializable {
 	
 	private List<Shipment> shipments;
 	

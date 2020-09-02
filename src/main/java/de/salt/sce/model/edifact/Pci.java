@@ -1,7 +1,9 @@
-package de.salt.sce.mapper.model.edifact;
+package de.salt.sce.model.edifact;
 
 
-public class Pci {
+import java.io.Serializable;
+
+public class Pci implements Serializable {
 
 	private String markingInstructionsCode;
 	private String shippingMarksDescription1;

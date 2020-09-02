@@ -1,6 +1,8 @@
-package de.salt.sce.mapper.model.edifact;
+package de.salt.sce.model.edifact;
 
-public class Gid {
+import java.io.Serializable;
+
+public class Gid implements Serializable {
 
 	private String goodsItemNumber;
 

@@ -1,6 +1,8 @@
-package de.salt.sce.mapper.model.edifact;
+package de.salt.sce.model.edifact;
 
-public class Nad {
+import java.io.Serializable;
+
+public class Nad implements Serializable {
 	
 	private String name1;
 	private String name2;

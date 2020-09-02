@@ -9,12 +9,13 @@ import akka.http.scaladsl.model.{HttpRequest, StatusCodes}
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.testkit.{RouteTestTimeout, ScalatestRouteTest}
 import com.typesafe.scalalogging.LazyLogging
-import de.salt.sce.mapper.model.TrackContract
 import de.salt.sce.mapper.server.communication.model.MapperRequest
 import de.salt.sce.mapper.server.communication.model.MapperResponses.InternalResponse
 import de.salt.sce.mapper.server.communication.server.AkkaHttpRestServer
 import de.salt.sce.mapper.server.util.LazyConfig
 import de.salt.sce.mapper.util.{ObjectSerializer, SpecHelper}
+import de.salt.sce.model.csv.PaketCSV
+import de.salt.sce.model.edifact.Transport
 import org.apache.commons.codec.binary.Base64
 import org.apache.commons.io.IOUtils
 import org.json4s.{DefaultFormats, Formats, Serialization, native}
@@ -25,7 +26,6 @@ import scala.concurrent.duration.DurationInt
 class RouteTrackIntegrationSpec extends WordSpec with Matchers
   with ScalatestRouteTest with LazyConfig
   with LazyLogging {
-
 
   private val validCredentials = BasicHttpCredentials(
     config.getString("sce.track.mapper.rest-server.auth.username"),
@@ -71,20 +71,18 @@ class RouteTrackIntegrationSpec extends WordSpec with Matchers
         val responseProtocol = entityAs[InternalResponse]
         logger.debug(s"ResponseProtocol: $responseProtocol")
 
-        responseProtocol.extResponse.success.size equals 1
-        responseProtocol.extResponse.error.size equals 1
+        responseProtocol.edifactResponse.get.success.size equals 1
+        responseProtocol.cvsResponse equals Option.empty
 
-        val line1: Option[String] = responseProtocol.extResponse.success.get(file)
-        val trackContractList1 = ObjectSerializer.deserialize(Base64.decodeBase64(line1.get)).asInstanceOf[java.util.ArrayList[TrackContract]];
+        val line1: Option[String] = responseProtocol.edifactResponse.get.success.get(file)
+        val transport = ObjectSerializer.deserialize(Base64.decodeBase64(line1.get)).asInstanceOf[Transport];
 
-        trackContractList1.size() equals 1
-        trackContractList1.get(0).getRefId equals "279289"
-        trackContractList1.get(0).getRefType equals "XSISHP"
-        trackContractList1.get(0).getStateId equals "50"
-        trackContractList1.get(0).getTimestamp equals "20170329085100"
-        trackContractList1.get(0).getEdcid equals "amm"
+        transport.getShipments.get(0).getPakets.get(0).getCni.getDocumentMessageNumber equals "279289"
+        transport.getShipments.get(0).getPakets.get(0).getSts.getEvent equals "50"
+        transport.getShipments.get(0).getPakets.get(0).getRffs.get(0).getReference equals "18899031"
+        transport.getShipments.get(0).getPakets.get(0).getDtms.get(0).getDateTimePeriod equals "201703290851"
 
-        val line2: Option[String] = responseProtocol.extResponse.error.get("Unknown")
+        val line2: Option[String] = responseProtocol.edifactResponse.get.error.get("Unknown")
         line2.get equals "Some(File Parsing Exception:Failed to filter source. - Unknown)"
       }
     }
@@ -113,23 +111,26 @@ class RouteTrackIntegrationSpec extends WordSpec with Matchers
         val responseProtocol = entityAs[InternalResponse]
         logger.debug(s"ResponseProtocol: $responseProtocol")
 
-        responseProtocol.extResponse.success.size equals 1
-        responseProtocol.extResponse.error.size equals 1
+        responseProtocol.cvsResponse.get.success.size should be(2)
+        responseProtocol.edifactResponse should be(Option.empty)
 
-        val line1: Option[String] = responseProtocol.extResponse.success.get(file)
-        val trackContractList1 = ObjectSerializer.deserialize(Base64.decodeBase64(line1.get)).asInstanceOf[java.util.ArrayList[TrackContract]];
+        val line1: Option[String] = responseProtocol.cvsResponse.get.success.get(file)
+        val paketCSVs1 = ObjectSerializer.deserialize(Base64.decodeBase64(line1.get)).asInstanceOf[java.util.ArrayList[PaketCSV]]
 
-        trackContractList1.size() equals 85
-        trackContractList1.get(0).getRefId equals "09445744184617"
-        trackContractList1.get(0).getRefType equals "XSITRA"
-        trackContractList1.get(0).getStateId equals "18"
-        trackContractList1.get(0).getStateTextExt equals "Zusatzinformation"
-        trackContractList1.get(0).getTimestamp equals "20160130023900"
-        trackContractList1.get(0).getEdcid equals "dpd"
+        paketCSVs1.size() should be(85)
 
+        paketCSVs1.get(0).getSdgdatum should be("20160130023900")
+        paketCSVs1.get(0).getLangreferenz should be("09445744184617")
+        paketCSVs1.get(0).getStatus should be("18")
 
-        val line2: Option[String] = responseProtocol.extResponse.error.get("Unknown")
-        line2.get equals "Some(File Parsing Exception:File format is wrong. - Unknown)"
+        paketCSVs1.get(84).getSdgdatum should be("20160130054905")
+        paketCSVs1.get(84).getLangreferenz should be("09445744184916")
+        paketCSVs1.get(84).getStatus should be("02")
+
+        val line2: Option[String] = responseProtocol.cvsResponse.get.success.get("Unknown")
+        val paketCSVs2 = ObjectSerializer.deserialize(Base64.decodeBase64(line2.get)).asInstanceOf[java.util.ArrayList[PaketCSV]]
+
+        paketCSVs2.size() should be(0)
       }
     }
 
@@ -157,20 +158,23 @@ class RouteTrackIntegrationSpec extends WordSpec with Matchers
         val responseProtocol = entityAs[InternalResponse]
         logger.debug(s"ResponseProtocol: $responseProtocol")
 
-        responseProtocol.extResponse.success.size equals 1
-        responseProtocol.extResponse.error.size equals 1
+        responseProtocol.edifactResponse.get.success.size should be(1)
+        responseProtocol.edifactResponse.get.error.size should be(1)
+        responseProtocol.cvsResponse should be(Option.empty)
 
-        val line1: Option[String] = responseProtocol.extResponse.success.get(file)
-        val trackContractList1 = ObjectSerializer.deserialize(Base64.decodeBase64(line1.get)).asInstanceOf[java.util.ArrayList[TrackContract]];
+        val line1: Option[String] = responseProtocol.edifactResponse.get.success.get(file)
+        val transport = ObjectSerializer.deserialize(Base64.decodeBase64(line1.get)).asInstanceOf[Transport];
 
-        trackContractList1.size() equals 9
-        trackContractList1.get(0).getRefId equals "2006830538"
-        trackContractList1.get(0).getRefType equals "XSITRA"
-        trackContractList1.get(0).getStateId equals "45"
-        trackContractList1.get(0).getTimestamp equals "timestamp"
-        trackContractList1.get(0).getEdcid equals "dachser"
+        transport.getShipments.size() should be(1);
+        transport.getShipments.get(0).getPakets.size() should be(9)
 
-        val line2: Option[String] = responseProtocol.extResponse.error.get("Unknown")
+        transport.getShipments.get(0).getPakets.get(0).getRffs.get(0).getReference should be("01092352456")
+        transport.getShipments.get(0).getPakets.get(0).getRffs.get(0).getQualifier should be("FF")
+        transport.getShipments.get(0).getPakets.get(0).getDtms.get(0).getDateTimePeriod should be("201301250900")
+        transport.getShipments.get(0).getPakets.get(0).getNads.get(0).getName1 should be("DACHSER, STAVENHAGEN")
+        transport.getShipments.get(0).getPakets.get(0).getNads.get(0).getQualifier should be("CS")
+
+        val line2: Option[String] = responseProtocol.edifactResponse.get.error.get("Unknown")
         line2.get equals "Some(File Parsing Exception:Failed to filter source. - Unknown)"
       }
     }
@@ -199,31 +203,43 @@ class RouteTrackIntegrationSpec extends WordSpec with Matchers
         val responseProtocol = entityAs[InternalResponse]
         logger.debug(s"ResponseProtocol: $responseProtocol")
 
-        responseProtocol.extResponse.success.size equals 1
-        responseProtocol.extResponse.error.size equals 1
+        responseProtocol.cvsResponse.get.success.size should be(2)
+        responseProtocol.edifactResponse should be(Option.empty)
 
-        val line1: Option[String] = responseProtocol.extResponse.success.get(file)
-        val trackContractList1 = ObjectSerializer.deserialize(Base64.decodeBase64(line1.get)).asInstanceOf[java.util.ArrayList[TrackContract]];
+        val line1: Option[String] = responseProtocol.cvsResponse.get.success.get(file)
+        val paketCSVs1 = ObjectSerializer.deserialize(Base64.decodeBase64(line1.get)).asInstanceOf[java.util.ArrayList[PaketCSV]]
 
-        trackContractList1.size() equals 51
-        trackContractList1.get(0).getRefId equals "0080893320"
-        trackContractList1.get(0).getRefType equals "DELI"
-        trackContractList1.get(0).getStateId equals "A"
-        trackContractList1.get(0).getStateTextExt equals "Export CPT (Frei Haus)"
-        trackContractList1.get(0).getTimestamp equals "20140602000000"
-        trackContractList1.get(0).getEdcid equals "tof"
-        trackContractList1.get(0).getName1 equals "HELLWEG - IHR BAUFREUND"
-        trackContractList1.get(0).getPcode1 equals "73235"
-        trackContractList1.get(0).getCity equals "WEILHEIM"
-        trackContractList1.get(0).getCountryiso equals "AT"
+        paketCSVs1.size() should be(52)
+        paketCSVs1.get(0).getSdgdatum should be("SDGDATUM")
+        paketCSVs1.get(0).getLangreferenz should be("LANGREFERENZ        ")
+        paketCSVs1.get(0).getTofsdgnr should be("TOFSDGNR")
+        paketCSVs1.get(0).getEmpfaenger should be("NAME EMPFF?NGER/ABHOLADR.     ")
+        paketCSVs1.get(0).getLkz should be("LKZ")
+        paketCSVs1.get(0).getPlz should be("PLZ    ")
+        paketCSVs1.get(0).getOrt should be("ORT                           ")
+        paketCSVs1.get(0).getDienst2 should be("DIENST2                                      ")
 
-        val line2: Option[String] = responseProtocol.extResponse.error.get("Unknown")
-        line2.get equals "Some(File Parsing Exception:File format is wrong. - Unknown)"
+        paketCSVs1.get(51).getSdgdatum should be("20140630")
+        paketCSVs1.get(51).getLangreferenz should be("0080913281          ")
+        paketCSVs1.get(51).getTofsdgnr should be("44594647")
+        paketCSVs1.get(51).getEmpfaenger should be("BAUHAUS DEPOT GMBH            ")
+        paketCSVs1.get(51).getLkz should be("AT ")
+        paketCSVs1.get(51).getPlz should be("4400   ")
+        paketCSVs1.get(51).getOrt should be("STEYR                         ")
+        paketCSVs1.get(51).getDienst2 should be("Export CPT (Frei Haus)                       ")
+
+        val line2: Option[String] = responseProtocol.cvsResponse.get.success.get("Unknown")
+        val paketCSVs2 = ObjectSerializer.deserialize(Base64.decodeBase64(line2.get)).asInstanceOf[java.util.ArrayList[PaketCSV]]
+
+        paketCSVs2.size() should be(0)
       }
     }
 
     s"testing is ups service returns correct response when becomes correct request [$path]" in {
       import de.heikoseeberger.akkahttpjson4s.Json4sSupport._ // should be visible only in this method where no deserialization to string is performed
+
+      val file1: String = "20170516_093419_20160719_141122_ROTH-IFTSTA"
+      val file2: String = "20160123_181643_ROTH-IFTSTA.399"
 
       val mapperRequest = MapperRequest(
         id = UUID.randomUUID().toString,
@@ -232,8 +248,8 @@ class RouteTrackIntegrationSpec extends WordSpec with Matchers
         messageType = "edifact",
         encoding = "windows-1252",
         files = Map(
-          "20170516_093419_20160719_141122_ROTH-IFTSTA" -> "UNB+UNOA:1+EURPROD:UPS+ROTH-DE-IFTSTA:02+160714:1243+00000000044975++IFTSTA'UNG+IFTSTA+EURPROD:UPS+ROTH-DE-IFTSTA:02+160714:1243+00000000044975+UN+D:07B'UNH+00000000806777+IFTSTA:D:07B:UN'BGM+23:UPS::QVD+O4'NAD+DEQ+3F4W57'NAD+BS+3F4W57:01'NAD+DP++++21 HOERNLEWEG:E+WEILHEIM++73235+DE'RFF+CW:1Z3F4W576807747148'CNI+1'LOC+14+:::WENDLINGEN+:::DE'STS+1:D2:21'RFF+AGY:WALCH'RFF+AEL:RESIDENTIAL'RFF+AAN:2'DTM+78:20160714173746:204'UNT+14+00000000806777'UNH+00000000806778+IFTSTA:D:07B:UN'BGM+23:UPS::QVD+O4'NAD+DEQ+562V50'NAD+BS+562V50:01'RFF+CW:1Z562V506807737844'CNI+1'LOC+14+:::BRUSSELS+:::BE'STS+1:E1:101'DTM+78:20160714173339:204'FTX+AVA+02++DELIVERY WILL BE RESCHEDULED.:RESOLUTION'FTX+AVA+MF++THIS PACKAGE IS BEING HELD FOR A FUTURE DELIVERY DATE.:REASON'UNT+12+00000000806778'UNE+2+00000000044975'UNZ+1+00000000044975'",
-          "20160123_181643_ROTH-IFTSTA.399" -> "UNB+UNOA:1+EURPROD:UPS+ROTH-DE-IFTSTA:02+160122:2143+00000000034384++IFTSTA'UNG+IFTSTA+EURPROD:UPS+ROTH-DE-IFTSTA:02+160122:2143+00000000034384+UN+D:07B'UNH+00000000638669+IFTSTA:D:07B:UN'BGM+23:UPS::QVD+O4'NAD+DEQ+3F4W57'NAD+BS+3F4W57:01'RFF+CW:1Z3F4W576807071118'CNI+1'LOC+14+:::BASEL+:::CH'STS+1:E1:101'DTM+78:20160123023727:204'FTX+AVA+SR++YOUR PACKAGE IS AT THE CLEARING AGENCY AWAITING FINAL RELEASE.:REASON'UNT+11+00000000638669'UNH+00000000638670+IFTSTA:D:07B:UN'BGM+23:UPS::QVD+O4'NAD+DEQ+3F4W57'NAD+BS+3F4W57:01'RFF+CW:1Z3F4W576807071136'CNI+1'LOC+14+:::BASEL+:::CH'STS+1:E1:101'DTM+78:20160123023727:204'FTX+AVA+SR++YOUR PACKAGE IS AT THE CLEARING AGENCY AWAITING FINAL RELEASE.:REASON'UNT+11+00000000638670'UNE+2+00000000034384'UNZ+1+00000000034384'",
+          file1 -> "UNB+UNOA:1+EURPROD:UPS+ROTH-DE-IFTSTA:02+160714:1243+00000000044975++IFTSTA'UNG+IFTSTA+EURPROD:UPS+ROTH-DE-IFTSTA:02+160714:1243+00000000044975+UN+D:07B'UNH+00000000806777+IFTSTA:D:07B:UN'BGM+23:UPS::QVD+O4'NAD+DEQ+3F4W57'NAD+BS+3F4W57:01'NAD+DP++++21 HOERNLEWEG:E+WEILHEIM++73235+DE'RFF+CW:1Z3F4W576807747148'CNI+1'LOC+14+:::WENDLINGEN+:::DE'STS+1:D2:21'RFF+AGY:WALCH'RFF+AEL:RESIDENTIAL'RFF+AAN:2'DTM+78:20160714173746:204'UNT+14+00000000806777'UNH+00000000806778+IFTSTA:D:07B:UN'BGM+23:UPS::QVD+O4'NAD+DEQ+562V50'NAD+BS+562V50:01'RFF+CW:1Z562V506807737844'CNI+1'LOC+14+:::BRUSSELS+:::BE'STS+1:E1:101'DTM+78:20160714173339:204'FTX+AVA+02++DELIVERY WILL BE RESCHEDULED.:RESOLUTION'FTX+AVA+MF++THIS PACKAGE IS BEING HELD FOR A FUTURE DELIVERY DATE.:REASON'UNT+12+00000000806778'UNE+2+00000000044975'UNZ+1+00000000044975'",
+          file2 -> "UNB+UNOA:1+EURPROD:UPS+ROTH-DE-IFTSTA:02+160122:2143+00000000034384++IFTSTA'UNG+IFTSTA+EURPROD:UPS+ROTH-DE-IFTSTA:02+160122:2143+00000000034384+UN+D:07B'UNH+00000000638669+IFTSTA:D:07B:UN'BGM+23:UPS::QVD+O4'NAD+DEQ+3F4W57'NAD+BS+3F4W57:01'RFF+CW:1Z3F4W576807071118'CNI+1'LOC+14+:::BASEL+:::CH'STS+1:E1:101'DTM+78:20160123023727:204'FTX+AVA+SR++YOUR PACKAGE IS AT THE CLEARING AGENCY AWAITING FINAL RELEASE.:REASON'UNT+11+00000000638669'UNH+00000000638670+IFTSTA:D:07B:UN'BGM+23:UPS::QVD+O4'NAD+DEQ+3F4W57'NAD+BS+3F4W57:01'RFF+CW:1Z3F4W576807071136'CNI+1'LOC+14+:::BASEL+:::CH'STS+1:E1:101'DTM+78:20160123023727:204'FTX+AVA+SR++YOUR PACKAGE IS AT THE CLEARING AGENCY AWAITING FINAL RELEASE.:REASON'UNT+11+00000000638670'UNE+2+00000000034384'UNZ+1+00000000034384'",
           "Unknown" -> "Unknown format"
         )
       )
@@ -245,45 +261,32 @@ class RouteTrackIntegrationSpec extends WordSpec with Matchers
         val responseProtocol = entityAs[InternalResponse]
         logger.debug(s"ResponseProtocol: $responseProtocol")
 
-        responseProtocol.extResponse.success.size equals 2
-        responseProtocol.extResponse.error.size equals 1
+        responseProtocol.edifactResponse.get.success.size should be(2)
+        responseProtocol.edifactResponse.get.error.size should be(1)
+        responseProtocol.cvsResponse should be(Option.empty)
 
-        val line1: Option[String] = responseProtocol.extResponse.success.get("20170516_093419_20160719_141122_ROTH-IFTSTA")
-        val trackContractList1 = ObjectSerializer.deserialize(Base64.decodeBase64(line1.get)).asInstanceOf[java.util.ArrayList[TrackContract]];
-        trackContractList1.size() equals 2
-        trackContractList1.get(0).getRefId equals "1Z3F4W576807747148"
-        trackContractList1.get(0).getRefType equals "XSITRA"
-        trackContractList1.get(0).getStateId equals "21"
-        trackContractList1.get(0).getTimestamp equals "20160714173746"
-        trackContractList1.get(0).getEdcid equals "ups"
-        trackContractList1.get(0).getStreet equals "21 HOERNLEWEG; E"
-        trackContractList1.get(0).getPcode1 equals "73235"
-        trackContractList1.get(0).getCity equals "WEILHEIM"
-        trackContractList1.get(0).getCountryiso equals "DE"
+        val line1: Option[String] = responseProtocol.edifactResponse.get.success.get(file1)
+        val transport1 = ObjectSerializer.deserialize(Base64.decodeBase64(line1.get)).asInstanceOf[Transport]
 
-        trackContractList1.get(1).getRefId equals "1Z562V506807737844"
-        trackContractList1.get(1).getRefType equals "XSITRA"
-        trackContractList1.get(1).getStateId equals "101"
-        trackContractList1.get(1).getTimestamp equals "20160714173339"
-        trackContractList1.get(1).getEdcid equals "ups"
+        transport1.getShipments.size() should be(1);
+        transport1.getShipments.get(0).getPakets.size() should be(2)
+        transport1.getShipments.get(0).getPakets.get(0).getRffs.get(0).getReference should be("1Z3F4W576807747148")
+        transport1.getShipments.get(0).getPakets.get(0).getRffs.get(1).getReference should be("WALCH")
+        transport1.getShipments.get(0).getPakets.get(0).getDtms.get(0).getDateTimePeriod should be("20160714173746")
+        transport1.getShipments.get(0).getPakets.get(0).getNads.size() should be(3)
+        transport1.getShipments.get(0).getPakets.get(0).getNads.get(2).getStreet1 should be("21 HOERNLEWEG")
 
+        val line2: Option[String] = responseProtocol.edifactResponse.get.success.get(file2)
+        val transport2 = ObjectSerializer.deserialize(Base64.decodeBase64(line2.get)).asInstanceOf[Transport]
 
-        val line2: Option[String] = responseProtocol.extResponse.success.get("20160123_181643_ROTH-IFTSTA.399")
-        val trackContractList2 = ObjectSerializer.deserialize(Base64.decodeBase64(line2.get)).asInstanceOf[java.util.ArrayList[TrackContract]];
-        trackContractList2.size() equals 2
-        trackContractList2.get(0).getRefId equals "1Z3F4W576807071118"
-        trackContractList2.get(0).getRefType equals "XSITRA"
-        trackContractList2.get(0).getStateId equals "101"
-        trackContractList2.get(0).getTimestamp equals "20160123023727"
-        trackContractList2.get(0).getEdcid equals "ups"
+        transport2.getShipments.size() should be(1);
+        transport2.getShipments.get(0).getPakets.size() should be(2)
+        transport2.getShipments.get(0).getPakets.get(0).getSts.getEvent should be("101")
+        transport2.getShipments.get(0).getPakets.get(0).getRffs.get(0).getReference should be("1Z3F4W576807071118")
+        transport2.getShipments.get(0).getPakets.get(0).getDtms.get(0).getDateTimePeriod should be("20160123023727")
+        transport2.getShipments.get(0).getPakets.get(0).getNads.size() should be(2)
 
-        trackContractList2.get(1).getRefId equals "1Z3F4W576807071136"
-        trackContractList2.get(1).getRefType equals "XSITRA"
-        trackContractList2.get(1).getStateId equals "101"
-        trackContractList2.get(1).getTimestamp equals "20160123023727"
-        trackContractList2.get(1).getEdcid equals "ups"
-
-        val line3: Option[String] = responseProtocol.extResponse.error.get("Unknown")
+        val line3: Option[String] = responseProtocol.edifactResponse.get.error.get("Unknown")
         line3.get equals "File Parsing Exception:Failed to filter source. - Unknown"
       }
     }

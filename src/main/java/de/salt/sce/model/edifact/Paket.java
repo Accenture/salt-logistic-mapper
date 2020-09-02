@@ -1,8 +1,9 @@
-package de.salt.sce.mapper.model.edifact;
+package de.salt.sce.model.edifact;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Paket {
+public class Paket implements Serializable {
 
 	private Cni cni;
 	private Sts sts;

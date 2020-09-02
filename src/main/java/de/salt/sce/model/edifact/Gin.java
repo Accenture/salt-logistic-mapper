@@ -1,6 +1,8 @@
-package de.salt.sce.mapper.model.edifact;
+package de.salt.sce.model.edifact;
 
-public class Gin {
+import java.io.Serializable;
+
+public class Gin implements Serializable {
 
 	private String id_1_1;
 	private String id_1_2;

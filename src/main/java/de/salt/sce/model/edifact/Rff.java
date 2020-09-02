@@ -1,6 +1,8 @@
-package de.salt.sce.mapper.model.edifact;
+package de.salt.sce.model.edifact;
 
-public class Rff {
+import java.io.Serializable;
+
+public class Rff implements Serializable {
 
 	private String reference;
 	private String qualifier;

@@ -1,6 +1,8 @@
-package de.salt.sce.mapper.model.edifact;
+package de.salt.sce.model.edifact;
 
-public class Sts {
+import java.io.Serializable;
+
+public class Sts implements Serializable {
 
 	private String event;
 	private String reason;

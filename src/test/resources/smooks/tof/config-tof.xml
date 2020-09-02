@@ -12,7 +12,7 @@
     <csv:reader fields="$ignore$2,sdgdatum,$ignore$,langreferenz,$ignore$5,tofsdgnr,empfaenger
     					,lkz,plz,ort,$ignore$6,dienst2,$ignore$4"
     					separator=";" skipLines="2">
-        <csv:listBinding beanId="shipment-bean" class="de.salt.sce.mapper.model.csv.PaketCSV"/>
+        <csv:listBinding beanId="shipment-bean" class="de.salt.sce.model.csv.PaketCSV"/>
     </csv:reader>
 
 </smooks-resource-list>

@@ -9,7 +9,7 @@
 
 	<!-- Transport bean -->
 	<jb:bean beanId="transport-bean"
-		class="de.salt.sce.mapper.model.edifact.Transport"
+		class="de.salt.sce.model.edifact.Transport"
 		createOnElement="Transport">
 		<jb:wiring property="shipments" beanIdRef="shipment-list" />
 	</jb:bean>
@@ -21,7 +21,7 @@
 
 	<!-- Shipping bean -->
 	<jb:bean beanId="shipment-bean"
-		class="de.salt.sce.mapper.model.edifact.Shipment"
+		class="de.salt.sce.model.edifact.Shipment"
 		createOnElement="Shipment">
 		<jb:wiring property="pakets" beanIdRef="package-list" />
 	</jb:bean>
@@ -32,7 +32,7 @@
 	</jb:bean>
 
 	<!-- Package bean -->
-	<jb:bean beanId="package-bean" class="de.salt.sce.mapper.model.edifact.Paket"
+	<jb:bean beanId="package-bean" class="de.salt.sce.model.edifact.Paket"
 		createOnElement="Paket">
 		<jb:wiring property="rffs" beanIdRef="rff-list" />
 		<jb:wiring property="dtms" beanIdRef="dtm-list" />
@@ -45,7 +45,7 @@
 		createOnElement="Paket">
 		<jb:wiring beanIdRef="rff-bean" />
 	</jb:bean>
-	<jb:bean beanId="rff-bean" class="de.salt.sce.mapper.model.edifact.Rff"
+	<jb:bean beanId="rff-bean" class="de.salt.sce.model.edifact.Rff"
 		createOnElement="Reference">
 		<jb:value property="reference" data="Reference_identifier"
 			decoder="String" />
@@ -56,7 +56,7 @@
 		createOnElement="Paket">
 		<jb:wiring beanIdRef="dtm-bean" />
 	</jb:bean>	
-	<jb:bean beanId="dtm-bean" class="de.salt.sce.mapper.model.edifact.Dtm"
+	<jb:bean beanId="dtm-bean" class="de.salt.sce.model.edifact.Dtm"
 		createOnElement="Date_time_period">
 		<jb:value property="dateTimePeriod" data="Date_or_time_or_period_text"
 			decoder="String" />
@@ -67,7 +67,7 @@
 		createOnElement="Paket">
 		<jb:wiring beanIdRef="nad-bean" />
 	</jb:bean>	
-	<jb:bean beanId="nad-bean" class="de.salt.sce.mapper.model.edifact.Nad"
+	<jb:bean beanId="nad-bean" class="de.salt.sce.model.edifact.Nad"
 		createOnElement="Name_and_address">
 		<jb:value property="street1" data="Street_and_number_or_post_office_box_identifier_-_-1"
 			decoder="String" />
@@ -86,7 +86,7 @@
 	</jb:bean>
 
 	<!-- STS -->
-	<jb:bean beanId="sts-bean" class="de.salt.sce.mapper.model.edifact.Sts"
+	<jb:bean beanId="sts-bean" class="de.salt.sce.model.edifact.Sts"
 		createOnElement="Status">
 		<jb:value property="event"
 			data="STATUS_CATEGORY/Code_list_responsible_agency_code" decoder="String" />

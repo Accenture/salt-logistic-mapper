@@ -1,6 +1,8 @@
-package de.salt.sce.mapper.model.edifact;
+package de.salt.sce.model.edifact;
 
-public class Ftx {
+import java.io.Serializable;
+
+public class Ftx implements Serializable {
 
 	private String freeText;
 
