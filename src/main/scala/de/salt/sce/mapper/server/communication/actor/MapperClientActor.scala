@@ -1,24 +1,21 @@
 package de.salt.sce.mapper.server.communication.actor
 
 import akka.actor.{Actor, Props}
-import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.model.StatusCodes.InternalServerError
 import com.typesafe.scalalogging.LazyLogging
-import de.salt.sce.mapper.MapperServiceClientTrack
 import de.salt.sce.mapper.MapperServiceClientTrack.buildResponse
 import de.salt.sce.mapper.server.communication.model.MapperRequest
-import de.salt.sce.mapper.server.communication.model.MapperResponses.{InternalResponse, MapperResponseProtocol}
+import de.salt.sce.mapper.server.communication.model.MapperResponses.InternalResponse
 import de.salt.sce.mapper.server.util.LazyConfig
 import org.json4s.{DefaultFormats, Formats}
 
-import scala.collection.mutable
 import scala.util.{Failure, Success, Try}
 
 /**
  * Companion Object for MapperClient
  */
 object MapperClientActor extends LazyLogging {
-  final val Name: String = "mapper-mapper-client"
+  final val Name: String = "mapper-client"
 
   def props: Props = Props(new MapperClientActor)
 }
@@ -76,7 +73,7 @@ class MapperClientActor extends Actor with LazyLogging with LazyConfig {
    * @param statusCode    http code of error
    * @return complete response protocol with error protocol
    */
-  protected def buildErrorResponse(mapperRequest: MapperRequest, statusCode: Integer): InternalResponse = {
+  private def buildErrorResponse(mapperRequest: MapperRequest, statusCode: Integer): InternalResponse = {
     InternalResponse(
       id = mapperRequest.id,
       cvsResponse = Option.empty,
@@ -91,7 +88,7 @@ class MapperClientActor extends Actor with LazyLogging with LazyConfig {
    * @param requestData incoming request data. Contains connection information.
    * @return Success: response containing mapped files.
    */
-  protected def doCreateResponse(requestData: MapperRequest): Try[InternalResponse] = {
+  private def doCreateResponse(requestData: MapperRequest): Try[InternalResponse] = {
     Success(buildResponse(requestData, config))
   }
 }

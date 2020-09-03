@@ -1,7 +1,9 @@
 package de.salt.sce.mapper.server.communication.actor
 
-import akka.actor.{Actor, Props}
+import akka.actor.{Actor, Props, Terminated}
 import com.typesafe.scalalogging.LazyLogging
+import akka.routing.{ActorRefRoutee, RoundRobinRoutingLogic, Router}
+import de.salt.sce.mapper.server.communication.model.MapperRequest
 
 /**
  * Mapper-Client Manager Companion Object
@@ -12,19 +14,29 @@ object MapperClientActorManager {
   def props: Props = Props(new MapperClientActorManager)
 }
 
-
 /**
  * Mapper-Client Manager:
  * Parent of Mapper Client
  */
 class MapperClientActorManager extends Actor with LazyLogging {
-  override def preStart(): Unit = {
-    logger.debug("Creating Mapper Client")
-    context.actorOf(MapperClientActor.props, MapperClientActor.Name)
+  val parallelFactor = 4
+
+  var router:Router = {
+    val routees = Vector.fill(parallelFactor) {
+      val r = context.actorOf(Props[MapperClientActor])
+      context.watch(r)
+      ActorRefRoutee(r)
+    }
+    Router(RoundRobinRoutingLogic(), routees)
   }
 
-  override def postStop(): Unit =
-    logger.debug("Mapper Client Manager stopped")
-
-  def receive: Receive = Actor.emptyBehavior
+  def receive: Receive = {
+    case mr: MapperRequest =>
+      router.route(mr, sender())
+    case Terminated(a) =>
+      router = router.removeRoutee(a)
+      val r = context.actorOf(Props[MapperClientActor])
+      context.watch(r)
+      router = router.addRoutee(r)
+  }
 }

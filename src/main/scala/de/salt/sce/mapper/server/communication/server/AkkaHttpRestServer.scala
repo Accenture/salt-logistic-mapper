@@ -38,11 +38,11 @@ object AkkaHttpRestServer extends LazyLogging {
 class AkkaHttpRestServer extends RestServer with LazyLogging with LazyConfig {
 
   private val mapperPath = config.getString(s"sce.track.mapper.rest-server.path.mapper-path")
+  private val mapperExt = config.getString(s"sce.track.mapper.rest-server.path.mapper-ext")
 
   implicit val timeout: Timeout = Timeout(Duration(config.getInt(s"sce.track.mapper.rest-server.timeout-sec"), SECONDS))
   implicit val s: Serialization = native.Serialization
   implicit val formats: Formats = DefaultFormats
-  private val mapperExt = config.getString(s"sce.track.mapper.rest-server.path.mapper-ext")
 
   def getRoute: Route = handleExceptions(AkkaHttpRestServer.myExceptionHandler) {
     path("") { // default - GET on root
@@ -78,7 +78,7 @@ class AkkaHttpRestServer extends RestServer with LazyLogging with LazyConfig {
   protected def handleMappingRequest(): Route = {
       entity(as[MapperRequest]) {
         request =>
-          onSuccess(ActorService.getMapperServerActor ? request) {
+          onSuccess(ActorService.getMapperClientManagerActor ? request) {
             case response: InternalResponse =>
               logger.debug(s"Response: $response")
               complete(StatusCodes.getForKey(response.statusCode).get, response )

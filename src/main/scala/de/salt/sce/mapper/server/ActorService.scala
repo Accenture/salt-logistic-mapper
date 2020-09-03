@@ -5,7 +5,6 @@ import java.util.concurrent.TimeUnit.MILLISECONDS
 import akka.actor.{ActorRef, ActorSelection, ActorSystem}
 import akka.util.Timeout
 import de.salt.sce.mapper.server.communication.actor.{MapperClientActor, MapperClientActorManager}
-import de.salt.sce.mapper.server.communication.server.{MapperServer, MapperServerManager}
 import de.salt.sce.mapper.server.util.LazyConfig
 
 import scala.concurrent.Await
@@ -17,30 +16,16 @@ import scala.concurrent.duration.Duration
 object ActorService extends LazyConfig {
   private val defaultDuration = Duration(500, MILLISECONDS)
   var system: ActorSystem = _
-  private var mapperServerActor: Option[ActorRef] = None
-  private var mapperClientActor: Option[ActorRef] = None
+  private var mapperClientActorManager: Option[ActorRef] = None
   implicit private val timeout: Timeout = Timeout(defaultDuration)
 
   def createActorHierarchy(): Unit = {
-    mapperServerActor = None
-    mapperClientActor = None
+    mapperClientActorManager = None
     getActorSystem match {
       case Some(s) =>
-        s.actorOf(MapperServerManager.props, MapperServerManager.Name)
         s.actorOf(MapperClientActorManager.props, MapperClientActorManager.Name)
       case None =>
         throw new Exception("Actor system is not available")
-    }
-  }
-
-  def getMapperServerActor: ActorRef = {
-    mapperServerActor match {
-      case Some(a) => a
-      case None =>
-        mapperServerActor = Some(Await.result(
-          getActor(s"/user/${MapperServerManager.Name}/${MapperServer.Name}")
-            .resolveOne(), defaultDuration))
-        mapperServerActor.get
     }
   }
 
@@ -60,15 +45,15 @@ object ActorService extends LazyConfig {
 
   def setActorSystem(system: ActorSystem): Unit = this.system = system
 
-  def getMapperClientActor: ActorRef = {
-    mapperClientActor match {
+  def getMapperClientManagerActor: ActorRef = {
+    mapperClientActorManager match {
       case Some(a) => a
       case None =>
-        mapperClientActor =
+        mapperClientActorManager =
           Some(Await.result(
-            getActor(s"/user/${MapperClientActorManager.Name}/${MapperClientActor.Name}")
+            getActor(s"/user/${MapperClientActorManager.Name}")
               .resolveOne(), defaultDuration))
-        mapperClientActor.get
+        mapperClientActorManager.get
     }
   }
 }
