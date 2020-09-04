@@ -22,26 +22,23 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * XML Parser <br />
- * XML to Java Object
+ * XML to Java Object which serialized and endoded to String.
  *
- * @author WRH
- * @since 3.0.1
  */
 public class MessageParser {
 
     private static final Logger log = getLogger(MessageParser.class);
 
     /**
-     * Gets java bean from XML byte
+     * Gets java bean from byte
      *
      * @param data   Input data
      * @param config Smooks config
-     * @return Javaresult
-     * @throws {@link       SmooksException)
+     * @return {@link JavaResult]
+     * @throws {@link SmooksException)
      * @throws IOException
      * @throws SAXException
      */
-
     public JavaResult getBean(byte[] data, String config) throws SmooksException, IOException, SAXException {
         JavaResult javaResult = new JavaResult();
         Smooks smooks = new Smooks(config);

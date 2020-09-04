@@ -19,160 +19,170 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MessageParserTest {
 
-       @Test
-       @DisplayName("UPS testing 1.")
-       public void whenRecieveCorrectUPSFile_thenParseSuccessful_1() throws IOException, ParserFailedException {
-           String fileName = "ups/20170516_093419_20160719_141122_ROTH-IFTSTA";
+    private MessageParser messageParser = new MessageParser();
 
-           MessageParser messageParser = new MessageParser();
-           Optional<String> encodedString = messageParser.parseFile(
-                   "ups",
-                   "classpath:/smooks/ups/config-ups.xml",
-                   "edifact",
-                   fileName,
-                   getResource(fileName, "windows-1252")
-           );
+    @Test
+    @DisplayName("Testing unknown message type.")
+    public void whenRecieveUnknownFileType_thenReturnsEmptyString() throws IOException, ParserFailedException {
+        String fileName = "ups/20170516_093419_20160719_141122_ROTH-IFTSTA";
 
-           assertThat(encodedString).isPresent();
+        Optional<String> encodedString = messageParser.parseFile(
+                "ups",
+                "classpath:/smooks/ups/config-ups.xml",
+                "unknown",
+                fileName,
+                getResource(fileName, "windows-1252")
+        );
 
-           @SuppressWarnings("unchecked")
-           Transport  transport = (Transport)ObjectSerializer.deserialize(Base64.decodeBase64(encodedString.get()));
+        assertThat(encodedString).isNotPresent();
+    }
 
-           assertThat(transport.getShipments()).hasSize(1);
-           assertThat(transport.getShipments().get(0).getPakets()).hasSize(2);
-       }
+    @Test
+    @DisplayName("UPS testing 1.")
+    public void whenRecieveCorrectUPSFile_thenParseSuccessful_1() throws IOException, ParserFailedException {
+        String fileName = "ups/20170516_093419_20160719_141122_ROTH-IFTSTA";
 
-       @Test
-       @DisplayName("UPS testing 2. Just an another file.")
-       public void whenRecieveCorrectUPSFile_thenParseSuccessful_2() throws IOException, ParserFailedException {
-           String fileName = "ups/20160121_181708_ROTH-IFTSTA.266.txt";
+        Optional<String> encodedString = messageParser.parseFile(
+                "ups",
+                "classpath:/smooks/ups/config-ups.xml",
+                "edifact",
+                fileName,
+                getResource(fileName, "windows-1252")
+        );
 
-           MessageParser messageParser = new MessageParser();
-           Optional<String> encodedString = messageParser.parseFile(
-                   "ups",
-                   "classpath:/smooks/ups/config-ups.xml",
-                   "edifact",
-                   fileName,
-                   getResource(fileName, "windows-1252")
-           );
+        assertThat(encodedString).isPresent();
 
-           assertThat(encodedString).isPresent();
+        @SuppressWarnings("unchecked")
+        Transport transport = (Transport) ObjectSerializer.deserialize(Base64.decodeBase64(encodedString.get()));
 
-           @SuppressWarnings("unchecked")
-           Transport  transport = (Transport)ObjectSerializer.deserialize(Base64.decodeBase64(encodedString.get()));
+        assertThat(transport.getShipments()).hasSize(1);
+        assertThat(transport.getShipments().get(0).getPakets()).hasSize(2);
+    }
 
-           assertThat(transport.getShipments()).hasSize(1);
-           assertThat(transport.getShipments().get(0).getPakets()).hasSize(1);
-       }
+    @Test
+    @DisplayName("UPS testing 2. Just an another file.")
+    public void whenRecieveCorrectUPSFile_thenParseSuccessful_2() throws IOException, ParserFailedException {
+        String fileName = "ups/20160121_181708_ROTH-IFTSTA.266.txt";
 
-       @Test
-       @DisplayName("UPS testing exception.")
-       public void whenRecieveCorrectButNotUPSFile_thenThrowsException() {
-           String fileName = "ups/IIFTSTA_Hellmann_Rothenberger-2015-03-10-07-39-42-002.dat.SmooksException";
+        Optional<String> encodedString = messageParser.parseFile(
+                "ups",
+                "classpath:/smooks/ups/config-ups.xml",
+                "edifact",
+                fileName,
+                getResource(fileName, "windows-1252")
+        );
 
-           MessageParser messageParser = new MessageParser();
+        assertThat(encodedString).isPresent();
 
-           assertThrows(ParserFailedException.class,
-                   ()->{
-                       messageParser.parseFile(
-                               "ups",
-                               "classpath:/smooks/ups/config-ups.xml",
-                               "edifact",
-                               fileName,
-                               getResource(fileName, "windows-1252")
-                       );
-                   });
-       }
+        @SuppressWarnings("unchecked")
+        Transport transport = (Transport) ObjectSerializer.deserialize(Base64.decodeBase64(encodedString.get()));
 
-       @Test
-       @DisplayName("DPD testing.")
-       public void whenRecieveCorrectDPDFile_thenParseSuccessful() throws IOException, ParserFailedException {
-           String fileName = "dpd/20160201_170112_STATUSDATA_KD2748208P_D20160201T021335";
+        assertThat(transport.getShipments()).hasSize(1);
+        assertThat(transport.getShipments().get(0).getPakets()).hasSize(1);
+    }
 
-           MessageParser messageParser = new MessageParser();
-           Optional<String> encodedString = messageParser.parseFile(
-                   "dpd",
-                   "classpath:/smooks/dpd/config-dpd.xml",
-                   "csv",
-                   fileName,
-                   getResource(fileName, "UTF-8")
-           );
+    @Test
+    @DisplayName("UPS testing exception.")
+    public void whenRecieveCorrectButNotUPSFile_thenThrowsException() {
+        String fileName = "ups/IIFTSTA_Hellmann_Rothenberger-2015-03-10-07-39-42-002.dat.SmooksException";
 
-           assertThat(encodedString).isPresent();
+        assertThrows(ParserFailedException.class,
+                () -> {
+                    messageParser.parseFile(
+                            "ups",
+                            "classpath:/smooks/ups/config-ups.xml",
+                            "edifact",
+                            fileName,
+                            getResource(fileName, "windows-1252")
+                    );
+                });
+    }
 
-           @SuppressWarnings("unchecked")
-           List<PaketCSV> paketCSVs = (ArrayList<PaketCSV>)ObjectSerializer.deserialize(Base64.decodeBase64(encodedString.get()));
+    @Test
+    @DisplayName("DPD testing.")
+    public void whenRecieveCorrectDPDFile_thenParseSuccessful() throws IOException, ParserFailedException {
+        String fileName = "dpd/20160201_170112_STATUSDATA_KD2748208P_D20160201T021335";
 
-           assertThat(paketCSVs).hasSize(85);
-       }
+        Optional<String> encodedString = messageParser.parseFile(
+                "dpd",
+                "classpath:/smooks/dpd/config-dpd.xml",
+                "csv",
+                fileName,
+                getResource(fileName, "UTF-8")
+        );
 
-       @Test
-       @DisplayName("Dachser testing.")
-       public void whenRecieveCorrectDachserFile_thenParseSuccessful() throws IOException, ParserFailedException {
-           String fileName = "dachser/Beispiel_EDIFACT_IFTSTA_D01C.txt";
+        assertThat(encodedString).isPresent();
 
-           MessageParser messageParser = new MessageParser();
-           Optional<String> encodedString = messageParser.parseFile(
-                   "dachser",
-                   "classpath:/smooks/dachser/config-dachser.xml",
-                   "edifact",
-                   fileName,
-                   getResource(fileName, "UTF-8")
-           );
+        @SuppressWarnings("unchecked")
+        List<PaketCSV> paketCSVs = (ArrayList<PaketCSV>) ObjectSerializer.deserialize(Base64.decodeBase64(encodedString.get()));
 
-           assertThat(encodedString).isPresent();
+        assertThat(paketCSVs).hasSize(85);
+    }
 
-           @SuppressWarnings("unchecked")
-           Transport  transport = (Transport)ObjectSerializer.deserialize(Base64.decodeBase64(encodedString.get()));
+    @Test
+    @DisplayName("Dachser testing.")
+    public void whenRecieveCorrectDachserFile_thenParseSuccessful() throws IOException, ParserFailedException {
+        String fileName = "dachser/Beispiel_EDIFACT_IFTSTA_D01C.txt";
 
-           assertThat(transport.getShipments()).hasSize(1);
-           assertThat(transport.getShipments().get(0).getPakets()).hasSize(9);
-       }
+        Optional<String> encodedString = messageParser.parseFile(
+                "dachser",
+                "classpath:/smooks/dachser/config-dachser.xml",
+                "edifact",
+                fileName,
+                getResource(fileName, "UTF-8")
+        );
 
-       @Test
-       @DisplayName("AMM testing.")
-       public void whenRecieveCorrectAMMFile_thenParseSuccessful() throws IOException, ParserFailedException {
-           String fileName = "amm/P0815-STAT_IFTSTA-4.txt";
+        assertThat(encodedString).isPresent();
 
-           MessageParser messageParser = new MessageParser();
-           Optional<String> encodedString = messageParser.parseFile(
-                   "amm",
-                   "classpath:/smooks/amm/config-amm.xml",
-                   "edifact",
-                   fileName,
-                   getResource(fileName, "UTF-8")
-           );
+        @SuppressWarnings("unchecked")
+        Transport transport = (Transport) ObjectSerializer.deserialize(Base64.decodeBase64(encodedString.get()));
 
-           assertThat(encodedString).isPresent();
+        assertThat(transport.getShipments()).hasSize(1);
+        assertThat(transport.getShipments().get(0).getPakets()).hasSize(9);
+    }
 
-           @SuppressWarnings("unchecked")
-           Transport  transport = (Transport)ObjectSerializer.deserialize(Base64.decodeBase64(encodedString.get()));
+    @Test
+    @DisplayName("AMM testing.")
+    public void whenRecieveCorrectAMMFile_thenParseSuccessful() throws IOException, ParserFailedException {
+        String fileName = "amm/P0815-STAT_IFTSTA-4.txt";
 
-           assertThat(transport.getShipments()).hasSize(1);
-           assertThat(transport.getShipments().get(0).getPakets()).hasSize(1);
-       }
+        Optional<String> encodedString = messageParser.parseFile(
+                "amm",
+                "classpath:/smooks/amm/config-amm.xml",
+                "edifact",
+                fileName,
+                getResource(fileName, "UTF-8")
+        );
 
-       @Test
-       @DisplayName("TOF testing.")
-       public void whenRecieveCorrectTOFFile_thenParseSuccessful() throws IOException, ParserFailedException {
-           String fileName = "tof/93449322.ROTHENBE.20140408.AZMX.39471758.11171400.CSV";
+        assertThat(encodedString).isPresent();
 
-           MessageParser messageParser = new MessageParser();
-           Optional<String> encodedString  = messageParser.parseFile(
-                   "tof",
-                   "classpath:/smooks/tof/config-tof.xml",
-                   "csv",
-                   fileName,
-                   getResource(fileName, "windows-1252")
-           );
+        @SuppressWarnings("unchecked")
+        Transport transport = (Transport) ObjectSerializer.deserialize(Base64.decodeBase64(encodedString.get()));
 
-           assertThat(encodedString).isPresent();
+        assertThat(transport.getShipments()).hasSize(1);
+        assertThat(transport.getShipments().get(0).getPakets()).hasSize(1);
+    }
 
-           @SuppressWarnings("unchecked")
-           List<PaketCSV> paketCSVs = (ArrayList<PaketCSV>)ObjectSerializer.deserialize(Base64.decodeBase64(encodedString.get()));
+    @Test
+    @DisplayName("TOF testing.")
+    public void whenRecieveCorrectTOFFile_thenParseSuccessful() throws IOException, ParserFailedException {
+        String fileName = "tof/93449322.ROTHENBE.20140408.AZMX.39471758.11171400.CSV";
 
-           assertThat(paketCSVs).hasSize(40);
-       }
+        Optional<String> encodedString = messageParser.parseFile(
+                "tof",
+                "classpath:/smooks/tof/config-tof.xml",
+                "csv",
+                fileName,
+                getResource(fileName, "windows-1252")
+        );
+
+        assertThat(encodedString).isPresent();
+
+        @SuppressWarnings("unchecked")
+        List<PaketCSV> paketCSVs = (ArrayList<PaketCSV>) ObjectSerializer.deserialize(Base64.decodeBase64(encodedString.get()));
+
+        assertThat(paketCSVs).hasSize(40);
+    }
 
     private byte[] getResource(String resourseName, String encoding) throws IOException {
         return IOUtils.toString(
