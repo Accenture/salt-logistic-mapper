@@ -33,6 +33,9 @@ fi
 if [ -z "$OWNCLOUD_TOKEN" ]; then
     printf "%s\n" "Variable OWNCLOUD_TOKEN is unset"; ERROR=1
 fi
+if [ -z "$PIPELINE_SERVICE_TOKEN" ]; then
+    printf "%s\n" "Variable PIPELINE_SERVICE_TOKEN is unset"; ERROR=1
+fi
 # shellcheck disable=SC2181
 if [[ $ERROR -ne 0 ]]; then
     printf "%s\n" "Please set all variables mentioned above on GitLab CI/CD Settings"; exit 1
@@ -133,6 +136,7 @@ function code-push() {
 function foss-report() {
   prepare-fossa
   fossa test --timeout 600 --revision "$CI_COMMIT_SHA"
+  printf "WARNING: FOSSA Reports will NOT be dowloaded and sent to smes-documentation repo, this process has to be done manually..."
 }
 
 function check-deploy-prerequisite() {
