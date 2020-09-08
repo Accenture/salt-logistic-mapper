@@ -72,7 +72,7 @@ class RouteTrackIntegrationSpec extends WordSpec with Matchers
         logger.debug(s"ResponseProtocol: $responseProtocol")
 
         responseProtocol.edifactResponse.get.success.size equals 1
-        responseProtocol.cvsResponse equals Option.empty
+        responseProtocol.csvResponse equals Option.empty
 
         val line1: Option[String] = responseProtocol.edifactResponse.get.success.get(file)
         val transport = ObjectSerializer.deserialize(Base64.decodeBase64(line1.get)).asInstanceOf[Transport];
@@ -111,10 +111,10 @@ class RouteTrackIntegrationSpec extends WordSpec with Matchers
         val responseProtocol = entityAs[InternalResponse]
         logger.debug(s"ResponseProtocol: $responseProtocol")
 
-        responseProtocol.cvsResponse.get.success.size should be(2)
+        responseProtocol.csvResponse.get.success.size should be(2)
         responseProtocol.edifactResponse should be(Option.empty)
 
-        val line1: Option[String] = responseProtocol.cvsResponse.get.success.get(file)
+        val line1: Option[String] = responseProtocol.csvResponse.get.success.get(file)
         val paketCSVs1 = ObjectSerializer.deserialize(Base64.decodeBase64(line1.get)).asInstanceOf[java.util.ArrayList[PaketCSV]]
 
         paketCSVs1.size() should be(85)
@@ -127,7 +127,7 @@ class RouteTrackIntegrationSpec extends WordSpec with Matchers
         paketCSVs1.get(84).getLangreferenz should be("09445744184916")
         paketCSVs1.get(84).getStatus should be("02")
 
-        val line2: Option[String] = responseProtocol.cvsResponse.get.success.get("Unknown")
+        val line2: Option[String] = responseProtocol.csvResponse.get.success.get("Unknown")
         val paketCSVs2 = ObjectSerializer.deserialize(Base64.decodeBase64(line2.get)).asInstanceOf[java.util.ArrayList[PaketCSV]]
 
         paketCSVs2.size() should be(0)
@@ -160,7 +160,7 @@ class RouteTrackIntegrationSpec extends WordSpec with Matchers
 
         responseProtocol.edifactResponse.get.success.size should be(1)
         responseProtocol.edifactResponse.get.error.size should be(1)
-        responseProtocol.cvsResponse should be(Option.empty)
+        responseProtocol.csvResponse should be(Option.empty)
 
         val line1: Option[String] = responseProtocol.edifactResponse.get.success.get(file)
         val transport = ObjectSerializer.deserialize(Base64.decodeBase64(line1.get)).asInstanceOf[Transport];
@@ -203,10 +203,10 @@ class RouteTrackIntegrationSpec extends WordSpec with Matchers
         val responseProtocol = entityAs[InternalResponse]
         logger.debug(s"ResponseProtocol: $responseProtocol")
 
-        responseProtocol.cvsResponse.get.success.size should be(2)
+        responseProtocol.csvResponse.get.success.size should be(2)
         responseProtocol.edifactResponse should be(Option.empty)
 
-        val line1: Option[String] = responseProtocol.cvsResponse.get.success.get(file)
+        val line1: Option[String] = responseProtocol.csvResponse.get.success.get(file)
         val paketCSVs1 = ObjectSerializer.deserialize(Base64.decodeBase64(line1.get)).asInstanceOf[java.util.ArrayList[PaketCSV]]
 
         paketCSVs1.size() should be(52)
@@ -228,7 +228,7 @@ class RouteTrackIntegrationSpec extends WordSpec with Matchers
         paketCSVs1.get(51).getOrt should be("STEYR                         ")
         paketCSVs1.get(51).getDienst2 should be("Export CPT (Frei Haus)                       ")
 
-        val line2: Option[String] = responseProtocol.cvsResponse.get.success.get("Unknown")
+        val line2: Option[String] = responseProtocol.csvResponse.get.success.get("Unknown")
         val paketCSVs2 = ObjectSerializer.deserialize(Base64.decodeBase64(line2.get)).asInstanceOf[java.util.ArrayList[PaketCSV]]
 
         paketCSVs2.size() should be(0)
@@ -263,7 +263,7 @@ class RouteTrackIntegrationSpec extends WordSpec with Matchers
 
         responseProtocol.edifactResponse.get.success.size should be(2)
         responseProtocol.edifactResponse.get.error.size should be(1)
-        responseProtocol.cvsResponse should be(Option.empty)
+        responseProtocol.csvResponse should be(Option.empty)
 
         val line1: Option[String] = responseProtocol.edifactResponse.get.success.get(file1)
         val transport1 = ObjectSerializer.deserialize(Base64.decodeBase64(line1.get)).asInstanceOf[Transport]

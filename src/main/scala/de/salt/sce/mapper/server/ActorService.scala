@@ -4,7 +4,7 @@ import java.util.concurrent.TimeUnit.MILLISECONDS
 
 import akka.actor.{ActorRef, ActorSelection, ActorSystem}
 import akka.util.Timeout
-import de.salt.sce.mapper.server.communication.actor.{MapperClientActor, MapperClientActorManager}
+import de.salt.sce.mapper.server.communication.actor.{MapperActor, MapperActorDispatcher}
 import de.salt.sce.mapper.server.util.LazyConfig
 
 import scala.concurrent.Await
@@ -23,7 +23,7 @@ object ActorService extends LazyConfig {
     mapperClientActorManager = None
     getActorSystem match {
       case Some(s) =>
-        s.actorOf(MapperClientActorManager.props, MapperClientActorManager.Name)
+        s.actorOf(MapperActorDispatcher.props, MapperActorDispatcher.Name)
       case None =>
         throw new Exception("Actor system is not available")
     }
@@ -51,7 +51,7 @@ object ActorService extends LazyConfig {
       case None =>
         mapperClientActorManager =
           Some(Await.result(
-            getActor(s"/user/${MapperClientActorManager.Name}")
+            getActor(s"/user/${MapperActorDispatcher.Name}")
               .resolveOne(), defaultDuration))
         mapperClientActorManager.get
     }

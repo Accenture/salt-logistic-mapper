@@ -12,26 +12,26 @@ import org.json4s.{DefaultFormats, Formats}
 import scala.util.{Failure, Success, Try}
 
 /**
- * Companion Object for MapperClient
+ * Companion Object for Mapper Actor
  */
-object MapperClientActor extends LazyLogging {
-  final val Name: String = "mapper-client"
+object MapperActor extends LazyLogging {
+  final val Name: String = "mapper"
 
-  def props: Props = Props(new MapperClientActor)
+  def props: Props = Props(new MapperActor)
 }
 
 /**
- * Generic mapper client :
- * pushes data to Mapper server
+ * Generic mapper actor.
+ * Handling incoming mapping request.
  */
-class MapperClientActor extends Actor with LazyLogging with LazyConfig {
+class MapperActor extends Actor with LazyLogging with LazyConfig {
 
   implicit val formats: Formats = DefaultFormats
 
   /**
    * Method handling the incoming request.
    *
-   * @return Nothing. Sends answer back to sender.
+   * @return InternalResponse
    */
   def receive: Receive = {
 
@@ -76,7 +76,7 @@ class MapperClientActor extends Actor with LazyLogging with LazyConfig {
   private def buildErrorResponse(mapperRequest: MapperRequest, statusCode: Integer): InternalResponse = {
     InternalResponse(
       id = mapperRequest.id,
-      cvsResponse = Option.empty,
+      csvResponse = Option.empty,
       edifactResponse = Option.empty,
       statusCode = statusCode
     )

@@ -23,7 +23,7 @@ object MapperResponses {
   }
 
   case class InternalResponse(id: String,
-                              cvsResponse: Option[MapperResponseProtocol],
+                              csvResponse: Option[MapperResponseProtocol],
                               edifactResponse: Option[MapperResponseProtocol],
                               statusCode: Integer
                              )
