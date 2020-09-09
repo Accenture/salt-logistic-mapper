@@ -2,6 +2,7 @@ package de.salt.sce.mapper.server.communication.server
 
 import java.util.concurrent.TimeUnit.SECONDS
 
+import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.directives.Credentials
@@ -10,7 +11,7 @@ import akka.pattern.ask
 import akka.util.Timeout
 import com.typesafe.scalalogging.LazyLogging
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
-import de.salt.sce.mapper.server.ActorService
+import de.salt.sce.mapper.server.communication.actor.MapperActor
 import de.salt.sce.mapper.server.communication.model.MapperRequest
 import de.salt.sce.mapper.server.communication.model.MapperResponses.InternalResponse
 import de.salt.sce.mapper.server.util.LazyConfig
@@ -22,20 +23,22 @@ import scala.concurrent.duration.Duration
  * Companion Object
  */
 object AkkaHttpRestServer extends LazyLogging {
-  val myExceptionHandler = ExceptionHandler {
+  val myExceptionHandler:ExceptionHandler = ExceptionHandler {
     case e: Exception =>
       logger.error(e.getMessage, e.getCause)
       complete(StatusCodes.InternalServerError)
   }
-  private val restServer = new AkkaHttpRestServer
-
-  def getServer: AkkaHttpRestServer = restServer
 }
 
 /**
  * Akka Http Server
  */
-class AkkaHttpRestServer extends RestServer with LazyLogging with LazyConfig {
+class AkkaHttpRestServer(system: ActorSystem) extends RestServer with LazyLogging with LazyConfig {
+
+  private val mapperActor:ActorRef = system.actorOf(
+    Props[MapperActor].withDispatcher("mapper-dispatcher"),
+    "mapper"
+  )
 
   private val mapperPath = config.getString(s"sce.track.mapper.rest-server.path.mapper-path")
   private val mapperExt = config.getString(s"sce.track.mapper.rest-server.path.mapper-ext")
@@ -78,7 +81,7 @@ class AkkaHttpRestServer extends RestServer with LazyLogging with LazyConfig {
   protected def handleMappingRequest(): Route = {
       entity(as[MapperRequest]) {
         request =>
-          onSuccess(ActorService.getMapperClientManagerActor ? request) {
+          onSuccess(mapperActor ? request) {
             case response: InternalResponse =>
               logger.debug(s"Response: $response")
               complete(StatusCodes.getForKey(response.statusCode).get, response )

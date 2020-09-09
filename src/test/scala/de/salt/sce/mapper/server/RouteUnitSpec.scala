@@ -16,14 +16,7 @@ class RouteUnitSpec extends WordSpec with Matchers
 
   implicit val s: Serialization = native.Serialization
   implicit val formats: Formats = DefaultFormats
-  private var route: Route = _
-
-  override def beforeAll(): Unit = {
-    ActorService.setActorSystem(system)
-    ActorService.createActorHierarchy()
-    route = AkkaHttpRestServer.getServer.getRoute
-  }
-
+  private val route: Route =  new AkkaHttpRestServer(system).getRoute
   private val path = s"/${config.getString(s"sce.track.mapper.rest-server.path.mapper-path")}/${config.getString(s"sce.track.mapper.rest-server.path.mapper-ext")}"
 
   "AkkaHttpRestServer" should {

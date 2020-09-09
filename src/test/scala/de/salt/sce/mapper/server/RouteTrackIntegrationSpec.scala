@@ -13,7 +13,7 @@ import de.salt.sce.mapper.server.communication.model.MapperRequest
 import de.salt.sce.mapper.server.communication.model.MapperResponses.InternalResponse
 import de.salt.sce.mapper.server.communication.server.AkkaHttpRestServer
 import de.salt.sce.mapper.server.util.LazyConfig
-import de.salt.sce.mapper.util.{ObjectSerializer, SpecHelper}
+import de.salt.sce.mapper.util.ObjectSerializer
 import de.salt.sce.model.csv.PaketCSV
 import de.salt.sce.model.edifact.Transport
 import org.apache.commons.codec.binary.Base64
@@ -34,16 +34,10 @@ class RouteTrackIntegrationSpec extends WordSpec with Matchers
 
   implicit val s: Serialization = native.Serialization
   implicit val formats: Formats = DefaultFormats
-
   implicit def default(implicit system: ActorSystem): RouteTestTimeout = RouteTestTimeout(200.seconds)
 
   private val path = s"/${config.getString("sce.track.mapper.rest-server.path.mapper-path")}/${config.getString("sce.track.mapper.rest-server.path.mapper-ext")}"
-  private var route: Route = _
-
-  override def beforeAll(): Unit = {
-    SpecHelper.beforeAll(system)
-    route = AkkaHttpRestServer.getServer.getRoute
-  }
+  private val route: Route = new AkkaHttpRestServer(system).getRoute
 
   "AkkaHttpRestServer" should {
 
