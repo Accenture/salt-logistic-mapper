@@ -4,7 +4,7 @@ import java.util.concurrent.TimeUnit.MILLISECONDS
 
 import akka.actor.{ActorRef, ActorSelection, ActorSystem}
 import akka.util.Timeout
-import de.salt.sce.mapper.server.communication.actor.{MapperActor, MapperActorDispatcher}
+import de.salt.sce.mapper.server.communication.actor.MapperActorDispatcher
 import de.salt.sce.mapper.server.util.LazyConfig
 
 import scala.concurrent.Await

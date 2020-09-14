@@ -4,6 +4,7 @@ import akka.actor.{Actor, Props, Terminated}
 import akka.routing.{ActorRefRoutee, RoundRobinRoutingLogic, Router}
 import com.typesafe.scalalogging.LazyLogging
 import de.salt.sce.mapper.server.communication.model.MapperRequest
+import de.salt.sce.mapper.server.util.LazyConfig
 
 /**
  * Mapper Actor Dispatcher Companion Object
@@ -18,8 +19,8 @@ object MapperActorDispatcher {
  * Mapper Actor Dispatcher:
  * Parent of Mapper Actor
  */
-class MapperActorDispatcher extends Actor with LazyLogging {
-  val parallelFactor = 4
+class MapperActorDispatcher extends Actor with LazyLogging with LazyConfig {
+  private val parallelFactor = config.getInt("sce.track.mapper.actor-system.parallelFactor")
 
   var router:Router = {
     val routees = Vector.fill(parallelFactor) {
