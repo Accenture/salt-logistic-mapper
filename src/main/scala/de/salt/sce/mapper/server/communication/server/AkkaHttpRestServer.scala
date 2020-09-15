@@ -3,6 +3,7 @@ package de.salt.sce.mapper.server.communication.server
 import java.util.concurrent.TimeUnit.SECONDS
 
 import akka.http.scaladsl.model.StatusCodes
+import akka.http.scaladsl.model.StatusCodes.InternalServerError
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.directives.Credentials
 import akka.http.scaladsl.server.{ExceptionHandler, Route}
@@ -22,10 +23,10 @@ import scala.concurrent.duration.Duration
  * Companion Object
  */
 object AkkaHttpRestServer extends LazyLogging {
-  val myExceptionHandler = ExceptionHandler {
+  private val myExceptionHandler = ExceptionHandler {
     case e: Exception =>
       logger.error(e.getMessage, e.getCause)
-      complete(StatusCodes.InternalServerError)
+      complete(InternalServerError)
   }
   private val restServer = new AkkaHttpRestServer
 
@@ -80,11 +81,11 @@ class AkkaHttpRestServer extends RestServer with LazyLogging with LazyConfig {
           onSuccess(ActorService.getMapperClientManagerActor ? request) {
             case response: InternalResponse =>
               logger.debug(s"Response: $response")
-              complete(StatusCodes.getForKey(response.statusCode).get, response )
+              complete(StatusCodes.getForKey(response.statusCode).getOrElse(InternalServerError), response )
 
             case x: Any =>
               logger.error(s"Internal error: Got unexpected response ${x.toString}")
-              complete(StatusCodes.InternalServerError, x)
+              complete(InternalServerError, x)
           }
       }
   }
