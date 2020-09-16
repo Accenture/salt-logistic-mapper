@@ -5,7 +5,6 @@ import akka.http.scaladsl.model.headers.BasicHttpCredentials
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import com.typesafe.scalalogging.LazyLogging
-import de.salt.sce.mapper.server.communication.model.secret.LoggableSecretSerializer
 import de.salt.sce.mapper.server.communication.server.AkkaHttpRestServer
 import de.salt.sce.mapper.server.util.LazyConfig
 import org.json4s.{DefaultFormats, Formats, Serialization, native}
@@ -16,7 +15,7 @@ class RouteUnitSpec extends WordSpec with Matchers
   with LazyLogging {
 
   implicit val s: Serialization = native.Serialization
-  implicit val formats: Formats = DefaultFormats + new LoggableSecretSerializer
+  implicit val formats: Formats = DefaultFormats
   private var route: Route = _
 
   override def beforeAll(): Unit = {
@@ -25,7 +24,7 @@ class RouteUnitSpec extends WordSpec with Matchers
     route = AkkaHttpRestServer.getServer.getRoute
   }
 
-  private val path = s"/${config.getString(s"sce.track.mapper.rest-server.path.track-path")}/${config.getString(s"sce.track.mapper.rest-server.path.track-ext")}"
+  private val path = s"/${config.getString(s"sce.track.mapper.rest-server.path.mapper-path")}/${config.getString(s"sce.track.mapper.rest-server.path.mapper-ext")}"
 
   "AkkaHttpRestServer" should {
 

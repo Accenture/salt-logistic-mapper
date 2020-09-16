@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <properties>
+        <property name="LOG_DIR">logs</property>
+        <property name="LOG_FILE_NAME">mapper</property>
+    </properties>
+    <Appenders>
+        <Console name="STDOUT" target="SYSTEM_OUT">
+            <PatternLayout disableAnsi="false"
+                           pattern="%d{HH:mm:ss.SSS} %highlight{ %-5level}{INFO=BLUE, DEBUG=BLACK, TRACE= CYAN} %style{[%.10thread]}{magenta} %style{ %logger{36}}{green} %n> %msg%n"/>
+        </Console>
+
+        <RollingFile
+                name="rollingFile"
+                fileName="${LOG_DIR}/${LOG_FILE_NAME}.log"
+                filePattern="${LOG_DIR}/archived/${LOG_FILE_NAME}.%d{yyyy-MM-dd.HH.mm}.log.gz"
+                ignoreExceptions="false">  <!-- also use hour and minutes in file pattern: prevent that older files are overwritten if system is restarted multiple times a day  -->
+            <PatternLayout>
+                <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight{ %-5level}{INFO=BLUE, DEBUG=BLACK, TRACE= CYAN}
+                    %style{[%.10thread]}{magenta} %style{ %logger{36}}{green} %n> %msg%n
+                </Pattern>
+                <!--				<Pattern>%d{yyyy-MM-dd HH:mm:ss} %-5p %m%n</Pattern>-->
+            </PatternLayout>
+            <Policies>
+                <OnStartupTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="10 MB"/>
+                <TimeBasedTriggeringPolicy interval="1"/>
+            </Policies>
+            <DefaultRolloverStrategy max="5"/>
+        </RollingFile>
+
+    </Appenders>
+
+    <Loggers>
+        <Root level="INFO">
+            <appender-ref ref="STDOUT"/>
+            <appender-ref ref="rollingFile"/>
+        </Root>
+
+        <!-- Specific Levels -->
+        <Logger name="de.salt.sce" level="DEBUG"/>
+    </Loggers>
+
+</Configuration>

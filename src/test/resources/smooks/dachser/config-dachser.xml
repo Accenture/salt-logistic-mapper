@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<smooks-resource-list xmlns="http://www.milyn.org/xsd/smooks-1.1.xsd"
+	xmlns:edi="http://www.milyn.org/xsd/smooks/edi-1.1.xsd" xmlns:jb="http://www.milyn.org/xsd/smooks/javabean-1.2.xsd">
+
+	<!-- Configure the EDI Reader to parse the message stream into a stream 
+		of SAX events. -->
+	<edi:reader mappingModel="/smooks/dachser/mapping-dachser.xml" />
+
+	<!-- Transport bean -->
+	<jb:bean beanId="transport-bean" class="de.salt.sce.model.edifact.Transport"
+		createOnElement="Transport">
+		<jb:wiring property="shipment" beanIdRef="shipment-list" />
+	</jb:bean>
+
+	<jb:bean beanId="shipment-list" class="java.util.ArrayList"
+		createOnElement="Transport">
+		<jb:wiring beanIdRef="shipment-bean" />
+	</jb:bean>
+
+
+	<!-- Shipping bean -->
+	<jb:bean beanId="shipment-bean" class="de.salt.sce.model.edifact.Shipment"
+		createOnElement="Shipment">
+		<jb:wiring property="Paket" beanIdRef="package-list" />
+	</jb:bean>
+
+	<jb:bean beanId="package-list" class="java.util.ArrayList"
+		createOnElement="Shipment">
+		<jb:wiring beanIdRef="package-bean" />
+	</jb:bean>
+
+	<!-- Package bean -->
+	<jb:bean beanId="package-bean" class="de.salt.sce.model.edifact.Paket"
+		createOnElement="Paket">
+		<jb:wiring property="cni" beanIdRef="cni-bean" />
+		<jb:wiring property="sts" beanIdRef="sts-bean" />
+		<jb:wiring property="rffs" beanIdRef="rff-list" />
+		<jb:wiring property="dtms" beanIdRef="dtm-list" />
+		<jb:wiring property="ftx" beanIdRef="ftx-bean" />
+		<jb:wiring property="nads" beanIdRef="nad-list" />
+		<jb:wiring property="pci" beanIdRef="pci-bean" />
+	</jb:bean>
+
+	<!-- CNI -->
+	<jb:bean beanId="cni-bean" class="de.salt.sce.model.edifact.Cni"
+		createOnElement="CNI">
+		<jb:value property="consolidationTtemNumber" data="e1490"
+			decoder="String" />
+		<jb:value property="documentMessageNumber" data="e1004"
+			decoder="String" />
+	</jb:bean>
+
+	<!-- STS -->
+	<jb:bean beanId="sts-bean" class="de.salt.sce.model.edifact.Sts"
+		createOnElement="STS">
+		<jb:value property="event" data="e4405"
+			decoder="String" />
+		<jb:value property="reason" data="e4404"
+			decoder="String" />
+	</jb:bean>
+
+	<!-- RFF -->
+	<jb:bean beanId="rff-list" class="java.util.ArrayList"
+		createOnElement="Paket">
+		<jb:wiring beanIdRef="rff-bean" />
+	</jb:bean>
+	<jb:bean beanId="rff-bean" class="de.salt.sce.model.edifact.Rff"
+		createOnElement="RFF">
+		<jb:value property="qualifier" data="e1153"
+		    decoder="String" />
+		<jb:value property="reference" data="e1154"
+			decoder="String" />
+	</jb:bean>
+
+	<!-- DTM -->
+	<jb:bean beanId="dtm-list" class="java.util.ArrayList"
+		createOnElement="Paket">
+		<jb:wiring beanIdRef="dtm-bean" />
+	</jb:bean>	
+	<jb:bean beanId="dtm-bean" class="de.salt.sce.model.edifact.Dtm"
+		createOnElement="DTM">
+		<jb:value property="dateTimePeriod" data="e2380"
+			decoder="String" />
+	</jb:bean>
+
+	<!-- FTX -->
+	<jb:bean beanId="ftx-bean" class="de.salt.sce.model.edifact.Ftx"
+		createOnElement="FTX">
+		<jb:value property="freeText" data="e4440_-_-1" decoder="String" />
+	</jb:bean>
+	
+	<!-- NAD -->
+	<jb:bean beanId="nad-list" class="java.util.ArrayList"
+		createOnElement="Paket">
+		<jb:wiring beanIdRef="nad-bean" />
+	</jb:bean>	
+	<jb:bean beanId="nad-bean" class="de.salt.sce.model.edifact.Nad"
+		createOnElement="NAD_Paket">
+		<jb:value property="qualifier" data="e3035"
+		    decoder="String" />
+		<jb:value property="name1" data="e3124_-_-1"
+			decoder="String" />
+	</jb:bean>
+
+	<!-- PCI -->
+	<jb:bean beanId="pci-bean" class="de.salt.sce.model.edifact.Pci"
+		createOnElement="PCI">
+		<jb:value property="markingInstructionsCode" data="e4233" decoder="String" />
+		<jb:value property="shippingMarksDescription1" data="e7102_-_-1" decoder="String" />
+	</jb:bean>
+
+</smooks-resource-list>

@@ -11,18 +11,17 @@ import de.salt.sce.mapper.server.util.LazyConfig
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, ExecutionContextExecutor, Future}
 
-
 object Bootstrap extends App with LazyLogging with LazyConfig {
 
   protected var bindingFuture: Future[Http.ServerBinding] = _
 
-  config.checkValid(config, s"sce.track.mapper.rest-server")
+  config.checkValid(config, "sce.track.mapper.rest-server")
 
-  protected val protocol = config.getString(s"sce.track.mapper.rest-server.protocol")
-  protected val endpoint = config.getString(s"sce.track.mapper.rest-server.endpoint")
-  protected val endpointPort = config.getInt(s"sce.track.mapper.rest-server.port")
+  protected val protocol = config.getString("sce.track.mapper.rest-server.protocol")
+  protected val endpoint = config.getString("sce.track.mapper.rest-server.endpoint")
+  protected val endpointPort = config.getInt("sce.track.mapper.rest-server.port")
 
-  implicit val system: ActorSystem = ActorSystem(config.getString(s"sce.track.mapper.actor-system.name"))
+  implicit val system: ActorSystem = ActorSystem(config.getString("sce.track.mapper.actor-system.name"))
   ActorService.setActorSystem(system)
   implicit val materializer: ActorMaterializer = ActorMaterializer()
   implicit val ec: ExecutionContextExecutor = system.dispatcher

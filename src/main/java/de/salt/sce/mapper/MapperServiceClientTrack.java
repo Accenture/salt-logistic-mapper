@@ -1,50 +1,88 @@
 package de.salt.sce.mapper;
 
-
 import com.typesafe.config.Config;
-import de.salt.sce.mapper.model.TrackContract;
 import de.salt.sce.mapper.parser.MessageParser;
-import de.salt.sce.mapper.server.communication.model.Requests.TrackProviderRequest;
-import de.salt.sce.mapper.server.communication.model.Responses.TrackResponseProtocol;
-import scala.Tuple2;
-import scala.collection.immutable.HashMap;
+import de.salt.sce.mapper.server.communication.model.MapperRequest;
+import de.salt.sce.mapper.server.communication.model.MapperResponses;
+import de.salt.sce.mapper.server.communication.model.MapperResponses.InternalResponse;
+import scala.Option;
+import scala.collection.mutable.HashMap;
+import scala.collection.mutable.Map;
 
 import java.io.UnsupportedEncodingException;
-import java.util.List;
+import java.util.Optional;
 
-import static java.lang.String.format;
+import static akka.http.javadsl.model.StatusCodes.BAD_REQUEST;
+import static akka.http.javadsl.model.StatusCodes.OK;
+
+import static scala.collection.JavaConverters.mapAsJavaMapConverter;
 
 public class MapperServiceClientTrack {
 
     /**
      * returns TrackResponseProtocol.
      *
-     * @return {@link TrackResponseProtocol}
+     * @return {@link InternalResponse}
      */
-    public static TrackResponseProtocol buildResponse(TrackProviderRequest requestData, Config config) throws UnsupportedEncodingException {
+    public static InternalResponse buildResponse(MapperRequest requestData, Config config) throws UnsupportedEncodingException {
 
-        String serviceConfigurationName = requestData.configName();
-
-        //TODO change to lesen von request(TrackProviderRequest) ? or anower way
-        String message_type = "edifact";
-        String encoding = "windows-1252";
-        //TODO configurable from conf
-        String smooks_config = "/smooks/config-ups.xml";
-
-        Tuple2<String, String> line = requestData.lines().head();
         MessageParser messageParser = new MessageParser();
-        List<TrackContract> trackContracts = messageParser.parseFile(
-                serviceConfigurationName,
-                smooks_config,
-                message_type,
-                line._1,
-                line._2.getBytes(encoding)
+        String serviceConfigurationName = requestData.serviceName().toLowerCase();
+        String smooks_config = config.getString("sce.track.mapper.smooks.config-files-path") + "/" + serviceConfigurationName + "/" + requestData.configFile();
+
+        Map<String, String> mapSucess = new HashMap<>();
+        Map<String, String> mapErrors = new HashMap<>();
+
+        mapAsJavaMapConverter(requestData.files()).asJava().forEach(
+                (k, v) -> {
+                    try {
+                        Optional<String> smooksEncodedObject = messageParser.parseFile(
+                                serviceConfigurationName,
+                                smooks_config,
+                                requestData.messageType(),
+                                k,
+                                v.getBytes(requestData.encoding())
+                        );
+
+                        smooksEncodedObject
+                                .map(o -> mapSucess.put(k, o))
+                                .orElseGet(() -> mapErrors.put(k, "Unknown message type"));
+
+                    } catch (Exception e) {
+                        mapErrors.put(k, e.getMessage());
+                    }
+                }
         );
 
-        //TODO trackContracts -> TrackResponseProtocol
-        return new TrackResponseProtocol(
-                new HashMap<String, String>(),
-                new HashMap<String, String>()
+        if (requestData.messageType().equals("csv")) {
+            return new InternalResponse(
+                    requestData.id(),
+                    Option.apply(new MapperResponses.MapperResponseProtocol(
+                            mapSucess,
+                            mapErrors
+                    )),
+                    Option.empty(),
+                    OK.intValue()
+            );
+        } else if (requestData.messageType().equals("edifact")) {
+            return new InternalResponse(
+                    requestData.id(),
+                    Option.empty(),
+                    Option.apply(new MapperResponses.MapperResponseProtocol(
+                            mapSucess,
+                            mapErrors
+                    )),
+                    OK.intValue()
+            );
+        }
+
+        return new InternalResponse(
+                requestData.id(),
+                Option.empty(),
+                Option.empty(),
+                BAD_REQUEST.intValue()
+
         );
+
     }
 }

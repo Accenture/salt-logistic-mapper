@@ -1,6 +1,5 @@
 package de.salt.sce.mapper.util
 
-import de.salt.sce.mapper.exception.MoveException
 import org.slf4j.LoggerFactory.getLogger
 
 /**
@@ -11,13 +10,6 @@ import org.slf4j.LoggerFactory.getLogger
  */
 object ScalaTool {
   private val logger = getLogger(this.getClass);
-
-  /**
-   * Generate random exception
-   */
-  def generateRandomException(message: String, edcid: String = "", actorName: String = ""): Unit =
-    if (java.util.concurrent.ThreadLocalRandom.current.nextDouble() < 0.2)
-      throw new MoveException(message, edcid, actorName)
 
   /**
    * Truncates a string with regard to positions of & and ;

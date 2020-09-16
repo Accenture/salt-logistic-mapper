@@ -15,13 +15,11 @@ import org.json4s.{DefaultFormats, Serialization, native}
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration.Duration
 
-
 object ConfigActor {
   final val Name: String = "smooks-configs"
 
   def props: Props = Props(new ConfigActor)
 }
-
 
 class ConfigActor extends Actor with LazyLogging with LazyConfig {
   implicit val s: Serialization = native.Serialization
@@ -30,7 +28,7 @@ class ConfigActor extends Actor with LazyLogging with LazyConfig {
   implicit val ec: ExecutionContext = context.dispatcher
 
   def receive: Receive = {
-    case "" =>
+    case "INIT_CONFIG" =>
     val httpClient = get(context.system)
     val actorMaterializer = create(context.system)
     config.getConfig(s"sce.track.mapper.smooks.clients").root().forEach {
