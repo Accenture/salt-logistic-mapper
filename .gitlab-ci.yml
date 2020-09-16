@@ -1,4 +1,4 @@
-# Version S24
+# Version S28
 
 # Gitlab Cache Settings
 cache:
@@ -207,6 +207,16 @@ foss-report:
     - tags
   script:
     - .gitlab/S-QA-POST-foss-report.sh
+  tags:
+    - d4s-devbox-logistic-1
+
+apidoc-release:
+  stage: QA-POST
+  cache: {}
+  only:
+    - tags
+  script:
+    - .gitlab/S-QA-POST-apidoc-release.sh
   tags:
     - d4s-devbox-logistic-1
 
