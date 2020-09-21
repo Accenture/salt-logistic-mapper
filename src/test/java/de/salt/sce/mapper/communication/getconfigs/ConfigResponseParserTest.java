@@ -1,5 +1,6 @@
 package de.salt.sce.mapper.communication.getconfigs;
 
+import de.salt.sce.modelftp.provider.model.Responses.InternalSmooksFilesResponse;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 
@@ -18,12 +19,12 @@ public class ConfigResponseParserTest {
                 UTF_8
         );
 
-        ConfigResponse configResponse = parseResponse(responseJSon);
+        InternalSmooksFilesResponse configResponse = parseResponse(responseJSon);
 
-        assertThat(configResponse.getName()).isEqualTo("ups");
-        assertThat(configResponse.getFiles()).hasSize(3);
-        assertThat(configResponse.getFiles().get(0).fileName).isEqualTo("config-ups.xml");
-        assertThat(configResponse.getFiles().get(1).fileName).isEqualTo("mapping-ups.xml");
-        assertThat(configResponse.getFiles().get(2).fileName).isEqualTo("modelset-definitions-d07b.xml");
+        assertThat(configResponse.extResponse().name()).isEqualTo("ups");
+        assertThat(configResponse.extResponse().files()).hasSize(3);
+        assertThat(configResponse.extResponse().files()[0].fileName()).isEqualTo("config-ups.xml");
+        assertThat(configResponse.extResponse().files()[1].fileName()).isEqualTo("mapping-ups.xml");
+        assertThat(configResponse.extResponse().files()[2].fileName()).isEqualTo("modelset-definitions-d07b.xml");
     }
 }

@@ -1,8 +1,9 @@
 package de.salt.sce.mapper.server.communication.actor
 
-import akka.actor.{Actor, Props, Terminated}
+import akka.actor.{Actor, ActorRef, Props, Terminated}
 import akka.routing.{ActorRefRoutee, RoundRobinRoutingLogic, Router}
 import com.typesafe.scalalogging.LazyLogging
+import de.salt.sce.mapper.actor.ConfigActor
 import de.salt.sce.mapper.server.communication.model.MapperRequest
 import de.salt.sce.mapper.server.util.LazyConfig
 
@@ -40,4 +41,20 @@ class MapperActorDispatcher extends Actor with LazyLogging with LazyConfig {
       context.watch(r)
       router = router.addRoutee(r)
   }
+  private lazy val configActor = loadActor("configActor", Props[ConfigActor])
+  override def preStart(): Unit = {
+    logger.debug("Getting Smooks Configurations.")
+    configActor ! "INIT_CONFIG"
+
+  }
+
+  def loadActor(actorName: String, actorProps: Props): ActorRef =
+    context.child(s"$actorName-${self.path.name}") match {
+      case None =>
+        logger.debug(s"creating $actorName: $actorName-${self.path.name}")
+        context.actorOf(actorProps, s"$actorName-${self.path.name}")
+      case Some(x) =>
+        logger.debug(s"getting an existing $actorName actor")
+        x
+    }
 }
