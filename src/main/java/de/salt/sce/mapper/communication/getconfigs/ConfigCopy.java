@@ -42,7 +42,7 @@ public class ConfigCopy {
 
         ConfigClient configClient = new ConfigClient(actorMaterializer, requestTimeoutMills);
         Optional<String> result = configClient.send(
-                ConfigRequest.buildRequest(host, username, password),
+                ConfigRequestBuilder.buildRequest(host, username, password),
                 httpClient,
                 host
         );
