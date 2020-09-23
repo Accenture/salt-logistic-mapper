@@ -28,7 +28,7 @@ paths:
           description: "OK"
     post:
       tags:
-        - default
+        - not-allowed
       summary: "POST on default root path"
       operationId: root-post
       responses:
@@ -39,7 +39,7 @@ paths:
   /track/mapper:
     get:
       tags:
-        - default
+        - not-allowed
       summary: "GET on default /track/mapper path"
       responses:
         405:
@@ -49,6 +49,8 @@ paths:
         - default
       summary: "TODO: To be defined"
       operationId: track-mapper
+      security:
+        - basicAuth: []
       requestBody:
         description: "TODO: To be defined"
         content:
@@ -62,7 +64,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MapperResponseProtocol'
+                $ref: '#/components/schemas/InternalResponse'
         400:
           description: "Bad request"
         500:
@@ -70,6 +72,11 @@ paths:
 
 ### Components
 components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+
   schemas:
     MapperRequest:
       type: object
@@ -99,8 +106,24 @@ components:
             type: string
             description: "File content"
 
+    InternalResponse:
+      type: object
+      description:  "TODO: To be defined"
+      properties:
+        id:
+          type: string
+          description: "TODO: To be defined"
+        csvResponse:
+          $ref: '#/components/schemas/MapperResponseProtocol'
+        edifactResponse:
+          $ref: '#/components/schemas/MapperResponseProtocol'
+        statusCode:
+          type: integer
+
+
     MapperResponseProtocol:
       type: object
+      nullable: true
       description: "Mapper Response"
       properties:
         success:
@@ -119,8 +142,6 @@ components:
             description: "Error code description"
           example:
             "500": "Error"
-
-
 
 
 
