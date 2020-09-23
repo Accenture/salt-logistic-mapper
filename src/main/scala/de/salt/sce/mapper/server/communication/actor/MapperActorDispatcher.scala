@@ -41,20 +41,4 @@ class MapperActorDispatcher extends Actor with LazyLogging with LazyConfig {
       context.watch(r)
       router = router.addRoutee(r)
   }
-  private lazy val configActor = loadActor("configActor", Props[ConfigActor])
-  override def preStart(): Unit = {
-    logger.debug("Getting Smooks Configurations.")
-    configActor ! "INIT_CONFIG"
-
-  }
-
-  def loadActor(actorName: String, actorProps: Props): ActorRef =
-    context.child(s"$actorName-${self.path.name}") match {
-      case None =>
-        logger.debug(s"creating $actorName: $actorName-${self.path.name}")
-        context.actorOf(actorProps, s"$actorName-${self.path.name}")
-      case Some(x) =>
-        logger.debug(s"getting an existing $actorName actor")
-        x
-    }
 }

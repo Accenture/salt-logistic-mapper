@@ -8,8 +8,8 @@ import akka.stream.ActorMaterializer.create
 import akka.util.Timeout
 import com.typesafe.config.ConfigObject
 import com.typesafe.scalalogging.LazyLogging
+import de.salt.sce.mapper.communication.getconfigs.ConfigCopy
 import de.salt.sce.mapper.server.util.LazyConfig
-import de.salt.sce.modelftp.provider.mapper.getconfigs.ConfigCopy
 import org.json4s.{DefaultFormats, Serialization, native}
 
 import scala.concurrent.ExecutionContext
