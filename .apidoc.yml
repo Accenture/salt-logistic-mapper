@@ -1,0 +1,126 @@
+### Header
+openapi: 3.0.3
+info:
+  title: SCE Mapper Service
+  description: 'Mapper Service'
+  contact:
+    name: SCE Team
+    email: sce-addons@salt-software.de
+  version: 0.1.1-SNAPSHOT
+servers:
+  - url: https://sce-mapper.apps.d4s.salt-solutions.de
+    description: Integration Server
+externalDocs:
+  description: Find out more about this service
+  url: https://swugit1.salt-solutions.de/sce/mapper/-/blob/master/README.md
+
+
+### Paths
+paths:
+  /:
+    get:
+      tags:
+        - default
+      summary: "GET on default root path"
+      operationId: root-get
+      responses:
+        200:
+          description: "OK"
+    post:
+      tags:
+        - default
+      summary: "POST on default root path"
+      operationId: root-post
+      responses:
+        405:
+          description: "Method not allowed"
+
+
+  /track/mapper:
+    get:
+      tags:
+        - default
+      summary: "GET on default /track/mapper path"
+      responses:
+        405:
+          description: "Method not allowed"
+    post:
+      tags:
+        - default
+      summary: "TODO: To be defined"
+      operationId: track-mapper
+      requestBody:
+        description: "TODO: To be defined"
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MapperRequest'
+        required: true
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MapperResponseProtocol'
+        400:
+          description: "Bad request"
+        500:
+          description: "Internal server error"
+
+### Components
+components:
+  schemas:
+    MapperRequest:
+      type: object
+      description: "Mapper Request"
+      properties:
+        id:
+          type: string
+          description: "UUID"
+        serviceName:
+          type: string
+          description: "The name of Microservice: ups, dpd..."
+        configFile:
+          type: string
+          description: "The name of first smooks configuration file"
+        messageType:
+          type: string
+          enum: [edifac, csv]
+          description: "edifact or csv"
+        encoding:
+          type: string
+          enum: [utf, windows]
+          description: "utf or windows"
+        files:
+          type: object
+          description: "File name"
+          additionalProperties:
+            type: string
+            description: "File content"
+
+    MapperResponseProtocol:
+      type: object
+      description: "Mapper Response"
+      properties:
+        success:
+          type: object
+          description: "Success code"
+          additionalProperties:
+            type: string
+            description: "Success code description"
+          example:
+            "200": "OK"
+        error:
+          type: object
+          description: "Error code"
+          additionalProperties:
+            type: string
+            description: "Error code description"
+          example:
+            "500": "Error"
+
+
+
+
+
