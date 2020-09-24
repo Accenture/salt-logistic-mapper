@@ -108,8 +108,8 @@ components:
           description: "edifact or csv"
         encoding:
           type: string
-          enum: [utf8, windows-1252]
-          description: "utf or windows"
+          enum: [UTF-8, windows-1252]
+          description: "UTF-8 or windows-1252"
         files:
           type: object
           description: "File name"
@@ -153,11 +153,3 @@ components:
             description: "Error code description"
           example:
             "500": "Error"
-
-    User:
-      type: object
-      properties:
-        id:
-          type: integer
-        name:
-          type: string
