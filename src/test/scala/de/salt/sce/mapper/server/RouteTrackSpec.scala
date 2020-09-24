@@ -83,10 +83,10 @@ class RouteTrackSpec extends WordSpec with Matchers
         transport.getShipments.get(0).getPakets.get(0).getDtms.get(0).getDateTimePeriod should be("201703290851")
 
         val line2: Option[String] = responseProtocol.edifactResponse.get.error.get("Unknown")
-        line2.get equals "Some(File Parsing Exception:Failed to filter source. - Unknown)"
+        line2.get should be("File Parsing Exception:Failed to filter source. - Unknown")
       }
     }
-/*
+
     s"testing is dpd service returns correct response when becomes correct request [$path]" in {
       import de.heikoseeberger.akkahttpjson4s.Json4sSupport._ // should be visible only in this method where no deserialization to string is performed
 
@@ -175,7 +175,7 @@ class RouteTrackSpec extends WordSpec with Matchers
         transport.getShipments.get(0).getPakets.get(0).getNads.get(0).getQualifier should be("CS")
 
         val line2: Option[String] = responseProtocol.edifactResponse.get.error.get("Unknown")
-        line2.get equals "Some(File Parsing Exception:Failed to filter source. - Unknown)"
+        line2.get should be("File Parsing Exception:Failed to filter source. - Unknown")
       }
     }
 
@@ -287,7 +287,7 @@ class RouteTrackSpec extends WordSpec with Matchers
         transport2.getShipments.get(0).getPakets.get(0).getNads.size() should be(2)
 
         val line3: Option[String] = responseProtocol.edifactResponse.get.error.get("Unknown")
-        line3.get equals "File Parsing Exception:Failed to filter source. - Unknown"
+        line3.get should be("File Parsing Exception:Failed to filter source. - Unknown")
       }
     }
 
@@ -309,8 +309,6 @@ class RouteTrackSpec extends WordSpec with Matchers
           responseString should startWith("The request content was malformed:")
         }
     }
-
- */
   }
 
   private def createPost(usingPath: String, request: IncompatibleProviderRequest): HttpRequest = {
