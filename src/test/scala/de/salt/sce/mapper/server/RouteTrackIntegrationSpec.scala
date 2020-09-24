@@ -11,6 +11,9 @@ import org.apache.commons.codec.binary.Base64.decodeBase64
 
 
 class RouteTrackIntegrationSpec extends IntegrationTester {
+
+  protected val mapperUri: String  = buildMapperUrl()
+
   override def beforeAll(): Unit = {
     logger.warn("Make sure Mapper is up and running! ")
   }
@@ -33,7 +36,7 @@ class RouteTrackIntegrationSpec extends IntegrationTester {
         )
       )
 
-      val internalResponse:InternalResponse = createAndCheckAuthRequest(mapperRequest)
+      val internalResponse:InternalResponse = createAndCheckAuthRequest(mapperRequest, mapperUri)
 
       internalResponse.edifactResponse.get.success.size should be(2)
       internalResponse.edifactResponse.get.error.size should be(1)
@@ -63,5 +66,18 @@ class RouteTrackIntegrationSpec extends IntegrationTester {
       val line3: Option[String] = internalResponse.edifactResponse.get.error.get("Unknown")
       line3.get should be("File Parsing Exception:Failed to filter source. - Unknown")
     }
+  }
+
+  def buildMapperUrl(): String = {
+    val protocol = config.getString("sce.track.mapper.rest-server.protocol")
+    val endpoint = config.getString("sce.track.mapper.rest-server.endpoint")
+    val port = config.getString("sce.track.mapper.rest-server.port")
+    val path = s"${config.getString("sce.track.mapper.rest-server.path.mapper-path")}" +
+      s"/${config.getString("sce.track.mapper.rest-server.path.mapper-ext")}"
+
+    s"$protocol://" +
+      s"$endpoint:" +
+      s"$port/" +
+      s"$path"
   }
 }

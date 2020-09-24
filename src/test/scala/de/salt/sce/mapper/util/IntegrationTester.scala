@@ -19,14 +19,11 @@ import scala.util.{Failure, Success, Try}
 
 trait IntegrationTester extends WordSpec with Matchers with ScalatestRouteTest with LazyConfig with LazyLogging {
 
-  protected val mapperUri: String  = buildMapperUrl()
-
   implicit val s: Serialization = native.Serialization
   implicit val formats: Formats = DefaultFormats
-
   implicit val testTimeout: Timeout = Timeout(30 seconds)
 
-  def createAndCheckAuthRequest(mapperRequest:MapperRequest): InternalResponse = {
+  def createAndCheckAuthRequest(mapperRequest: MapperRequest, mapperUri: String): InternalResponse = {
     import de.heikoseeberger.akkahttpjson4s.Json4sSupport._ // should be visible only in this method where no deserialization to string is performed
     logger.debug(s"${mapperRequest.serviceName} should return a protocol echo response for authenticated POST requests to [/$mapperUri]")
 
@@ -49,18 +46,5 @@ trait IntegrationTester extends WordSpec with Matchers with ScalatestRouteTest w
         logger.debug(error.getMessage)
         fail(error.getMessage)
     }
-  }
-
-  def buildMapperUrl(): String = {
-    val protocol = config.getString("sce.track.mapper.rest-server.protocol")
-    val endpoint = config.getString("sce.track.mapper.rest-server.endpoint")
-    val port = config.getString("sce.track.mapper.rest-server.port")
-    val path = s"${config.getString("sce.track.mapper.rest-server.path.mapper-path")}" +
-      s"/${config.getString("sce.track.mapper.rest-server.path.mapper-ext")}"
-
-    s"$protocol://" +
-      s"$endpoint:" +
-      s"$port/" +
-      s"$path"
   }
 }
