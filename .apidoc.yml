@@ -1,0 +1,155 @@
+### Header
+openapi: 3.0.3
+info:
+  title: SCE Mapper Service
+  description: 'Mapper Service'
+  contact:
+    name: SCE Team
+    email: sce-addons@salt-software.de
+  version: 0.1.1
+servers:
+  - url: https://sce-mapper.apps.d4s.salt-solutions.de
+    description: Integration Server
+externalDocs:
+  description: Find out more about this service
+  url: https://swugit1.salt-solutions.de/sce/mapper/-/blob/master/README.md
+
+
+### Paths
+paths:
+  /:
+    get:
+      tags:
+        - default
+      summary: "GET on default root path"
+      operationId: root-get
+      responses:
+        200:
+          description: "OK"
+    post:
+      tags:
+        - not-allowed
+      summary: "POST on default root path"
+      operationId: root-post
+      responses:
+        405:
+          description: "Method not allowed"
+
+
+  /track/mapper:
+    get:
+      tags:
+        - not-allowed
+      summary: "GET on default /track/mapper path"
+      responses:
+        405:
+          description: "Method not allowed"
+    post:
+      tags:
+        - default
+      summary: "TODO: To be defined"
+      operationId: track-mapper
+      security:
+        - basicAuth: []
+      requestBody:
+        description: "TODO: To be defined"
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MapperRequest'
+            example:
+              id: "UUID"
+              serviceName: "ups"
+              configFile: "config-ups.xml"
+              messageType: "edifact"
+              encoding: "windows-1252"
+              files:
+                20170516_093419_20160719_141122_ROTH-IFTSTA: 'UNB+UNOA:1+EURPROD:UPS+ROTH-DE-IFTSTA:02+160714:1243+00000000044975++IFTSTA''UNG+IFTSTA+EURPROD:UPS+ROTH-DE-IFTSTA:02+160714:1243+00000000044975+UN+D:07B''UNH+00000000806777+IFTSTA:D:07B:UN''BGM+23:UPS::QVD+O4''NAD+DEQ+3F4W57''NAD+BS+3F4W57:01''NAD+DP++++21 HOERNLEWEG:E+WEILHEIM++73235+DE''RFF+CW:1Z3F4W576807747148''CNI+1''LOC+14+:::WENDLINGEN+:::DE''STS+1:D2:21''RFF+AGY:WALCH''RFF+AEL:RESIDENTIAL''RFF+AAN:2''DTM+78:20160714173746:204''UNT+14+00000000806777''UNH+00000000806778+IFTSTA:D:07B:UN''BGM+23:UPS::QVD+O4''NAD+DEQ+562V50''NAD+BS+562V50:01''RFF+CW:1Z562V506807737844''CNI+1''LOC+14+:::BRUSSELS+:::BE''STS+1:E1:101''DTM+78:20160714173339:204''FTX+AVA+02++DELIVERY WILL BE RESCHEDULED.:RESOLUTION''FTX+AVA+MF++THIS PACKAGE IS BEING HELD FOR A FUTURE DELIVERY DATE.:REASON''UNT+12+00000000806778''UNE+2+00000000044975''UNZ+1+00000000044975'''
+                20170516_093419_20160719_141122_ROTH-IFTSTA_2222: 'UNB+UNOA:1+EURPROD:UPS+ROTH-DE-IFTSTA:02+160714:1243+00000000044975++IFTSTA''UNG+IFTSTA+EURPROD:UPS+ROTH-DE-IFTSTA:'
+                unknown file: "bla bla"
+
+        required: true
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalResponse'
+        400:
+          description: "Bad request"
+        500:
+          description: "Internal server error"
+
+### Components
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+
+  schemas:
+    MapperRequest:
+      type: object
+      description: "Mapper Request"
+      properties:
+        id:
+          type: string
+          description: "UUID"
+        serviceName:
+          type: string
+          description: "The name of Microservice: ups, dpd..."
+        configFile:
+          type: string
+          description: "The name of first smooks configuration file"
+        messageType:
+          type: string
+          enum: [edifact, csv]
+          description: "edifact or csv"
+        encoding:
+          type: string
+          enum: [UTF-8, windows-1252]
+          description: "UTF-8 or windows-1252"
+        files:
+          type: object
+          description: "File name"
+          additionalProperties:
+            type: string
+            description: "File content"
+
+    InternalResponse:
+      type: object
+      description:  "TODO: To be defined"
+      properties:
+        id:
+          type: string
+          description: "TODO: To be defined"
+        csvResponse:
+          $ref: '#/components/schemas/MapperResponseProtocol'
+        edifactResponse:
+          $ref: '#/components/schemas/MapperResponseProtocol'
+        statusCode:
+          type: integer
+
+
+    MapperResponseProtocol:
+      type: object
+      nullable: true
+      description: "Mapper Response"
+      properties:
+        success:
+          type: object
+          description: "Success code"
+          additionalProperties:
+            type: string
+            description: "Success code description"
+          example:
+            "200": "OK"
+        error:
+          type: object
+          description: "Error code"
+          additionalProperties:
+            type: string
+            description: "Error code description"
+          example:
+            "500": "Error"

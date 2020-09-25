@@ -46,24 +46,25 @@ class AkkaHttpRestServer extends RestServer with LazyLogging with LazyConfig {
   implicit val formats: Formats = DefaultFormats
 
   def getRoute: Route = handleExceptions(AkkaHttpRestServer.myExceptionHandler) {
-    path("") { // default - GET on root
-      extractRequest { req =>
+    import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
+    cors() {
+      path("") { // default - GET on root
         get {
           complete(StatusCodes.OK)
         } ~
           post {
             complete(StatusCodes.MethodNotAllowed)
           }
-      }
-    } ~ path(mapperPath / mapperExt) {
-      get {
-        complete(StatusCodes.MethodNotAllowed)
-      } ~
-        post {
-          authenticateBasic(realm = "sce", sceAuthenticator) { _ =>
-            handleMappingRequest()
+      } ~ path(mapperPath / mapperExt) {
+        get {
+          complete(StatusCodes.MethodNotAllowed)
+        } ~
+          post {
+            authenticateBasic(realm = "sce", sceAuthenticator) { _ =>
+              handleMappingRequest()
+            }
           }
-        }
+      }
     }
   }
 

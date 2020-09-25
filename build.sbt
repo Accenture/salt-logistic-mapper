@@ -3,9 +3,9 @@
 // = Metadata
 // =====================================================================================================================
 name := "mapper"
-version := "0.1.0"
+version := "0.1.1"
 organization := "de.salt.sce"
-scalaVersion := "2.12.3"
+scalaVersion := "2.12.11"
 
 lazy val root = (project in file(""))
 
@@ -24,7 +24,7 @@ logBuffered in Test := false
 // =====================================================================================================================
 
 val akkaVersion = "2.5.26"
-val akkaHttpVersion = "10.1.10"
+val akkaHttpVersion = "10.1.12"
 
 libraryDependencies += "com.typesafe.akka" %% "akka-http" % akkaHttpVersion
 libraryDependencies += "com.typesafe.akka" %% "akka-actor" % akkaVersion
@@ -57,4 +57,7 @@ libraryDependencies += "commons-validator" % "commons-validator" % "1.6"
 libraryDependencies += "org.apache.commons" % "commons-lang3" % "3.4"
 
 libraryDependencies += "org.milyn" % "milyn-smooks-all" % "1.7.1"
+
+// Akka CORS :: https://github.com/lomigmegard/akka-http-cors
+libraryDependencies += "ch.megard" %% "akka-http-cors" % "1.0.0"
 

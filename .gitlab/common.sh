@@ -136,7 +136,9 @@ function code-push() {
 function foss-report() {
   prepare-fossa
   fossa test --timeout 600 --revision "$CI_COMMIT_SHA"
+  EXIT_CODE=$?
   printf "WARNING: FOSSA Reports will NOT be dowloaded and sent to smes-documentation repo, this process has to be done manually..."
+  exit $EXIT_CODE
 }
 
 function check-deploy-prerequisite() {

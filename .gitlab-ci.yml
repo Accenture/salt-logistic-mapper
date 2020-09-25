@@ -1,4 +1,4 @@
-# Version S28
+# Version S29
 
 # Gitlab Cache Settings
 cache:
@@ -136,6 +136,7 @@ image-push:
     - .gitlab/S-STASH-image-push.sh
   tags:
     - d4s-devbox-logistic-1
+  timeout: 3m
 
 man-image-push:
   stage: STASH
@@ -150,6 +151,7 @@ man-image-push:
     - .gitlab/S-STASH-man-image-push.sh
   tags:
     - d4s-devbox-logistic-1
+  timeout: 3m
   when:
     manual
 
