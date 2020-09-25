@@ -43,4 +43,6 @@ class ConfigActor extends Actor with LazyLogging with LazyConfig {
         )
     }
   }
+
+  override def postStop(): Unit = logger.warn("Stopped ConfigActor")
 }
