@@ -4,6 +4,7 @@ import java.util.concurrent.TimeUnit.MILLISECONDS
 
 import akka.actor.{ActorRef, ActorSelection, ActorSystem}
 import akka.util.Timeout
+import de.salt.sce.mapper.actor.ConfigActor
 import de.salt.sce.mapper.server.communication.actor.MapperActorDispatcher
 import de.salt.sce.mapper.server.util.LazyConfig
 
@@ -24,6 +25,15 @@ object ActorService extends LazyConfig {
     getActorSystem match {
       case Some(s) =>
         s.actorOf(MapperActorDispatcher.props, MapperActorDispatcher.Name)
+      case None =>
+        throw new Exception("Actor system is not available")
+    }
+  }
+
+  def createConfigActor(): ActorRef = {
+    getActorSystem match {
+      case Some(s) =>
+        s.actorOf(ConfigActor.props, ConfigActor.Name)
       case None =>
         throw new Exception("Actor system is not available")
     }

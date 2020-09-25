@@ -1,6 +1,6 @@
 package de.salt.sce.mapper
 
-import akka.actor.ActorSystem
+import akka.actor.{ActorRef, ActorSystem}
 import akka.http.scaladsl.Http
 import akka.stream.ActorMaterializer
 import com.typesafe.scalalogging.LazyLogging
@@ -10,6 +10,7 @@ import de.salt.sce.mapper.server.util.LazyConfig
 
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, ExecutionContextExecutor, Future}
+
 
 object Bootstrap extends App with LazyLogging with LazyConfig {
 
@@ -28,6 +29,9 @@ object Bootstrap extends App with LazyLogging with LazyConfig {
 
   logger.debug("Creating manager actors")
   ActorService.createActorHierarchy()
+
+  val configActor : ActorRef = ActorService.createConfigActor()
+  configActor ! "INIT_CONFIG"
 
   val restServer = AkkaHttpRestServer.getServer
   bindingFuture = Http().bindAndHandle(restServer.getRoute, endpoint, endpointPort)

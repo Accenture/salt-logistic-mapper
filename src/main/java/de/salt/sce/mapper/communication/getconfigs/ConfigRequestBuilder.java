@@ -10,8 +10,8 @@ import static org.slf4j.LoggerFactory.getLogger;
 /**
  * Building request with reference Id.
  */
-public class ConfigRequest {
-    private static final Logger log = getLogger(ConfigRequest.class);
+public class ConfigRequestBuilder {
+    private static final Logger log = getLogger(ConfigRequestBuilder.class);
 
     /**
      * Building Get request to microservice.

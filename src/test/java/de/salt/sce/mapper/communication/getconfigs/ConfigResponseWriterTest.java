@@ -1,16 +1,19 @@
 package de.salt.sce.mapper.communication.getconfigs;
 
+import de.salt.sce.mapper.communication.getconfigs.model.ConfigResponse;
+import de.salt.sce.mapper.communication.getconfigs.model.SmooksConfigFile;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.nio.file.Files.readAllBytes;
+import static java.nio.file.Paths.get;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 public class ConfigResponseWriterTest {
 
@@ -26,41 +29,32 @@ public class ConfigResponseWriterTest {
                 configResponse
         );
 
-        configResponse.getFiles().forEach(
-                sf -> {
-                    try {
-                        String fileContent = new String(Files.readAllBytes(Paths.get(rootPath + "/" + configResponse.getName() + "/" + sf.getFileName())), StandardCharsets.UTF_8);
-                        assertThat(fileContent).contains(rootPath);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-        );
+        for(SmooksConfigFile smooksFile: configResponse.getFiles()) {
+            try {
+                String fileContent = new String(
+                        readAllBytes(get(
+                                rootPath + "/" + configResponse.getName() + "/" + smooksFile.getFileName()
+                                )
+                        ),
+                        StandardCharsets.UTF_8
+                );
+                assertThat(fileContent).contains(rootPath);
+            } catch (IOException e) {
+                fail(e.getMessage());
+            }
+        }
     }
 
     private ConfigResponse createConfigResponse() {
-        ConfigResponse configResponse = new ConfigResponse();
-        configResponse.setName("ups");
+        SmooksConfigFile smooksFile1 = new SmooksConfigFile("file1","content 1 content 1 content 1 contPATH_TO_FOLDERent 1 content 1");
+        SmooksConfigFile smooksFile2 = new SmooksConfigFile("file2","content 2 content 2 content 2 contPATH_TO_FOLDERent 2 content 2");
+        SmooksConfigFile smooksFile3 = new SmooksConfigFile("file3","content 3 content 3 content 3 contPATH_TO_FOLDERent 3 content 3");
 
-        ConfigResponse.SmooksFile smooksFile1 = new ConfigResponse.SmooksFile();
-        smooksFile1.setFileName("file1");
-        smooksFile1.setFileContent("content 1 content 1 content 1 contPATH_TO_FOLDERent 1 content 1");
-
-        ConfigResponse.SmooksFile smooksFile2 = new ConfigResponse.SmooksFile();
-        smooksFile2.setFileName("file2");
-        smooksFile2.setFileContent("content 2 content 2 content 2 contPATH_TO_FOLDERent 2 content 2");
-
-        ConfigResponse.SmooksFile smooksFile3 = new ConfigResponse.SmooksFile();
-        smooksFile3.setFileName("file3");
-        smooksFile3.setFileContent("content 3 content 3 content 3 contPATH_TO_FOLDERent 3 content 3");
-
-        List<ConfigResponse.SmooksFile> smooksFiles = new ArrayList<>();
+        List<SmooksConfigFile> smooksFiles = new ArrayList<>();
         smooksFiles.add(smooksFile1);
         smooksFiles.add(smooksFile2);
         smooksFiles.add(smooksFile3);
 
-        configResponse.setFiles(smooksFiles);
-
-        return configResponse;
+        return new ConfigResponse("ups", smooksFiles, "200");
     }
 }

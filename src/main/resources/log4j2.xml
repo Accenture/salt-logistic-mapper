@@ -38,7 +38,7 @@
         </Root>
 
         <!-- Specific Levels -->
-        <Logger name="de.salt.sce" level="DEBUG"/>
+        <Logger name="de.salt.sce" level="TRACE"/>
     </Loggers>
 
 </Configuration>

@@ -1,8 +1,9 @@
 package de.salt.sce.mapper.server.communication.actor
 
-import akka.actor.{Actor, Props, Terminated}
+import akka.actor.{Actor, ActorRef, Props, Terminated}
 import akka.routing.{ActorRefRoutee, RoundRobinRoutingLogic, Router}
 import com.typesafe.scalalogging.LazyLogging
+import de.salt.sce.mapper.actor.ConfigActor
 import de.salt.sce.mapper.server.communication.model.MapperRequest
 import de.salt.sce.mapper.server.util.LazyConfig
 

@@ -1,5 +1,6 @@
 package de.salt.sce.mapper.communication.getconfigs;
 
+import de.salt.sce.mapper.communication.getconfigs.model.ConfigResponse;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 
@@ -20,10 +21,11 @@ public class ConfigResponseParserTest {
 
         ConfigResponse configResponse = parseResponse(responseJSon);
 
+        assertThat(configResponse).isNotNull();
         assertThat(configResponse.getName()).isEqualTo("ups");
         assertThat(configResponse.getFiles()).hasSize(3);
-        assertThat(configResponse.getFiles().get(0).fileName).isEqualTo("config-ups.xml");
-        assertThat(configResponse.getFiles().get(1).fileName).isEqualTo("mapping-ups.xml");
-        assertThat(configResponse.getFiles().get(2).fileName).isEqualTo("modelset-definitions-d07b.xml");
+        assertThat(configResponse.getFiles().get(0).getFileName()).isEqualTo("config-ups.xml");
+        assertThat(configResponse.getFiles().get(1).getFileName()).isEqualTo("mapping-ups.xml");
+        assertThat(configResponse.getFiles().get(2).getFileName()).isEqualTo("modelset-definitions-d07b.xml");
     }
 }
