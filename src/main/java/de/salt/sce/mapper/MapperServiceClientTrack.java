@@ -36,17 +36,21 @@ public class MapperServiceClientTrack {
         mapAsJavaMapConverter(requestData.files()).asJava().forEach(
                 (k, v) -> {
                     try {
-                        Optional<String> smooksEncodedObject = messageParser.parseFile(
-                                serviceConfigurationName,
-                                smooks_config,
-                                requestData.messageType(),
-                                k,
-                                v.getBytes(requestData.encoding())
-                        );
+                        if(!v.startsWith("Error")){
+                            Optional<String> smooksEncodedObject = messageParser.parseFile(
+                                    serviceConfigurationName,
+                                    smooks_config,
+                                    requestData.messageType(),
+                                    k,
+                                    v.getBytes(requestData.encoding())
+                            );
 
-                        smooksEncodedObject
-                                .map(o -> mapSucess.put(k, o))
-                                .orElseGet(() -> mapErrors.put(k, "Unknown message type"));
+                            smooksEncodedObject
+                                    .map(o -> mapSucess.put(k, o))
+                                    .orElseGet(() -> mapErrors.put(k, "Unknown message type"));
+                        } else {
+                            mapErrors.put(k, v);
+                        }
 
                     } catch (Exception e) {
                         mapErrors.put(k, e.getMessage());
