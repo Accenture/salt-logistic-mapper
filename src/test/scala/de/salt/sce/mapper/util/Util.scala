@@ -4,7 +4,6 @@ import java.util.UUID
 
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.model.headers.{BasicHttpCredentials, HttpCredentials}
-import com.sun.deploy.nativesandbox.comm.Request
 import com.typesafe.config.ConfigException
 import com.typesafe.scalalogging.LazyLogging
 import de.salt.sce.mapper.server.communication.model.MapperRequest
@@ -25,15 +24,15 @@ object Util extends LazyLogging with LazyConfig {
     try {
 
       Some(HttpRequest(
-          HttpMethods.POST,
-          uri = uri,
-          entity = serializeEntity(mapperRequest),
-          headers = List(
-            headers.Authorization(
-              buildCredentials()
-            )
+        HttpMethods.POST,
+        uri = uri,
+        entity = serializeEntity(mapperRequest),
+        headers = List(
+          headers.Authorization(
+            buildCredentials()
           )
         )
+      )
       )
     } catch {
       case e: ConfigException =>
