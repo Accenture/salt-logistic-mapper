@@ -84,6 +84,7 @@ public class MessageParser {
                     return Optional.empty();
             }
         } catch (Exception e) {
+            e.printStackTrace();
             String error = "File Parsing Exception:" + e.getMessage() + " - " + fileName;
             log.error(error);
             throw new ParserFailedException(error);
