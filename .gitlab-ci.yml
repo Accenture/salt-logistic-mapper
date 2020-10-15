@@ -1,4 +1,10 @@
-# Version S29
+# Version S30
+
+#########################################################################################################
+### PLEASE NOTE:                                                                                      ###
+### This file and .gitlab folder are managed by sce-pipeline-template.                                ###
+### Don't make changes here - they will be overwritten.                                               ###
+#########################################################################################################
 
 # Gitlab Cache Settings
 cache:

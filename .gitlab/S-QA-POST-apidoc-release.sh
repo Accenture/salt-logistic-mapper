@@ -39,8 +39,8 @@ if [ -f "$FILE" ]; then
   git push origin master
 
   printf "=== Complete ===\n"
-  printf "Fix link: https://swagger-ui.apps.d4s.salt-solutions.de/?url=https://cors-anywhere.apps.d4s.salt-solutions.de/https://swugit1.salt-solutions.de/%s/%s/-/raw/master/%s/%s/%s.yml\n" "$APIDOC_NAMESPACE" "$APIDOC_PROJECT_NAME" "$SCE_NAMESPACE" "$SCE_PROJECT" "$CI_COMMIT_TAG"
-  printf "Dynamic link: https://swagger-ui.apps.d4s.salt-solutions.de/?url=https://cors-anywhere.apps.d4s.salt-solutions.de/https://swugit1.salt-solutions.de/%s/%s/-/raw/master/%s/%s/latest.yml\n" "$APIDOC_NAMESPACE" "$APIDOC_PROJECT_NAME" "$SCE_NAMESPACE" "$SCE_PROJECT"
+  printf "Floating Version: https://swagger-ui.apps.d4s.salt-solutions.de/?url=https://cors-anywhere.apps.d4s.salt-solutions.de/https://swugit1.salt-solutions.de/%s/%s/-/raw/master/%s/%s/%s.yml\n" "$APIDOC_NAMESPACE" "$APIDOC_PROJECT_NAME" "$SCE_NAMESPACE" "$SCE_PROJECT" "$CI_COMMIT_TAG"
+  printf "Latest Version: https://swagger-ui.apps.d4s.salt-solutions.de/?url=https://cors-anywhere.apps.d4s.salt-solutions.de/https://swugit1.salt-solutions.de/%s/%s/-/raw/master/%s/%s/latest.yml\n" "$APIDOC_NAMESPACE" "$APIDOC_PROJECT_NAME" "$SCE_NAMESPACE" "$SCE_PROJECT"
 else
   echo "$FILE does not exist, skipping the job"
 fi
