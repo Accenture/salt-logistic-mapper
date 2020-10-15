@@ -33,7 +33,7 @@ public class ConfigResponseWriter {
         String path = createFilePath(rootFolder, configResponse);
         log.trace(format("Create Smooks Configs On Path: %s", path));
         for (SmooksConfigFile smooksFile : configResponse.getFiles()) {
-            String filePath = format("%s/%s", path, smooksFile.getFileName());
+            String filePath = format("file:/%s/%s", path, smooksFile.getFileName());
             log.trace(format("Create Smooks Config File: %s", filePath));
             writeStringToFile(
                     new File(filePath),
