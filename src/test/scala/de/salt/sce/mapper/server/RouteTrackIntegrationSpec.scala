@@ -12,14 +12,14 @@ import org.apache.commons.codec.binary.Base64.decodeBase64
 
 class RouteTrackIntegrationSpec extends IntegrationTester {
 
-  protected val mapperUri: String  = buildMapperUrl()
+  private val mapperUri: String  = buildMapperUrl()
 
   override def beforeAll(): Unit = {
-    logger.warn("Make sure Mapper is up and running! ")
+    logger.warn("Make sure Mapper is up and running!")
   }
 
-  "UPS" should {
-    s"return a protocol echo response for authenticated POST requests" in {
+  "Mapper" should {
+    s"return a transports response for authenticated POST requests [$mapperUri]" in {
       val file1: String = "20170516_093419_20160719_141122_ROTH-IFTSTA"
       val file2: String = "20160123_181643_ROTH-IFTSTA.399"
 
