@@ -19,8 +19,6 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class ConfigResponseWriter {
     private static final Logger log = getLogger(ConfigResponseWriter.class);
 
-    private static final String PLACEHOLDER = "PATH_TO_FOLDER";
-
     /**
      * Storing smooks configuration files in local path.
      * Replacing in config files PLACEHOLDER to Absolute path to file.
@@ -37,7 +35,7 @@ public class ConfigResponseWriter {
             log.trace(format("Create Smooks Config File: %s", filePath));
             writeStringToFile(
                     new File(filePath),
-                    smooksFile.getFileContent().replaceFirst(PLACEHOLDER, path),
+                    smooksFile.getFileContent(),
                     UTF_8
             );
         }

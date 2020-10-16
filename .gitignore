@@ -30,7 +30,7 @@ project/target/
 # IntelliJ specific
 .idea/
 
-# royalmail specific
+# mapper specific
 logs
+smooks
 /bin/
-/conf/service-custom.conf
