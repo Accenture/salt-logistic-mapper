@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN">
     <properties>
-        <property name="LOG_DIR">logs</property>
+        <property name="LOG_DIR">${env:SALT_LOG_DIR:-.}/logs</property>
         <property name="LOG_FILE_NAME">mapper</property>
     </properties>
     <Appenders>
