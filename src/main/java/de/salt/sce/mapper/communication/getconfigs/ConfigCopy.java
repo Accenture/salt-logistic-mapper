@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 import static de.salt.sce.mapper.communication.getconfigs.ConfigResponseParser.parseResponse;
-import static de.salt.sce.mapper.communication.getconfigs.ConfigResponseWriter.replaceAndWrite;
+import static de.salt.sce.mapper.communication.getconfigs.ConfigResponseWriter.write;
 import static java.lang.String.format;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -49,7 +49,7 @@ public class ConfigCopy {
 
         try {
             if (result.isPresent()) {
-                replaceAndWrite(
+                write(
                         rootFolder,
                         parseResponse(result.get())
                 );

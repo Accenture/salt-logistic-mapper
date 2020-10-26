@@ -10,12 +10,19 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.Files.readAllBytes;
 import static java.nio.file.Paths.get;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
 public class ConfigResponseWriterUnitSpec {
+
+    private static final String[] filesContent = {
+            "content 1 content 1 content 1 content 1 content 1",
+            "content 2 content 2 content 2 content 2 content 2",
+            "content 3 content 3 content 3 content 3 content 3"
+    };
 
     @Test
     public void whenGivenCorrectRootPath_thenCreateSmooksFilesWithCorrectPathInPlaceholder() throws IOException {
@@ -24,11 +31,12 @@ public class ConfigResponseWriterUnitSpec {
 
         ConfigResponse configResponse = createConfigResponse();
 
-        ConfigResponseWriter.replaceAndWrite(
+        ConfigResponseWriter.write(
                 rootPath,
                 configResponse
         );
 
+        int fileNumber = 0;
         for(SmooksConfigFile smooksFile: configResponse.getFiles()) {
             try {
                 String fileContent = new String(
@@ -36,9 +44,9 @@ public class ConfigResponseWriterUnitSpec {
                                 rootPath + "/" + configResponse.getName() + "/" + smooksFile.getFileName()
                                 )
                         ),
-                        StandardCharsets.UTF_8
+                        UTF_8
                 );
-                assertThat(fileContent).contains(rootPath);
+                assertThat(fileContent).contains(filesContent[fileNumber++]);
             } catch (IOException e) {
                 fail(e.getMessage());
             }
@@ -46,9 +54,9 @@ public class ConfigResponseWriterUnitSpec {
     }
 
     private ConfigResponse createConfigResponse() {
-        SmooksConfigFile smooksFile1 = new SmooksConfigFile("file1","content 1 content 1 content 1 contPATH_TO_FOLDERent 1 content 1");
-        SmooksConfigFile smooksFile2 = new SmooksConfigFile("file2","content 2 content 2 content 2 contPATH_TO_FOLDERent 2 content 2");
-        SmooksConfigFile smooksFile3 = new SmooksConfigFile("file3","content 3 content 3 content 3 contPATH_TO_FOLDERent 3 content 3");
+        SmooksConfigFile smooksFile1 = new SmooksConfigFile("file1",filesContent[0]);
+        SmooksConfigFile smooksFile2 = new SmooksConfigFile("file2",filesContent[1]);
+        SmooksConfigFile smooksFile3 = new SmooksConfigFile("file3",filesContent[2]);
 
         List<SmooksConfigFile> smooksFiles = new ArrayList<>();
         smooksFiles.add(smooksFile1);

@@ -21,13 +21,11 @@ public class ConfigResponseWriter {
 
     /**
      * Storing smooks configuration files in local path.
-     * Replacing in config files PLACEHOLDER to Absolute path to file.
-     * This needs for smooks. Sometimes smooks configs contain 2 or more files, with links( or include) another files.
      *
      * @param rootFolder     Path in local filesystem
      * @param configResponse {@link ConfigResponse} content to store.
      */
-    public static void replaceAndWrite(String rootFolder, ConfigResponse configResponse) throws IOException {
+    public static void write(String rootFolder, ConfigResponse configResponse) throws IOException {
         String path = createFilePath(rootFolder, configResponse);
         log.trace(format("Create Smooks Configs On Path: %s", path));
         for (SmooksConfigFile smooksFile : configResponse.getFiles()) {
