@@ -15,7 +15,7 @@ import static java.nio.file.Paths.get;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
-public class ConfigResponseWriterTest {
+public class ConfigResponseWriterUnitSpec {
 
     @Test
     public void whenGivenCorrectRootPath_thenCreateSmooksFilesWithCorrectPathInPlaceholder() throws IOException {

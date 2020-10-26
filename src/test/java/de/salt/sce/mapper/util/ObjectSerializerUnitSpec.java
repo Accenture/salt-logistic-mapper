@@ -8,7 +8,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ObjectSerializerTest {
+public class ObjectSerializerUnitSpec {
 
     @Test
     public void whenSeliazeObject_thenCanDeserialize() {

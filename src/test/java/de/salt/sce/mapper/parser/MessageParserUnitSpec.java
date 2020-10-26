@@ -17,7 +17,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class MessageParserTest {
+public class MessageParserUnitSpec {
 
     private MessageParser messageParser = new MessageParser();
 

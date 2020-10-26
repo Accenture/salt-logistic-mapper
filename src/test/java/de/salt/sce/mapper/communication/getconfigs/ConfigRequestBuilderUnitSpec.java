@@ -9,7 +9,7 @@ import static akka.http.javadsl.model.HttpHeader.parse;
 import static akka.http.javadsl.model.headers.HttpCredentials.createBasicHttpCredentials;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ConfigRequestBuilderTest {
+public class ConfigRequestBuilderUnitSpec {
 
     @Test
     public void whenBuildingRequest_thenRequestContainsAllParameters() throws ExecutionException, InterruptedException {

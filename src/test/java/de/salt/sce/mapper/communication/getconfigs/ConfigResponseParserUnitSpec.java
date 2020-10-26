@@ -10,7 +10,7 @@ import static de.salt.sce.mapper.communication.getconfigs.ConfigResponseParser.p
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ConfigResponseParserTest {
+public class ConfigResponseParserUnitSpec {
 
     @Test
     public void whenGivenCorrectSmooksConfigFile_thenParsingToConfigResponseObject() throws IOException {
