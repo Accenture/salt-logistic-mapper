@@ -46,9 +46,9 @@ class RouteUnitSpec extends WordSpec with Matchers
       }
     }
 
-    "leave GET requests to other path [/invalidPath] unhandled" in {
+    "handle GET requests to other path [/invalidPath]" in {
       Post("/invalidPath") ~> route ~> check {
-        handled shouldBe false
+        handled shouldBe true
       }
     }
 
