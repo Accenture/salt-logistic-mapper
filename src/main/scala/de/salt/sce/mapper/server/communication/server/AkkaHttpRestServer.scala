@@ -6,7 +6,7 @@ import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.model.StatusCodes.InternalServerError
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.directives.Credentials
-import akka.http.scaladsl.server.{ExceptionHandler, Route}
+import akka.http.scaladsl.server.{ExceptionHandler, RejectionHandler, Route}
 import akka.pattern.ask
 import akka.util.Timeout
 import com.typesafe.scalalogging.LazyLogging
@@ -23,13 +23,7 @@ import scala.concurrent.duration.Duration
  * Companion Object
  */
 object AkkaHttpRestServer extends LazyLogging {
-  private val myExceptionHandler = ExceptionHandler {
-    case e: Exception =>
-      logger.error(e.getMessage, e.getCause)
-      complete(InternalServerError)
-  }
   private val restServer = new AkkaHttpRestServer
-
   def getServer: AkkaHttpRestServer = restServer
 }
 
@@ -45,25 +39,40 @@ class AkkaHttpRestServer extends RestServer with LazyLogging with LazyConfig {
   implicit val s: Serialization = native.Serialization
   implicit val formats: Formats = DefaultFormats
 
-  def getRoute: Route = handleExceptions(AkkaHttpRestServer.myExceptionHandler) {
+  /**
+   * Get all defined routes
+   *
+   * @return Defined route
+   */
+  def getRoute: Route = {
     import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
-    cors() {
-      path("") { // default - GET on root
-        get {
-          complete(StatusCodes.OK)
-        } ~
-          post {
-            complete(StatusCodes.MethodNotAllowed)
-          }
-      } ~ path(mapperPath / mapperExt) {
-        get {
-          complete(StatusCodes.MethodNotAllowed)
-        } ~
-          post {
-            authenticateBasic(realm = "sce", sceAuthenticator) { _ =>
-              handleMappingRequest()
+
+    // Rejection handler
+    val rejectionHandler = corsRejectionHandler.withFallback(RejectionHandler.default)
+
+    // Exception handler
+    val exceptionHandler = ExceptionHandler { case e: NoSuchElementException =>
+      complete(StatusCodes.NotFound -> e.getMessage)
+    }
+
+    // Combining the two handlers only for convenience
+    val handleErrors = handleRejections(rejectionHandler) & handleExceptions(exceptionHandler)
+
+    handleErrors {
+      cors() {
+        handleErrors {
+          path("") { // default - GET on root
+            get {
+              complete(StatusCodes.OK)
+            }
+          } ~ path(mapperPath / mapperExt) {
+            post {
+              authenticateBasic(realm = "sce", sceAuthenticator) { _ =>
+                handleMappingRequest()
+              }
             }
           }
+        }
       }
     }
   }
@@ -77,17 +86,17 @@ class AkkaHttpRestServer extends RestServer with LazyLogging with LazyConfig {
     }
 
   protected def handleMappingRequest(): Route = {
-      entity(as[MapperRequest]) {
-        request =>
-          onSuccess(ActorService.getMapperClientManagerActor ? request) {
-            case response: InternalResponse =>
-              logger.debug(s"Response: $response")
-              complete(StatusCodes.getForKey(response.statusCode).getOrElse(InternalServerError), response )
+    entity(as[MapperRequest]) {
+      request =>
+        onSuccess(ActorService.getMapperClientManagerActor ? request) {
+          case response: InternalResponse =>
+            logger.debug(s"Response: $response")
+            complete(StatusCodes.getForKey(response.statusCode).getOrElse(InternalServerError), response )
 
-            case x: Any =>
-              logger.error(s"Internal error: Got unexpected response ${x.toString}")
-              complete(InternalServerError, x)
-          }
-      }
+          case x: Any =>
+            logger.error(s"Internal error: Got unexpected response ${x.toString}")
+            complete(InternalServerError, x)
+        }
+    }
   }
 }

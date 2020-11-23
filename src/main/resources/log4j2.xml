@@ -1,25 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+SALT log4j2 Configuration
+=========================
+# Environment Variables
+SALT_LOG_DIR        - Absolute or relative path to place the logs (Default: ./logs)
+SALT_LOG_LEVEL      - Log level (Default: INFO)
+SALT_ROOT_LOG_LEVEL - Root log level (Default: INFO)
+
+# Changelogs
+## Version 3
+* Add Zulu timezone
+
+## Version 2
+* Remove color overwrites for TRACE, DEBUG and INFO
+* Add date on timestamp
+
+## Version 1
+* Enable environment variable overwrites
+* Remove color highlighting for file log
+* Enable abbreviated package name, eg. d.s.s.a.Bootstrap instead of de.salt.sce.angela.Bootstrap
+* One place log for multiple services, configurable via environment variable SALT_LOG_DIR, separated by System Property
+  field set by Bootstrap
+
+-->
 <Configuration status="WARN">
-    <properties>
-        <property name="LOG_DIR">${env:SALT_LOG_DIR:-.}/logs</property>
-        <property name="LOG_FILE_NAME">mapper</property>
-    </properties>
     <Appenders>
         <Console name="STDOUT" target="SYSTEM_OUT">
             <PatternLayout disableAnsi="false"
-                           pattern="%d{HH:mm:ss.SSS} %highlight{ %-5level}{INFO=BLUE, DEBUG=BLACK, TRACE= CYAN} %style{[%.10thread]}{magenta} %style{ %logger{36}}{green} %n> %msg%n"/>
+                           pattern="%d{yyyy-MM-dd H:mm:ss.SSS}{GMT+0}Z %highlight{%-5level} %style{[%.70thread]}{magenta} %style{%c{1.}}{green} %n> %msg%n"/>
         </Console>
-
         <RollingFile
-                name="rollingFile"
-                fileName="${LOG_DIR}/${LOG_FILE_NAME}.log"
-                filePattern="${LOG_DIR}/archived/${LOG_FILE_NAME}.%d{yyyy-MM-dd.HH.mm}.log.gz"
-                ignoreExceptions="false">  <!-- also use hour and minutes in file pattern: prevent that older files are overwritten if system is restarted multiple times a day  -->
+                name="FILE"
+                fileName="${env:SALT_LOG_DIR:-logs}/${sys:sce.service.name:-sce-service}/application.log"
+                filePattern="${env:SALT_LOG_DIR:-logs}/${sys:sce.service.name:-sce-service}/archived/application.%d{yyyy-MM-dd.HH.mm}.log.gz"
+                ignoreExceptions="false">
             <PatternLayout>
-                <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight{ %-5level}{INFO=BLUE, DEBUG=BLACK, TRACE= CYAN}
-                    %style{[%.10thread]}{magenta} %style{ %logger{36}}{green} %n> %msg%n
-                </Pattern>
-                <!--				<Pattern>%d{yyyy-MM-dd HH:mm:ss} %-5p %m%n</Pattern>-->
+                <Pattern>%d{yyyy-MM-dd H:mm:ss.SSS}{GMT+0}Z %-5level [%.70thread] %c{1.} %n> %msg%n</Pattern>
             </PatternLayout>
             <Policies>
                 <OnStartupTriggeringPolicy/>
@@ -28,17 +44,14 @@
             </Policies>
             <DefaultRolloverStrategy max="5"/>
         </RollingFile>
-
     </Appenders>
 
     <Loggers>
-        <Root level="INFO">
+        <Logger name="de.salt.sce" level="${env:SALT_LOG_LEVEL:-INFO}"/>
+        <Root level="${env:SALT_ROOT_LOG_LEVEL:-INFO}">
             <appender-ref ref="STDOUT"/>
-            <appender-ref ref="rollingFile"/>
+            <appender-ref ref="FILE"/>
         </Root>
-
-        <!-- Specific Levels -->
-        <Logger name="de.salt.sce" level="TRACE"/>
     </Loggers>
 
 </Configuration>
