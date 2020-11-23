@@ -6,7 +6,7 @@ info:
   contact:
     name: SCE Team
     email: sce-addons@salt-software.de
-  version: 0.1.4-SNAPSHOT
+  version: 0.1.4
 servers:
   - url: https://sce-mapper.apps.d4s.salt-solutions.de
     description: Integration Server
