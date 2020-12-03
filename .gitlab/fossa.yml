@@ -2,7 +2,7 @@ version: 2
 cli:
   server: https://app.fossa.com
   fetcher: custom
-  project: sce-{{project-name}}
+  project: {{project-name}}
 analyze:
   modules:
     - name: root

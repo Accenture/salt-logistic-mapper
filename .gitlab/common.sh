@@ -46,6 +46,13 @@ function prepare-image-configuration() {
   printf "Prepare Image\n"
   sed -i "s+{{executable-script-name}}+$EXECUTABLE_SCRIPT_NAME+g" .gitlab/packager.txt
   cat .gitlab/packager.txt >> build.sbt
+
+  printf "Checking whether special packager is needed\n"
+  FILE=packager-$EXECUTABLE_SCRIPT_NAME.txt
+  if test -f .gitlab/"$FILE"; then
+    echo "$FILE exists, applying these additional packager configs"
+    cat .gitlab/"$FILE" >> build.sbt
+  fi
 }
 
 function prepare-plugins-common() {
