@@ -16,6 +16,8 @@ object Bootstrap extends App with LazyLogging with LazyConfig {
 
   protected var bindingFuture: Future[Http.ServerBinding] = _
 
+  System.getProperties.setProperty("sce.service.name", "mapper")
+
   config.checkValid(config, "sce.track.mapper.rest-server")
 
   protected val protocol = config.getString("sce.track.mapper.rest-server.protocol")

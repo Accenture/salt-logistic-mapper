@@ -3,7 +3,7 @@
 // = Metadata
 // =====================================================================================================================
 name := "mapper"
-version := "1.1.7"
+version := "1.1.8"
 organization := "de.salt.sce"
 scalaVersion := "2.12.11"
 
@@ -37,6 +37,11 @@ libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2"
 libraryDependencies += "org.apache.logging.log4j" % "log4j-slf4j-impl" % "2.13.3"
 libraryDependencies += "org.apache.logging.log4j" %% "log4j-api-scala" % "12.0"
 
+
+libraryDependencies += "org.apache.logging.log4j" % "log4j-core" % "2.13.3"
+
+
+
 libraryDependencies += "commons-codec" % "commons-codec" % "1.13"
 libraryDependencies += "org.json4s" %% "json4s-native" % "3.6.7"
 libraryDependencies += "de.heikoseeberger" %% "akka-http-json4s" % "1.28.0"
@@ -62,8 +67,10 @@ libraryDependencies += "org.milyn" % "milyn-smooks-all" % "1.7.1"
 libraryDependencies += "ch.megard" %% "akka-http-cors" % "1.0.0"
 
 // needed for merging conflicts in dependencies.
+
 assemblyMergeStrategy in assembly := {
   case PathList("META-INF", xs @ _*) => MergeStrategy.discard
   case PathList("reference.conf") => MergeStrategy.concat
   case x => MergeStrategy.first
 }
+
