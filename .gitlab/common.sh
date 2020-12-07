@@ -46,6 +46,13 @@ function prepare-image-configuration() {
   printf "Prepare Image\n"
   sed -i "s+{{executable-script-name}}+$EXECUTABLE_SCRIPT_NAME+g" .gitlab/packager.txt
   cat .gitlab/packager.txt >> build.sbt
+
+  printf "Checking whether special packager is needed\n"
+  FILE=packager-$EXECUTABLE_SCRIPT_NAME.txt
+  if test -f .gitlab/"$FILE"; then
+    echo "$FILE exists, applying these additional packager configs"
+    cat .gitlab/"$FILE" >> build.sbt
+  fi
 }
 
 function prepare-plugins-common() {
@@ -95,7 +102,7 @@ function unit-test() {
 function prepare-fossa() {
   printf "Prepare FOSSA\n"
   cp -f .gitlab/fossa.yml .fossa.yml
-  sed -i "s+{{project-name}}+$CI_PROJECT_NAME+g" .fossa.yml
+  sed -i "s+{{project-name}}+${CI_PROJECT_PATH//\//-}+g" .fossa.yml
   printf "%s\n" "Get the latest version from internet"
   curl -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fossas/fossa-cli/master/install.sh | bash
   fossa --version
@@ -111,7 +118,7 @@ function prepare-sonarqube() {
   printf "Prepare SonarQube\n"
   sed -i "s+{{sonar-url}}+$SONAR_URL+g" .gitlab/sonar.txt
   sed -i "s+{{sonar-token}}+$SONAR_TOKEN+g" .gitlab/sonar.txt
-  sed -i "s+{{sonar-project-key}}+$CI_PROJECT_NAME+g" .gitlab/sonar.txt
+  sed -i "s+{{sonar-project-key}}+${CI_PROJECT_PATH//\//-}+g" .gitlab/sonar.txt
   cat .gitlab/sonar.txt >> build.sbt
 }
 
