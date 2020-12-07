@@ -3,7 +3,7 @@
 // = Metadata
 // =====================================================================================================================
 name := "mapper"
-version := "1.1.8"
+version := "1.1.9"
 organization := "de.salt.sce"
 scalaVersion := "2.12.11"
 
@@ -62,8 +62,8 @@ libraryDependencies += "org.milyn" % "milyn-smooks-all" % "1.7.1"
 libraryDependencies += "ch.megard" %% "akka-http-cors" % "1.0.0"
 
 // needed for merging conflicts in dependencies.
-assemblyMergeStrategy in assembly := {
-  case PathList("META-INF", xs @ _*) => MergeStrategy.discard
-  case PathList("reference.conf") => MergeStrategy.concat
-  case x => MergeStrategy.first
-}
+//assemblyMergeStrategy in assembly := {
+//  case PathList("META-INF", xs @ _*) => MergeStrategy.discard
+//  case PathList("reference.conf") => MergeStrategy.concat
+//  case x => MergeStrategy.first
+//}

@@ -25,7 +25,7 @@ class RouteTrackIntegrationSpec extends IntegrationTester {
 
       val mapperRequest = MapperRequest(
         id = UUID.randomUUID().toString,
-        serviceName = "ups_ftp_de",
+        serviceName = "ups_de",
         configFile = "config-ups.xml",
         messageType = "edifact",
         encoding = "windows-1252",
