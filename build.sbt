@@ -3,7 +3,7 @@
 // = Metadata
 // =====================================================================================================================
 name := "mapper"
-version := "1.1.9"
+version := "1.1.11"
 organization := "de.salt.sce"
 scalaVersion := "2.12.11"
 
@@ -46,10 +46,8 @@ libraryDependencies += "de.heikoseeberger" %% "akka-http-json4s" % "1.28.0"
 
 libraryDependencies += "com.google.code.gson" % "gson" % "2.8.6"
 
-
 // Scalatest :: http://www.scalatest.org
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % "test"
-
 libraryDependencies += "org.junit.jupiter" % "junit-jupiter-engine" % "5.0.0" % "test"
 libraryDependencies += "org.mockito" % "mockito-junit-jupiter" % "2.23.0" % "test"
 libraryDependencies += "org.assertj" % "assertj-core" % "3.11.1" % "test"
@@ -57,7 +55,6 @@ libraryDependencies += "org.assertj" % "assertj-core" % "3.11.1" % "test"
 libraryDependencies += "commons-io" % "commons-io" % "2.5"
 libraryDependencies += "commons-validator" % "commons-validator" % "1.6"
 libraryDependencies += "org.apache.commons" % "commons-lang3" % "3.4"
-
 
 libraryDependencies += "org.milyn" % "milyn-smooks-edi" % "1.7.1"
 libraryDependencies += "org.milyn" % "milyn-smooks-csv" % "1.7.1"
