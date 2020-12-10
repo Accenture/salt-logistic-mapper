@@ -3,11 +3,11 @@
 // = Metadata
 // =====================================================================================================================
 name := "mapper"
-version := "1.1.11"
+version := "1.1.12-SNAPSHOT"
 organization := "de.salt.sce"
 scalaVersion := "2.12.11"
 
-lazy val root = (project in file(""))
+lazy val root = project in file("")
 
 // Remove feature warning
 // Doc: http://stackoverflow.com/questions/27895790/sbt-0-12-4-there-were-x-feature-warnings-re-run-with-feature-for-details

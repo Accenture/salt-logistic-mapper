@@ -34,3 +34,4 @@ project/target/
 logs
 smooks
 /bin/
+/smooks-temp/

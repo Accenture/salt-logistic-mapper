@@ -26,7 +26,7 @@ class RouteTrackIntegrationSpec extends IntegrationTester {
 
       val mapperRequest = MapperRequest(
         id = UUID.randomUUID().toString,
-        serviceName = "ups_ftp_de",
+        serviceName = "ups_de",
         configFile = "config-ups.xml",
         messageType = "edifact",
         encoding = "windows-1252",
@@ -46,7 +46,7 @@ class RouteTrackIntegrationSpec extends IntegrationTester {
       val line1: Option[String] = internalResponse.edifactResponse.get.success.get(file1)
       val transport1 = deserialize(decodeBase64(line1.get)).asInstanceOf[Transport]
 
-      transport1.getShipments.size() should be(1);
+      transport1.getShipments.size() should be(1)
       transport1.getShipments.get(0).getPakets.size() should be(2)
       transport1.getShipments.get(0).getPakets.get(0).getRffs.get(0).getReference should be("1Z3F4W576807747148")
       transport1.getShipments.get(0).getPakets.get(0).getRffs.get(1).getReference should be("WALCH")
@@ -57,7 +57,7 @@ class RouteTrackIntegrationSpec extends IntegrationTester {
       val line2: Option[String] = internalResponse.edifactResponse.get.success.get(file2)
       val transport2 = deserialize(decodeBase64(line2.get)).asInstanceOf[Transport]
 
-      transport2.getShipments.size() should be(1);
+      transport2.getShipments.size() should be(1)
       transport2.getShipments.get(0).getPakets.size() should be(2)
       transport2.getShipments.get(0).getPakets.get(0).getSts.getEvent should be("101")
       transport2.getShipments.get(0).getPakets.get(0).getRffs.get(0).getReference should be("1Z3F4W576807071118")

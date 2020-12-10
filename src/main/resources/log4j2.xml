@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 SALT log4j2 Configuration
-=========================
+========================
 # Environment Variables
+SALT_ENVIRONMENT    - System Environment (Default: DEV) (Options: PROD/DEV)
 SALT_LOG_DIR        - Absolute or relative path to place the logs (Default: ./logs)
 SALT_LOG_LEVEL      - Log level (Default: INFO)
 SALT_ROOT_LOG_LEVEL - Root log level (Default: INFO)
@@ -26,16 +27,17 @@ SALT_ROOT_LOG_LEVEL - Root log level (Default: INFO)
 <Configuration status="WARN">
     <Appenders>
         <Console name="STDOUT" target="SYSTEM_OUT">
-            <PatternLayout disableAnsi="false"
-                           pattern="%d{yyyy-MM-dd H:mm:ss.SSS}{GMT+0}Z %highlight{%-5level} %style{[%.70thread]}{magenta} %style{%c{1.}}{green} %n> %msg%n"/>
+            <PatternLayout>
+                <Pattern>%d{yyyy-MM-dd H:mm:ss.SSS}{GMT+0}Z %highlight{%-5level} %style{[%.70thread]}{magenta} %style{%c{1.}}{green} %n> %msg%n</Pattern>
+            </PatternLayout>
         </Console>
         <RollingFile
                 name="FILE"
                 fileName="${env:SALT_LOG_DIR:-logs}/${sys:sce.service.name:-sce-service}/application.log"
                 filePattern="${env:SALT_LOG_DIR:-logs}/${sys:sce.service.name:-sce-service}/archived/application.%d{yyyy-MM-dd.HH.mm}.log.gz"
                 ignoreExceptions="false">
-            <PatternLayout>
-                <Pattern>%d{yyyy-MM-dd H:mm:ss.SSS}{GMT+0}Z %-5level [%.70thread] %c{1.} %n> %msg%n</Pattern>
+            <PatternLayout disableAnsi="true">
+                <Pattern>%d{HH:mm:ss.SSS}{GMT+0}Z %-5level [%.70thread] %c{1.} %n> %msg%n</Pattern>
             </PatternLayout>
             <Policies>
                 <OnStartupTriggeringPolicy/>
