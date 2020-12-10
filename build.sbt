@@ -3,7 +3,7 @@
 // = Metadata
 // =====================================================================================================================
 name := "mapper"
-version := "1.1.8"
+version := "1.1.9"
 organization := "de.salt.sce"
 scalaVersion := "2.12.11"
 
@@ -37,17 +37,14 @@ libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2"
 libraryDependencies += "org.apache.logging.log4j" % "log4j-slf4j-impl" % "2.13.3"
 libraryDependencies += "org.apache.logging.log4j" %% "log4j-api-scala" % "12.0"
 
-
-libraryDependencies += "org.apache.logging.log4j" % "log4j-core" % "2.13.3"
-
-
+// Akka CORS :: https://github.com/lomigmegard/akka-http-cors
+libraryDependencies += "ch.megard" %% "akka-http-cors" % "1.0.0"
 
 libraryDependencies += "commons-codec" % "commons-codec" % "1.13"
 libraryDependencies += "org.json4s" %% "json4s-native" % "3.6.7"
 libraryDependencies += "de.heikoseeberger" %% "akka-http-json4s" % "1.28.0"
 
 libraryDependencies += "com.google.code.gson" % "gson" % "2.8.6"
-
 
 
 // Scalatest :: http://www.scalatest.org
@@ -61,16 +58,14 @@ libraryDependencies += "commons-io" % "commons-io" % "2.5"
 libraryDependencies += "commons-validator" % "commons-validator" % "1.6"
 libraryDependencies += "org.apache.commons" % "commons-lang3" % "3.4"
 
-libraryDependencies += "org.milyn" % "milyn-smooks-all" % "1.7.1"
 
-// Akka CORS :: https://github.com/lomigmegard/akka-http-cors
-libraryDependencies += "ch.megard" %% "akka-http-cors" % "1.0.0"
-
-// needed for merging conflicts in dependencies.
+libraryDependencies += "org.milyn" % "milyn-smooks-edi" % "1.7.1"
+libraryDependencies += "org.milyn" % "milyn-smooks-csv" % "1.7.1"
 
 assemblyMergeStrategy in assembly := {
-  case PathList("META-INF", xs @ _*) => MergeStrategy.discard
+  case PathList("META-INF", "MANIFEST.MF") => MergeStrategy.discard
+  case PathList("META-INF", "data-decoders.inf") => MergeStrategy.concat
   case PathList("reference.conf") => MergeStrategy.concat
+  case PathList("overview.html") => MergeStrategy.concat
   case x => MergeStrategy.first
 }
-
