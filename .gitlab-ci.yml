@@ -15,6 +15,7 @@ cache:
 stages:
   - PUBLISH
   - BUILD
+  - PUBLISH
   - QA-1
   - QA-2
   - STASH
@@ -243,8 +244,8 @@ man-demo-deploy:
 
 publish:
   stage: PUBLISH
-  dependencies:
-    - int-test
+#  dependencies:
+#    - int-test
   only:
     - tags
   script:
