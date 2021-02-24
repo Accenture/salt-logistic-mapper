@@ -21,6 +21,7 @@ stages:
   - DEPLOY-1
   - QA-POST
   - DEPLOY-2
+  - PUBLISH
 
 build:
   stage: BUILD
@@ -239,3 +240,14 @@ man-demo-deploy:
     - d4s-devbox-logistic-1
   when:
     manual
+
+publish:
+  stage: PUBLISH
+  dependencies:
+    - int-test
+  only:
+    - tags
+  script:
+    - .gitlab/S-PUBLISH-github.sh
+  tags:
+    - d4s-devbox-logistic-1
