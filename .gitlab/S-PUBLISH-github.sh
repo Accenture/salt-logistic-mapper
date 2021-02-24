@@ -1,1 +1,3 @@
-printf "Hallo gitHub"
+#!/bin/bash
+
+printf "Hallo GitHub\n"

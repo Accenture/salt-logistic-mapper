@@ -13,6 +13,7 @@ cache:
     - "sbt-cache"
 
 stages:
+  - PUBLISH
   - BUILD
   - QA-1
   - QA-2
@@ -21,7 +22,6 @@ stages:
   - DEPLOY-1
   - QA-POST
   - DEPLOY-2
-  - PUBLISH
 
 build:
   stage: BUILD
