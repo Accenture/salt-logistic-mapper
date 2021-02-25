@@ -13,7 +13,6 @@ cache:
     - "sbt-cache"
 
 stages:
-  - PUBLISH
   - BUILD
   - PUBLISH
   - QA-1
