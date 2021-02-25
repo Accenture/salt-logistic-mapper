@@ -7,7 +7,8 @@ printf "Project name: %s\n" "$project_name"
 printf "GIT repo: %s\n" "$project"
 
 printf "Clone git repository...\n"
-gitlab_address="https://$gitlab_user:$gitlab_token@$(echo "$project" | sed -e 's#https://##')"
+# gitlab_address="https://$gitlab_user:$gitlab_token@$(echo "$project" | sed -e 's#https://##')"
+gitlab_address="https://$ARTIFACTORY_USER:$ARTIFACTORY_TOKEN@$(echo "$project" | sed -e 's#https://##')"
 git clone "$gitlab_address"
 
 printf "Change directory to $project_name...\n"
