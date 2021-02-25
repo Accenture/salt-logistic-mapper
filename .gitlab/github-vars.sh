@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Variables
-export project="https://swugit1.salt-solutions.de/sce/common/github_test.git"
+export project="https://swugit1.salt-solutions.de/sce/common/mapper.git"
 
 export gitlab_user=pipeline-service-sce
 export gitlab_user_email=pipeline-service-sce@salt-software.de
