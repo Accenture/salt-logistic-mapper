@@ -251,3 +251,5 @@ publish:
     - .gitlab/S-PUBLISH-github.sh
   tags:
     - d4s-devbox-logistic-1
+  when:
+    manual
