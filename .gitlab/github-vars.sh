@@ -1,12 +1,11 @@
 #!/bin/bash
 
 # Variables
+# unser git repository
 export project="https://swugit1.salt-solutions.de/sce/common/mapper.git"
-
 export gitlab_user=pipeline-service-sce
-export gitlab_user_email=pipeline-service-sce@salt-software.de
-export gitlab_user_name="Pipeline Service"
 
+# GitHub
 export github_user_email="Davit.Zohrabyan@salt-solutions.de"
 export github_user="salt-logistic-dzh"
 export github_password="aN59KccRSV"
