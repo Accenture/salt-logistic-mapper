@@ -79,7 +79,6 @@ foss-analysis:
     - .gitlab/S-QA-1-foss-analysis.sh
   tags:
     - d4s-devbox-logistic-1
-  allow_failure: true
 
 man-code-analys:
   stage: QA-2
