@@ -244,8 +244,6 @@ man-demo-deploy:
 
 publish:
   stage: PUBLISH
-  dependencies:
-    - int-test
   only:
     - tags
   script:
