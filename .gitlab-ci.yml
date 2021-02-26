@@ -253,3 +253,4 @@ publish:
     - d4s-devbox-logistic-1
   when:
     manual
+  allow_failure: true
