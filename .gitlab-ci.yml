@@ -207,18 +207,7 @@ int-test:
   tags:
     - d4s-devbox-logistic-1
 
-foss-report:
-  stage: QA-POST
-  cache:
-    paths:
-      - "sbt-cache"
-    policy: pull
-  only:
-    - tags
-  script:
-    - .gitlab/S-QA-POST-foss-report.sh
-  tags:
-    - d4s-devbox-logistic-1
+
 
 apidoc-release:
   stage: QA-POST
