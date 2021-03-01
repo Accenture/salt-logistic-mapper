@@ -28,7 +28,7 @@ git rm .gitlab-ci.yml
 git rm README_INTERN.md
 git rm -rf .gitlab
 
-github_address="https://$GITHUB_USER:$GITHUB_PASSWORD@$(echo "$GITHUB_URL" | sed -e 's#https://##')"
+github_address="https://$GITHUB_USER:$GITHUB_TOKEN@$(echo "$GITHUB_URL" | sed -e 's#https://##')"
 printf "Copy into $github_address\n"
 
 git config --global user.email "$GITHUB_USER_EMAIL"

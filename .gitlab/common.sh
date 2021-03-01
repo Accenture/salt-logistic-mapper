@@ -36,6 +36,18 @@ fi
 if [ -z "$PIPELINE_SERVICE_TOKEN" ]; then
     printf "%s\n" "Variable PIPELINE_SERVICE_TOKEN is unset"; ERROR=1
 fi
+if [ -z "$GITHUB_TOKEN" ]; then
+    printf "%s\n" "Variable GITHUB_TOKEN is unset"; ERROR=1
+fi
+if [ -z "$GITHUB_URL" ]; then
+    printf "%s\n" "Variable GITHUB_URL is unset"; ERROR=1
+fi
+if [ -z "$GITHUB_USER" ]; then
+    printf "%s\n" "Variable GITHUB_USER is unset"; ERROR=1
+fi
+if [ -z "$GITHUB_USER_EMAIL" ]; then
+    printf "%s\n" "Variable GITHUB_USER_EMAIL is unset"; ERROR=1
+fi
 # shellcheck disable=SC2181
 if [[ $ERROR -ne 0 ]]; then
     printf "%s\n" "Please set all variables mentioned above on GitLab CI/CD Settings"; exit 1
