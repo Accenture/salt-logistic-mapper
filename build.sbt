@@ -56,12 +56,12 @@ libraryDependencies += "commons-io" % "commons-io" % "2.5"
 libraryDependencies += "commons-validator" % "commons-validator" % "1.6"
 libraryDependencies += "org.apache.commons" % "commons-lang3" % "3.4"
 
-//libraryDependencies += "org.milyn" % "milyn-smooks-edi" % "1.7.1"
-//libraryDependencies += "org.milyn" % "milyn-smooks-csv" % "1.7.1"
-libraryDependencies ++= Seq(
-  "org.milyn" % "milyn-smooks-all" % "1.7.0",
-  "javax.jms" % "jms" % "1.1"
-)
+libraryDependencies += "org.milyn" % "milyn-smooks-edi" % "1.7.1"
+libraryDependencies += "org.milyn" % "milyn-smooks-csv" % "1.7.1"
+//libraryDependencies ++= Seq(
+//  "org.milyn" % "milyn-smooks-all" % "1.7.0",
+//  "javax.jms" % "jms" % "1.1"
+//)
 
 
 //assemblyMergeStrategy in assembly := {
