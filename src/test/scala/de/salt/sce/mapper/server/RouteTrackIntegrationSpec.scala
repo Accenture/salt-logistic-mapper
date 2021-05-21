@@ -19,7 +19,7 @@ class RouteTrackIntegrationSpec extends IntegrationTester {
   }
 
   "Mapper" should {
-    s"return a transports response for authenticated POST requests [$mapperUri]" in {
+    s"return a transports response for authenticated POST requests [$mapperUri] for UPS" in {
       val file1: String = "20170516_093419_20160719_141122_ROTH-IFTSTA"
       val file2: String = "20160123_181643_ROTH-IFTSTA.399"
       val file3: String = "Unknown"
@@ -67,6 +67,45 @@ class RouteTrackIntegrationSpec extends IntegrationTester {
       val line3: Option[String] = internalResponse.edifactResponse.get.error.get(file3)
       line3 should be ('defined)
       line3.get should be(s"File Parsing Exception:Failed to filter source. - $file3")
+    }
+
+    s"return a transports response for authenticated POST requests [$mapperUri] for GLS" in {
+      val file1: String = "20200923_133501_pakstat.018"
+      val file2: String = "Unknown"
+
+      val mapperRequest = MapperRequest(
+        id = UUID.randomUUID().toString,
+        serviceName = "gls_de",
+        configFile = "config-gls.xml",
+        messageType = "csv",
+        encoding = "UTF-8",
+        files = Map(
+          file1 -> "85590441212|20201102|1200|2010|20201103|1057|4499|700002105|00340061160033296936|001324094|Amazon Brieselang GmbH|\n85756150125|20201102|2800|2011|20201103|1056|Hemdt|700002106|62597232|0001067650|Mercedes-Benz AG|\n85756150126|20201102|2800|2011|20201103|1056|Hemdt|700002106|62597224|0001067650|Mercedes-Benz AG|",
+          file2 -> "Unknown format"
+        )
+      )
+
+      val internalResponse:InternalResponse = createAndCheckAuthRequest(mapperRequest, mapperUri)
+
+      internalResponse.csvResponse.get.success.size should be(1)
+      internalResponse.csvResponse.get.error.size should be(1)
+      internalResponse.edifactResponse should be(Option.empty)
+
+      val line1: Option[String] = internalResponse.csvResponse.get.success.get(file1)
+      val transport1 = deserialize(decodeBase64(line1.get)).asInstanceOf[Transport]
+
+      //TODO
+      transport1.getShipments.size() should be(3)
+      transport1.getShipments.get(0).getPakets.size() should be(1)
+      transport1.getShipments.get(0).getPakets.get(0).getRffs.get(0).getReference should be("85590441212")
+      transport1.getShipments.get(0).getPakets.get(0).getRffs.get(1).getReference should be("WALCH")
+      transport1.getShipments.get(0).getPakets.get(0).getDtms.get(0).getDateTimePeriod should be("20160714173746")
+      transport1.getShipments.get(0).getPakets.get(0).getNads.size() should be(3)
+      transport1.getShipments.get(0).getPakets.get(0).getNads.get(2).getStreet1 should be("21 HOERNLEWEG")
+
+      val line3: Option[String] = internalResponse.csvResponse.get.error.get(file2)
+      line3 should be ('defined)
+      line3.get should be(s"File Parsing Exception:Failed to filter source. - $file2")
     }
   }
 
