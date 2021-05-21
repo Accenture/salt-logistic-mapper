@@ -3,7 +3,7 @@
 // = Metadata
 // =====================================================================================================================
 name := "mapper"
-version := "1.1.16-SNAPSHOT1"
+version := "1.1.16-SNAPSHOT2"
 organization := "de.salt.sce"
 scalaVersion := "2.12.11"
 
