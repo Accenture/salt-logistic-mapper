@@ -68,36 +68,36 @@ class RouteTrackIntegrationSpec extends IntegrationTester {
       line3.get should be(s"File Parsing Exception:Failed to filter source. - $file3")
     }
 
-    s"return a transports response for authenticated POST requests [$mapperUri] for GLS" in {
-      val file1: String = "20200923_133501_pakstat.018"
-
-      val mapperRequest = MapperRequest(
-        id = UUID.randomUUID().toString,
-        serviceName = "gls_de",
-        configFile = "config-gls.xml",
-        messageType = "csv",
-        encoding = "windows-1252",
-        files = Map(
-          file1 -> "85590441212|20201102|1200|2010|20201103|1057|4499|700002105|00340061160033296936|001324094|Amazon Brieselang GmbH|\n85756150125|20201102|2800|2011|20201103|1056|Hemdt|700002106|62597232|0001067650|Mercedes-Benz AG|\n85756150126|20201102|2800|2011|20201103|1056|Hemdt|700002106|62597224|0001067650|Mercedes-Benz AG|",
-        )
-      )
-
-      val internalResponse:InternalResponse = createAndCheckAuthRequest(mapperRequest, mapperUri)
-
-      internalResponse.csvResponse.get.success.size should be(1)
-      internalResponse.edifactResponse should be(Option.empty)
-
-      val line1: Option[String] = internalResponse.csvResponse.get.success.get(file1)
-      val packages = deserialize(decodeBase64(line1.get)).asInstanceOf[java.util.ArrayList[PaketCSV]]
-
-      packages.size should be(3)
-      packages.get(0).getLangreferenz should be("85590441212")
-      packages.get(0).getEmpfaenger should be("Amazon Brieselang GmbH")
-      packages.get(0).getSdgdatum should be("20201103")
-      packages.get(0).getSdgzeit should be("1057")
-      packages.get(0).getStatus should be("2010")
-
-    }
+//    s"return a transports response for authenticated POST requests [$mapperUri] for GLS" in {
+//      val file1: String = "20200923_133501_pakstat.018"
+//
+//      val mapperRequest = MapperRequest(
+//        id = UUID.randomUUID().toString,
+//        serviceName = "gls_de",
+//        configFile = "config-gls.xml",
+//        messageType = "csv",
+//        encoding = "windows-1252",
+//        files = Map(
+//          file1 -> "85590441212|20201102|1200|2010|20201103|1057|4499|700002105|00340061160033296936|001324094|Amazon Brieselang GmbH|\n85756150125|20201102|2800|2011|20201103|1056|Hemdt|700002106|62597232|0001067650|Mercedes-Benz AG|\n85756150126|20201102|2800|2011|20201103|1056|Hemdt|700002106|62597224|0001067650|Mercedes-Benz AG|",
+//        )
+//      )
+//
+//      val internalResponse:InternalResponse = createAndCheckAuthRequest(mapperRequest, mapperUri)
+//
+//      internalResponse.csvResponse.get.success.size should be(1)
+//      internalResponse.edifactResponse should be(Option.empty)
+//
+//      val line1: Option[String] = internalResponse.csvResponse.get.success.get(file1)
+//      val packages = deserialize(decodeBase64(line1.get)).asInstanceOf[java.util.ArrayList[PaketCSV]]
+//
+//      packages.size should be(3)
+//      packages.get(0).getLangreferenz should be("85590441212")
+//      packages.get(0).getEmpfaenger should be("Amazon Brieselang GmbH")
+//      packages.get(0).getSdgdatum should be("20201103")
+//      packages.get(0).getSdgzeit should be("1057")
+//      packages.get(0).getStatus should be("2010")
+//
+//    }
   }
 
   def buildMapperUrl(): String = {
