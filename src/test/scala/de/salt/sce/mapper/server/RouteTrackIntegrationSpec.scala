@@ -1,14 +1,13 @@
 package de.salt.sce.mapper.server
 
 import java.util.UUID
-
 import de.salt.sce.mapper.server.communication.model.MapperRequest
 import de.salt.sce.mapper.server.communication.model.MapperResponses.InternalResponse
 import de.salt.sce.mapper.util.IntegrationTester
 import de.salt.sce.mapper.util.ObjectSerializer.deserialize
-import de.salt.sce.model.edifact.Transport
+import de.salt.sce.model.csv.PaketCSV
+import de.salt.sce.model.edifact.{Paket, Shipment, Transport}
 import org.apache.commons.codec.binary.Base64.decodeBase64
-
 
 class RouteTrackIntegrationSpec extends IntegrationTester {
 
@@ -71,41 +70,33 @@ class RouteTrackIntegrationSpec extends IntegrationTester {
 
     s"return a transports response for authenticated POST requests [$mapperUri] for GLS" in {
       val file1: String = "20200923_133501_pakstat.018"
-      val file2: String = "Unknown"
 
       val mapperRequest = MapperRequest(
         id = UUID.randomUUID().toString,
         serviceName = "gls_de",
         configFile = "config-gls.xml",
         messageType = "csv",
-        encoding = "UTF-8",
+        encoding = "windows-1252",
         files = Map(
           file1 -> "85590441212|20201102|1200|2010|20201103|1057|4499|700002105|00340061160033296936|001324094|Amazon Brieselang GmbH|\n85756150125|20201102|2800|2011|20201103|1056|Hemdt|700002106|62597232|0001067650|Mercedes-Benz AG|\n85756150126|20201102|2800|2011|20201103|1056|Hemdt|700002106|62597224|0001067650|Mercedes-Benz AG|",
-          file2 -> "Unknown format"
         )
       )
 
       val internalResponse:InternalResponse = createAndCheckAuthRequest(mapperRequest, mapperUri)
 
       internalResponse.csvResponse.get.success.size should be(1)
-      internalResponse.csvResponse.get.error.size should be(1)
       internalResponse.edifactResponse should be(Option.empty)
 
       val line1: Option[String] = internalResponse.csvResponse.get.success.get(file1)
-      val transport1 = deserialize(decodeBase64(line1.get)).asInstanceOf[Transport]
+      val packages = deserialize(decodeBase64(line1.get)).asInstanceOf[java.util.ArrayList[PaketCSV]]
 
-      //TODO
-      transport1.getShipments.size() should be(3)
-      transport1.getShipments.get(0).getPakets.size() should be(1)
-      transport1.getShipments.get(0).getPakets.get(0).getRffs.get(0).getReference should be("85590441212")
-      transport1.getShipments.get(0).getPakets.get(0).getRffs.get(1).getReference should be("WALCH")
-      transport1.getShipments.get(0).getPakets.get(0).getDtms.get(0).getDateTimePeriod should be("20160714173746")
-      transport1.getShipments.get(0).getPakets.get(0).getNads.size() should be(3)
-      transport1.getShipments.get(0).getPakets.get(0).getNads.get(2).getStreet1 should be("21 HOERNLEWEG")
+      packages.size should be(3)
+      packages.get(0).getLangreferenz should be("85590441212")
+      packages.get(0).getEmpfaenger should be("Amazon Brieselang GmbH")
+      packages.get(0).getSdgdatum should be("20201103")
+      packages.get(0).getSdgzeit should be("1057")
+      packages.get(0).getStatus should be("2010")
 
-      val line3: Option[String] = internalResponse.csvResponse.get.error.get(file2)
-      line3 should be ('defined)
-      line3.get should be(s"File Parsing Exception:Failed to filter source. - $file2")
     }
   }
 
