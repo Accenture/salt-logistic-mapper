@@ -19,8 +19,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MessageParserUnitSpec {
 
-    private MessageParser messageParser = new MessageParser();
-/*
+    private final MessageParser messageParser = new MessageParser();
+
     @Test
     @DisplayName("Testing unknown message type.")
     public void whenRecieveUnknownFileType_thenReturnsEmptyString() throws IOException, ParserFailedException {
@@ -183,7 +183,6 @@ public class MessageParserUnitSpec {
 
         assertThat(paketCSVs).hasSize(40);
     }
-*/
 
     @Test
     @DisplayName("GLS testing.")
