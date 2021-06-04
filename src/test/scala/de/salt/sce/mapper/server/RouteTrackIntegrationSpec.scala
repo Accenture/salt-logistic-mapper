@@ -6,7 +6,7 @@ import de.salt.sce.mapper.server.communication.model.MapperResponses.InternalRes
 import de.salt.sce.mapper.util.IntegrationTester
 import de.salt.sce.mapper.util.ObjectSerializer.deserialize
 import de.salt.sce.model.csv.PaketCSV
-import de.salt.sce.model.edifact.{Paket, Shipment, Transport}
+import de.salt.sce.model.edifact.Transport
 import org.apache.commons.codec.binary.Base64.decodeBase64
 
 class RouteTrackIntegrationSpec extends IntegrationTester {
@@ -18,6 +18,7 @@ class RouteTrackIntegrationSpec extends IntegrationTester {
   }
 
   "Mapper" should {
+
     s"return a transports response for authenticated POST requests [$mapperUri] for UPS" in {
       val file1: String = "20170516_093419_20160719_141122_ROTH-IFTSTA"
       val file2: String = "20160123_181643_ROTH-IFTSTA.399"
@@ -68,7 +69,7 @@ class RouteTrackIntegrationSpec extends IntegrationTester {
       line3.get should be(s"File Parsing Exception:Failed to filter source. - $file3")
     }
 
-    s"return a transports response for authenticated POST requests [$mapperUri] for GLS" in {
+    s"return a transports response for authenticated POST requests [$mapperUri] for GLS_DE" in {
       val file1: String = "20200923_133501_pakstat.018"
 
       val mapperRequest = MapperRequest(
@@ -97,6 +98,66 @@ class RouteTrackIntegrationSpec extends IntegrationTester {
       packages.get(0).getSdgzeit should be("1057")
       packages.get(0).getStatus should be("2010")
 
+    }
+
+    s"return a transports response for authenticated POST requests [$mapperUri] for GLS_AT" in {
+      val file1: String = "20201103_122541_pakstat"
+
+      val mapperRequest = MapperRequest(
+        id = UUID.randomUUID().toString,
+        serviceName = "gls_at",
+        configFile = "config-gls.xml",
+        messageType = "csv",
+        encoding = "windows-1252",
+        files = Map(
+          file1 -> "85385209822|20201102|4300|2011|20201103|0956|Kr?tz|700002106|62598239|0001032535|persona service AG & Co.KG|",
+        )
+      )
+
+      val internalResponse:InternalResponse = createAndCheckAuthRequest(mapperRequest, mapperUri)
+
+      internalResponse.csvResponse.get.success.size should be(1)
+      internalResponse.edifactResponse should be(Option.empty)
+
+      val line1: Option[String] = internalResponse.csvResponse.get.success.get(file1)
+      val packages = deserialize(decodeBase64(line1.get)).asInstanceOf[java.util.ArrayList[PaketCSV]]
+
+      packages.size should be(1)
+      packages.get(0).getLangreferenz should be("85385209822")
+      packages.get(0).getEmpfaenger should be("persona service AG & Co.KG")
+      packages.get(0).getSdgdatum should be("20201103")
+      packages.get(0).getSdgzeit should be("0956")
+      packages.get(0).getStatus should be("2011")
+
+    }
+
+   s"return a transports response for authenticated POST requests [$mapperUri] for DHL_DE" in {
+      val file1: String = "20201103_080624_5023422208_REPSRD_StandardberichtAlpina_B_0152924_20201103070015.txt"
+
+      val mapperRequest = MapperRequest(
+        id = UUID.randomUUID().toString,
+        serviceName = "dhl_de",
+        configFile = "config-dhl.xml",
+        messageType = "csv",
+        encoding = "windows-1252",
+        files = Map(
+          file1 -> "Abrechnungsnummer / Account-Nummer;Produktionslinie;Produkt;Erfassungszeitpunkt;Erfassungsort;Erfassungsland;DHL Facility;intern;Piece-Code (Identifizierer);Einlieferdatum;Zustelldatum;Pickup-Datum;Status Event;Status RIC;Standardereignis;intern;intern;Referenznummer1;intern;Empf�ngername IST;Empf�ngername SOLL;intern;intern;intern;intern;Leitcode / Routingcode;intern;intern;intern;Retourensendung (J/N);intern\n5023422208;DPEED;0;2020-11-03 03:00:53;55;DE;;;00340036920033289451;20201102;;;ULFMV;UNLDD;EE;;;19309;;;Bike & Fun Inh. Peter Freimuth BICO;;;;;6536612702300;;;;0;\n50234222080109;DPEED;0;2020-11-03 03:00:53;55;DE;;;00340036920033289451;20201102;;;ULFMV;UNLDD;EE;;;19309;;;Bike & Fun Inh. Peter Freimuth BICO;;;;;6536612702300;;;;0;\n50234222080109;DPEED;0;2020-11-03 03:06:42;55;DE;;;00340036920033290150;20201102;;;ULFMV;UNLDD;EE;;;19309;;;Bike & Fun Inh. Peter Freimuth BICO;;;;;6536612702300;;;;0;\n5023422208;DPEED;0;2020-11-03 03:06:42;55;DE;;;00340036920033290150;20201102;;;ULFMV;UNLDD;EE;;;19309;;;Bike & Fun Inh. Peter Freimuth BICO;;;;;6536612702300;;;;0;\n5023422208;DPEED;0;2020-11-03 03:00:57;55;DE;;;00340036920033290242;20201102;;;ULFMV;UNLDD;EE;;;19309;;;Auto & Motorrad Schuler GmbH Inh: S;;;;;6667909700700;;;;0;",
+        )
+      )
+
+      val internalResponse:InternalResponse = createAndCheckAuthRequest(mapperRequest, mapperUri)
+
+      internalResponse.csvResponse.get.success.size should be(1)
+      internalResponse.edifactResponse should be(Option.empty)
+
+      val line1: Option[String] = internalResponse.csvResponse.get.success.get(file1)
+      val packages = deserialize(decodeBase64(line1.get)).asInstanceOf[java.util.ArrayList[PaketCSV]]
+
+      packages.size should be(2)
+      packages.get(0).getLangreferenz should be("00340036920033290150")
+      packages.get(0).getEmpfaenger should be("")
+      packages.get(0).getSdgdatum should be("2020-11-03 03:06:42")
+      packages.get(0).getStatus should be("EE")
     }
   }
 

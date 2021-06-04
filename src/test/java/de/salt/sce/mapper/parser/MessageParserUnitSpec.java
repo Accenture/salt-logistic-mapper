@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static de.salt.sce.mapper.util.ObjectSerializer.deserialize;
+import static org.apache.commons.codec.binary.Base64.decodeBase64;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -53,7 +55,7 @@ public class MessageParserUnitSpec {
         assertThat(encodedString).isPresent();
 
         @SuppressWarnings("unchecked")
-        Transport transport = (Transport) ObjectSerializer.deserialize(Base64.decodeBase64(encodedString.get()));
+        Transport transport = (Transport) deserialize(decodeBase64(encodedString.get()));
 
         assertThat(transport.getShipments()).hasSize(1);
         assertThat(transport.getShipments().get(0).getPakets()).hasSize(2);
@@ -75,7 +77,7 @@ public class MessageParserUnitSpec {
         assertThat(encodedString).isPresent();
 
         @SuppressWarnings("unchecked")
-        Transport transport = (Transport) ObjectSerializer.deserialize(Base64.decodeBase64(encodedString.get()));
+        Transport transport = (Transport) deserialize(decodeBase64(encodedString.get()));
 
         assertThat(transport.getShipments()).hasSize(1);
         assertThat(transport.getShipments().get(0).getPakets()).hasSize(1);
@@ -114,7 +116,7 @@ public class MessageParserUnitSpec {
         assertThat(encodedString).isPresent();
 
         @SuppressWarnings("unchecked")
-        List<PaketCSV> paketCSVs = (ArrayList<PaketCSV>) ObjectSerializer.deserialize(Base64.decodeBase64(encodedString.get()));
+        List<PaketCSV> paketCSVs = (ArrayList<PaketCSV>) deserialize(decodeBase64(encodedString.get()));
 
         assertThat(paketCSVs).hasSize(85);
     }
@@ -135,7 +137,7 @@ public class MessageParserUnitSpec {
         assertThat(encodedString).isPresent();
 
         @SuppressWarnings("unchecked")
-        Transport transport = (Transport) ObjectSerializer.deserialize(Base64.decodeBase64(encodedString.get()));
+        Transport transport = (Transport) deserialize(decodeBase64(encodedString.get()));
 
         assertThat(transport.getShipments()).hasSize(1);
         assertThat(transport.getShipments().get(0).getPakets()).hasSize(9);
@@ -157,7 +159,7 @@ public class MessageParserUnitSpec {
         assertThat(encodedString).isPresent();
 
         @SuppressWarnings("unchecked")
-        Transport transport = (Transport) ObjectSerializer.deserialize(Base64.decodeBase64(encodedString.get()));
+        Transport transport = (Transport) deserialize(decodeBase64(encodedString.get()));
 
         assertThat(transport.getShipments()).hasSize(1);
         assertThat(transport.getShipments().get(0).getPakets()).hasSize(1);
@@ -179,19 +181,19 @@ public class MessageParserUnitSpec {
         assertThat(encodedString).isPresent();
 
         @SuppressWarnings("unchecked")
-        List<PaketCSV> paketCSVs = (ArrayList<PaketCSV>) ObjectSerializer.deserialize(Base64.decodeBase64(encodedString.get()));
+        List<PaketCSV> paketCSVs = (ArrayList<PaketCSV>) deserialize(decodeBase64(encodedString.get()));
 
         assertThat(paketCSVs).hasSize(40);
     }
 
     @Test
-    @DisplayName("GLS testing.")
-    public void whenRecieveCorrectGLSFile_thenParseSuccessful() throws IOException, ParserFailedException {
-        String fileName = "gls/20200923_133501_pakstat.018";
+    @DisplayName("GLS_DE testing.")
+    public void whenRecieveCorrectGlsDeFile_thenParseSuccessful() throws IOException, ParserFailedException {
+        String fileName = "gls_de/20200923.133501.pakstat.018";
 
         Optional<String> encodedString = messageParser.parseFile(
-                "gls",
-                "classpath:/smooks/gls/config-gls.xml",
+                "gls_de",
+                "classpath:/smooks/gls_de/config-gls.xml",
                 "csv",
                 fileName,
                 getResource(fileName, "windows-1252")
@@ -200,9 +202,51 @@ public class MessageParserUnitSpec {
         assertThat(encodedString).isPresent();
 
         @SuppressWarnings("unchecked")
-        List<PaketCSV> paketCSVs = (ArrayList<PaketCSV>) ObjectSerializer.deserialize(Base64.decodeBase64(encodedString.get()));
+        List<PaketCSV> paketCSVs = (ArrayList<PaketCSV>) deserialize(decodeBase64(encodedString.get()));
 
         assertThat(paketCSVs).hasSize(10);
+    }
+
+    @Test
+    @DisplayName("GLS_AT testing.")
+    public void whenRecieveCorrectGlsAtFile_thenParseSuccessful() throws IOException, ParserFailedException {
+        String fileName = "gls_at/20201103_122541_pakstat";
+
+        Optional<String> encodedString = messageParser.parseFile(
+                "gls_at",
+                "classpath:/smooks/gls_at/config-gls.xml",
+                "csv",
+                fileName,
+                getResource(fileName, "windows-1252")
+        );
+
+        assertThat(encodedString).isPresent();
+
+        @SuppressWarnings("unchecked")
+        List<PaketCSV> paketCSVs = (ArrayList<PaketCSV>) deserialize(decodeBase64(encodedString.get()));
+
+        assertThat(paketCSVs).hasSize(839);
+    }
+
+    @Test
+    @DisplayName("DHL_DE testing.")
+    public void whenRecieveCorrectDhlDeFile_thenParseSuccessful() throws IOException, ParserFailedException {
+        String fileName = "dhl_de/20201103_080624_5023422208_REPSRD_StandardberichtAlpina_B_0152924_20201103070015.txt";
+
+        Optional<String> encodedString = messageParser.parseFile(
+                "dhl_de",
+                "classpath:/smooks/dhl_de/config-dhl.xml",
+                "csv",
+                fileName,
+                getResource(fileName, "windows-1252")
+        );
+
+        assertThat(encodedString).isPresent();
+
+        @SuppressWarnings("unchecked")
+        List<PaketCSV> paketCSVs = (ArrayList<PaketCSV>) deserialize(decodeBase64(encodedString.get()));
+
+        assertThat(paketCSVs).hasSize(178);
     }
 
     private byte[] getResource(String resourseName, String encoding) throws IOException {

@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!DOCTYPE xml>
+<smooks-resource-list xmlns="http://www.milyn.org/xsd/smooks-1.1.xsd"
+                      xmlns:csv="http://www.milyn.org/xsd/smooks/csv-1.2.xsd">
+
+    <!--
+	1(Abrechnugsnummer),2(Produktionslinie),3(Produkt),4(Erfassungszeitpunkt),5(Erfassungsort),6(Erfassungsland),7(DHL-Facility)
+	,8(n/a),9(Sendungsnummer bzw. Licensplate),10(Einlieferdatum),11(Zustelldatum),12(Abholdatum),13(ICE-Event), 14(ICE-RIC),
+	15(Standardereignis),16(n/a),17(n/a),18(Sendungsreferenz des Kunden aus EDI),19(n/a),20(Empfängername IST),21(Empfängername Soll - aus EDI)
+	,22(n/a),23(n/a),24(n/a),25(n/a),26(Leitcode/Routingcode),27(n/a),28(n/a),29(n/a),30(Rücksendung J/N),31(n/a)
+    -->
+            <csv:reader fields="$ignore$3,sdgdatum,ort,$ignore$3,langreferenz,$ignore$5,status,$ignore$4,empfaenger,$ignore$11"
+    					separator=";" skipLines="4">
+        <csv:listBinding beanId="shipment-bean" class="de.salt.move.model.csv.PaketCSV"/>
+    </csv:reader>
+
+</smooks-resource-list>
