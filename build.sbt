@@ -3,7 +3,7 @@
 // = Metadata
 // =====================================================================================================================
 name := "mapper"
-version := "1.1.23"
+version := "1.1.24"
 organization := "de.salt.sce"
 scalaVersion := "2.12.11"
 
@@ -64,10 +64,10 @@ libraryDependencies += "org.milyn" % "milyn-smooks-csv" % "1.7.1"
 //)
 
 
-//assemblyMergeStrategy in assembly := {
-//  case PathList("META-INF", "MANIFEST.MF") => MergeStrategy.discard
-//  case PathList("META-INF", "data-decoders.inf") => MergeStrategy.concat
-//  case PathList("reference.conf") => MergeStrategy.concat
-//  case PathList("overview.html") => MergeStrategy.concat
-//  case x => MergeStrategy.first
-//}
+assemblyMergeStrategy in assembly := {
+  case PathList("META-INF", "MANIFEST.MF") => MergeStrategy.discard
+  case PathList("META-INF", "data-decoders.inf") => MergeStrategy.concat
+  case PathList("reference.conf") => MergeStrategy.concat
+  case PathList("overview.html") => MergeStrategy.concat
+  case x => MergeStrategy.first
+}
