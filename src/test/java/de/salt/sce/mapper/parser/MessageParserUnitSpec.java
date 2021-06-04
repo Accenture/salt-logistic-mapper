@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MessageParserUnitSpec {
 
-    private MessageParser messageParser = new MessageParser();
+    private final MessageParser messageParser = new MessageParser();
 
     @Test
     @DisplayName("Testing unknown message type.")
@@ -182,6 +182,27 @@ public class MessageParserUnitSpec {
         List<PaketCSV> paketCSVs = (ArrayList<PaketCSV>) ObjectSerializer.deserialize(Base64.decodeBase64(encodedString.get()));
 
         assertThat(paketCSVs).hasSize(40);
+    }
+
+    @Test
+    @DisplayName("GLS testing.")
+    public void whenRecieveCorrectGLSFile_thenParseSuccessful() throws IOException, ParserFailedException {
+        String fileName = "gls/20200923_133501_pakstat.018";
+
+        Optional<String> encodedString = messageParser.parseFile(
+                "gls",
+                "classpath:/smooks/gls/config-gls.xml",
+                "csv",
+                fileName,
+                getResource(fileName, "windows-1252")
+        );
+
+        assertThat(encodedString).isPresent();
+
+        @SuppressWarnings("unchecked")
+        List<PaketCSV> paketCSVs = (ArrayList<PaketCSV>) ObjectSerializer.deserialize(Base64.decodeBase64(encodedString.get()));
+
+        assertThat(paketCSVs).hasSize(10);
     }
 
     private byte[] getResource(String resourseName, String encoding) throws IOException {
