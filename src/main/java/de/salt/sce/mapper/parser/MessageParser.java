@@ -12,18 +12,21 @@ import org.xml.sax.SAXException;
 
 import javax.xml.transform.stream.StreamSource;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
 import static de.salt.sce.mapper.util.ObjectSerializer.serialize;
+import static java.nio.file.Paths.*;
 import static org.apache.commons.codec.binary.Base64.encodeBase64String;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * XML Parser <br />
  * XML to Java Object which serialized and endoded to String.
- *
  */
 public class MessageParser {
 
@@ -35,14 +38,14 @@ public class MessageParser {
      * @param data   Input data
      * @param config Smooks config
      * @return {@link JavaResult]
-     * @throws {@link SmooksException)
+     * @throws {@link       SmooksException)
      * @throws IOException
      * @throws SAXException
      */
     public JavaResult getBean(byte[] data, String config) throws SmooksException, IOException, SAXException {
         JavaResult javaResult = new JavaResult();
-        Smooks smooks = new Smooks(config);
 
+        Smooks smooks = new Smooks(buildRelativePathToConfig(config));
         ExecutionContext executionContext = smooks.createExecutionContext();
         smooks.filterSource(executionContext, new StreamSource(new ByteArrayInputStream(data)), javaResult);
 
@@ -90,4 +93,15 @@ public class MessageParser {
             throw new ParserFailedException(error);
         }
     }
+
+    private String buildRelativePathToConfig(String configPath) throws IOException {
+
+        String appHomePath = new File(".").getCanonicalPath();
+
+        return get(appHomePath).relativize(get(configPath))
+                .toString()
+                .replace(" ", "%20")
+                .replace("\\", "/");
+    }
+
 }

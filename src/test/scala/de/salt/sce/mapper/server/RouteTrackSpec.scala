@@ -2,7 +2,6 @@ package de.salt.sce.mapper.server
 
 import java.nio.charset.StandardCharsets.UTF_8
 import java.util.UUID
-
 import akka.actor.ActorSystem
 import akka.http.scaladsl.model.headers.BasicHttpCredentials
 import akka.http.scaladsl.model.{HttpRequest, StatusCodes}
@@ -21,6 +20,7 @@ import org.apache.commons.io.IOUtils
 import org.json4s.{DefaultFormats, Formats, Serialization, native}
 import org.scalatest.{Matchers, WordSpec}
 
+import java.io.File
 import scala.concurrent.duration.DurationInt
 
 class RouteTrackSpec extends WordSpec with Matchers
@@ -40,13 +40,15 @@ class RouteTrackSpec extends WordSpec with Matchers
   private val path = s"/${config.getString("sce.track.mapper.rest-server.path.mapper-path")}/${config.getString("sce.track.mapper.rest-server.path.mapper-ext")}"
   private var route: Route = _
 
+  private val appHomePath = new File(".").getCanonicalPath
+
   override def beforeAll(): Unit = {
     SpecHelper.beforeAll(system)
     route = AkkaHttpRestServer.getServer.getRoute
   }
 
   "AkkaHttpRestServer" should {
-
+/*
     s"testing is amm service returns correct response when becomes correct request [$path]" in {
       import de.heikoseeberger.akkahttpjson4s.Json4sSupport._ // should be visible only in this method where no deserialization to string is performed
 
@@ -309,6 +311,8 @@ class RouteTrackSpec extends WordSpec with Matchers
           responseString should startWith("The request content was malformed:")
         }
     }
+
+ */
   }
 
   private def createPost(usingPath: String, request: IncompatibleProviderRequest): HttpRequest = {
