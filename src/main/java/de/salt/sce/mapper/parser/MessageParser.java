@@ -96,6 +96,10 @@ public class MessageParser {
 
     private String buildRelativePathToConfig(String configPath) throws IOException {
 
+        if(configPath.startsWith("smooks") || configPath.startsWith("classpath")) {
+            return configPath;
+        }
+
         String appHomePath = new File(".").getCanonicalPath();
 
         return get(appHomePath).relativize(get(configPath))

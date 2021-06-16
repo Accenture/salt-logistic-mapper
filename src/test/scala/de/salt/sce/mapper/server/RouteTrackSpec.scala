@@ -48,7 +48,7 @@ class RouteTrackSpec extends WordSpec with Matchers
   }
 
   "AkkaHttpRestServer" should {
-/*
+
     s"testing is amm service returns correct response when becomes correct request [$path]" in {
       import de.heikoseeberger.akkahttpjson4s.Json4sSupport._ // should be visible only in this method where no deserialization to string is performed
 
@@ -311,8 +311,6 @@ class RouteTrackSpec extends WordSpec with Matchers
           responseString should startWith("The request content was malformed:")
         }
     }
-
- */
   }
 
   private def createPost(usingPath: String, request: IncompatibleProviderRequest): HttpRequest = {
