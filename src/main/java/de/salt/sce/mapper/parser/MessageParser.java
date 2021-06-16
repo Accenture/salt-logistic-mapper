@@ -96,6 +96,7 @@ public class MessageParser {
 
     private String buildRelativePathToConfig(String configPath) throws IOException {
 
+        // if the SMOOKS_CONFIG_HOME is not an absolute path. And we need it pro local unit/integration tests
         if(configPath.startsWith("smooks") || configPath.startsWith("classpath")) {
             return configPath;
         }
