@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<medi:edimap xmlns:medi="http://www.milyn.org/schema/edi-message-mapping-1.4.xsd">
+	<medi:import namespace="UN" resource="modelset-definitions-d96a.xml" />
+	<medi:description name="EMONS Mapping" version="D:96A:UN" />
+
+	<medi:delimiters component=":" escape="?" field="+"
+		segment="'!$" sub-component="~" />
+
+	<medi:segments xmltag="Transport">
+
+		<medi:segmentGroup maxOccurs="-1" minOccurs="0"
+			xmltag="Shipment">
+
+			<medi:segment minOccurs="1" maxOccurs="1" segcode="UNA:"
+				xmltag="UNA" truncatable="true" ignoreUnmappedFields="true">
+			</medi:segment>
+
+			<medi:segment minOccurs="1" maxOccurs="1" segcode="UNB"
+				xmltag="UNB" truncatable="true" ignoreUnmappedFields="true">
+			</medi:segment>
+
+			<medi:segment minOccurs="1" maxOccurs="1" segcode="UNH"
+				xmltag="UNH" truncatable="true" ignoreUnmappedFields="true">
+				<medi:documentation>UNH, Message header.
+					Function: To head, identify
+					and specify a message.
+				</medi:documentation>
+			</medi:segment>
+
+			<medi:segment ignoreUnmappedFields="false" maxOccurs="1"
+				minOccurs="1" nodeTypeRef="UN:BGM" segcode="BGM" truncatable="true"
+				xmltag="Beginning_of_message">
+				<medi:documentation>BGM,
+					A segment indicating the beginning of a
+					message and identifying
+					the consignment for which status is being
+					reported.
+				</medi:documentation>
+			</medi:segment>
+
+			<medi:segment ignoreUnmappedFields="false" maxOccurs="1"
+				minOccurs="1" nodeTypeRef="UN:DTM" segcode="DTM" truncatable="true"
+				xmltag="Date_time_period">
+				<medi:documentation>DTM,
+					A segment indicating the date of the
+					message.
+				</medi:documentation>
+			</medi:segment>
+
+			<medi:segment ignoreUnmappedFields="false" maxOccurs="2"
+				minOccurs="1" nodeTypeRef="UN:NAD" segcode="NAD" truncatable="true"
+				xmltag="Name_and_address">
+				<medi:documentation>NAD,
+					A segment identifying a party to the
+					consignment such as
+					shipper or consignee.
+				</medi:documentation>
+			</medi:segment>
+
+			<medi:segmentGroup maxOccurs="-1" minOccurs="0"
+				xmltag="Paket">
+				<medi:documentation>1 Shipment may contain one or more
+					package(s)
+				</medi:documentation>
+
+				<medi:segment ignoreUnmappedFields="false" maxOccurs="1"
+					minOccurs="1" nodeTypeRef="UN:CNI" segcode="CNI" truncatable="true"
+					xmltag="Consignment_information">
+					<medi:documentation>CNI,
+						A segment to identify a consignment for
+						which status details
+						are given.
+					</medi:documentation>
+				</medi:segment>
+
+				<medi:segment ignoreUnmappedFields="false" maxOccurs="1"
+					minOccurs="1" nodeTypeRef="UN:STS" segcode="STS" truncatable="true"
+					xmltag="Status">
+					<medi:documentation>STS,
+						A segment specifying the status relating to
+						a consignment
+						(e.g. loaded).
+					</medi:documentation>
+				</medi:segment>
+
+				<medi:segment ignoreUnmappedFields="false" maxOccurs="9"
+					minOccurs="0" nodeTypeRef="UN:RFF" segcode="RFF" truncatable="true"
+					xmltag="Reference">
+					<medi:documentation>RFF,
+						A segment identifying a reference relating
+						to the status
+						(e.g House Bill of Lading number).
+					</medi:documentation>
+				</medi:segment>
+
+				<medi:segment ignoreUnmappedFields="false" maxOccurs="9"
+					minOccurs="0" nodeTypeRef="UN:DTM" segcode="DTM" truncatable="true"
+					xmltag="Date_time_period">
+					<medi:documentation>DTM,
+						A segment indicating the date and time of
+						the status or
+						event.
+					</medi:documentation>
+				</medi:segment>
+
+				<medi:segment ignoreUnmappedFields="false" maxOccurs="9"
+					minOccurs="0" nodeTypeRef="UN:FTX" segcode="FTX" truncatable="true"
+					xmltag="Free_text">
+					<medi:documentation>FTX,
+						A segment specifying processable
+						information relating to
+						the status.
+					</medi:documentation>
+				</medi:segment>
+
+				<medi:segment ignoreUnmappedFields="false" maxOccurs="9"
+					minOccurs="0" nodeTypeRef="UN:NAD" segcode="NAD" truncatable="true"
+					xmltag="Name_and_address_paket">
+					<medi:documentation>NAD,
+						A segment specifying the name and/or
+						address associated
+						with the event such as notify party, terminal
+						address,
+						trucking company for gate move.
+					</medi:documentation>
+				</medi:segment>
+
+				<medi:segment ignoreUnmappedFields="false" maxOccurs="1"
+					minOccurs="0" nodeTypeRef="UN:GID" segcode="GID" truncatable="true"
+					xmltag="Goods_item_details">
+					<medi:documentation>GID,
+						A segment identifying a goods item.
+					</medi:documentation>
+				</medi:segment>
+				
+			</medi:segmentGroup>
+			
+			<medi:segment minOccurs="1" maxOccurs="1" segcode="UNT"
+				xmltag="UNT" truncatable="true" ignoreUnmappedFields="true">
+				<medi:documentation>UNT,
+					Message trailer.
+					Function: To end and check
+					the completeness of a message.
+				</medi:documentation>
+			</medi:segment>
+
+			<medi:segment minOccurs="1" maxOccurs="1" segcode="UNZ"
+				xmltag="UNZ" truncatable="true" ignoreUnmappedFields="true">
+				<medi:documentation>UNZ,
+					Interchange trailer.
+					Function: To end and
+					check the completeness of an interchange.
+				</medi:documentation>
+			</medi:segment>
+		</medi:segmentGroup>
+	</medi:segments>
+
+
+</medi:edimap>
+
+

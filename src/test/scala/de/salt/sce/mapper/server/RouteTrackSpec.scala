@@ -40,8 +40,6 @@ class RouteTrackSpec extends WordSpec with Matchers
   private val path = s"/${config.getString("sce.track.mapper.rest-server.path.mapper-path")}/${config.getString("sce.track.mapper.rest-server.path.mapper-ext")}"
   private var route: Route = _
 
-  private val appHomePath = new File(".").getCanonicalPath
-
   override def beforeAll(): Unit = {
     SpecHelper.beforeAll(system)
     route = AkkaHttpRestServer.getServer.getRoute
@@ -49,11 +47,93 @@ class RouteTrackSpec extends WordSpec with Matchers
 
   "AkkaHttpRestServer" should {
 
-    s"testing is amm service returns correct response when becomes correct request [$path]" in {
+
+    s"testing is EMO_DE service returns correct response when becomes correct request [$path]" in {
+      import de.heikoseeberger.akkahttpjson4s.Json4sSupport._ // should be visible only in this method where no deserialization to string is performed
+
+      val file: String = "20201103_121247_EMONS_STATUS_20201103_115148_000000815188.txt"
+      val content: String = IOUtils.toString(this.getClass.getResourceAsStream(s"/de/salt/sce/mapper/parser/emo_de/$file"), UTF_8)
+
+      val mapperRequest = MapperRequest(
+        id = UUID.randomUUID().toString,
+        serviceName = "emo_de",
+        configFile = "config-emons.xml",
+        messageType = "edifact",
+        encoding = "UTF-8",
+        files = Map(
+          file -> content,
+          "Unknown" -> "Unknown format"
+        )
+      )
+      Post(path, mapperRequest) ~>
+        addCredentials(validCredentials) ~> route ~> check {
+        logger.debug(s"Response status: $status")
+        status shouldEqual StatusCodes.OK
+        val responseProtocol = entityAs[InternalResponse]
+        logger.debug(s"ResponseProtocol: $responseProtocol")
+
+        responseProtocol.edifactResponse.get.success.size should be(1)
+        responseProtocol.csvResponse should be(Option.empty)
+
+        val line1: Option[String] = responseProtocol.edifactResponse.get.success.get(file)
+        val transport = ObjectSerializer.deserialize(Base64.decodeBase64(line1.get)).asInstanceOf[Transport];
+
+        transport.getShipments.get(0).getPakets.get(0).getCni.getDocumentMessageNumber should be("1324207")
+        transport.getShipments.get(0).getPakets.get(0).getSts.getEvent should be("360")
+        transport.getShipments.get(0).getPakets.get(0).getRffs.get(0).getReference should be("1208038219")
+        transport.getShipments.get(0).getPakets.get(0).getDtms.get(0).getDateTimePeriod should be("20201103115148")
+
+        val line2: Option[String] = responseProtocol.edifactResponse.get.error.get("Unknown")
+        line2.get should be("File Parsing Exception:Failed to filter source. - Unknown")
+      }
+    }
+
+    s"testing is DHF_DE service returns correct response when becomes correct request [$path]" in {
+      import de.heikoseeberger.akkahttpjson4s.Json4sSupport._ // should be visible only in this method where no deserialization to string is performed
+
+      val file: String = "20201103_122230_UVEX_IFTSTA005951.txt"
+      val content: String = IOUtils.toString(this.getClass.getResourceAsStream(s"/de/salt/sce/mapper/parser/dhf_de/$file"), UTF_8)
+
+      val mapperRequest = MapperRequest(
+        id = UUID.randomUUID().toString,
+        serviceName = "dhf_de",
+        configFile = "config-dhlf.xml",
+        messageType = "edifact",
+        encoding = "UTF-8",
+        files = Map(
+          file -> content,
+          "Unknown" -> "Unknown format"
+        )
+      )
+      Post(path, mapperRequest) ~>
+        addCredentials(validCredentials) ~> route ~> check {
+        logger.debug(s"Response status: $status")
+        status shouldEqual StatusCodes.OK
+        val responseProtocol = entityAs[InternalResponse]
+        logger.debug(s"ResponseProtocol: $responseProtocol")
+
+        responseProtocol.edifactResponse.get.success.size should be(1)
+        responseProtocol.csvResponse should be(Option.empty)
+
+        val line1: Option[String] = responseProtocol.edifactResponse.get.success.get(file)
+        val transport = ObjectSerializer.deserialize(Base64.decodeBase64(line1.get)).asInstanceOf[Transport];
+
+        transport.getShipments.get(0).getPakets.get(0).getCni.getDocumentMessageNumber should be("751447566")
+        transport.getShipments.get(0).getPakets.get(0).getSts.getEvent should be("20")
+        transport.getShipments.get(0).getPakets.get(0).getRffs.get(0).getReference should be("4001094572")
+        transport.getShipments.get(0).getPakets.get(0).getDtms.get(0).getDateTimePeriod should be("202011031004")
+
+        val line2: Option[String] = responseProtocol.edifactResponse.get.error.get("Unknown")
+        line2.get should be("File Parsing Exception:Failed to filter source. - Unknown")
+      }
+    }
+
+
+    s"testing is AMM_DE service returns correct response when becomes correct request [$path]" in {
       import de.heikoseeberger.akkahttpjson4s.Json4sSupport._ // should be visible only in this method where no deserialization to string is performed
 
       val file: String = "P0815-STAT_IFTSTA-4.txt"
-      val content: String = IOUtils.toString(this.getClass.getResourceAsStream(s"/smooks/amm/$file"), UTF_8)
+      val content: String = IOUtils.toString(this.getClass.getResourceAsStream(s"/de/salt/sce/mapper/parser/amm/$file"), UTF_8)
 
       val mapperRequest = MapperRequest(
         id = UUID.randomUUID().toString,
@@ -89,11 +169,11 @@ class RouteTrackSpec extends WordSpec with Matchers
       }
     }
 
-    s"testing is dpd service returns correct response when becomes correct request [$path]" in {
+    s"testing is DPD_DE service returns correct response when becomes correct request [$path]" in {
       import de.heikoseeberger.akkahttpjson4s.Json4sSupport._ // should be visible only in this method where no deserialization to string is performed
 
       val file: String = "20160201_170112_STATUSDATA_KD2748208P_D20160201T021335"
-      val content: String = IOUtils.toString(this.getClass.getResourceAsStream(s"/smooks/dpd/$file"), UTF_8)
+      val content: String = IOUtils.toString(this.getClass.getResourceAsStream(s"/de/salt/sce/mapper/parser/dpd/$file"), UTF_8)
 
       val mapperRequest = MapperRequest(
         id = UUID.randomUUID().toString,
@@ -136,11 +216,11 @@ class RouteTrackSpec extends WordSpec with Matchers
       }
     }
 
-    s"testing is dachser service returns correct response when becomes correct request [$path]" in {
+    s"testing is DACHER service returns correct response when becomes correct request [$path]" in {
       import de.heikoseeberger.akkahttpjson4s.Json4sSupport._ // should be visible only in this method where no deserialization to string is performed
 
       val file: String = "Beispiel_EDIFACT_IFTSTA_D01C.txt"
-      val content: String = IOUtils.toString(this.getClass.getResourceAsStream(s"/smooks/dachser/$file"), UTF_8)
+      val content: String = IOUtils.toString(this.getClass.getResourceAsStream(s"/de/salt/sce/mapper/parser/dachser/$file"), UTF_8)
 
       val mapperRequest = MapperRequest(
         id = UUID.randomUUID().toString,
@@ -181,11 +261,11 @@ class RouteTrackSpec extends WordSpec with Matchers
       }
     }
 
-    s"testing is tof (trans-o-flex) service returns correct response when becomes correct request [$path]" in {
+    s"testing is TOF (trans-o-flex) service returns correct response when becomes correct request [$path]" in {
       import de.heikoseeberger.akkahttpjson4s.Json4sSupport._ // should be visible only in this method where no deserialization to string is performed
 
-      val file: String = "93449323.ROTHENBE.20140703.RZMX.39499687.06313600.CSV"
-      val content: String = IOUtils.toString(this.getClass.getResourceAsStream(s"/smooks/tof/$file"), UTF_8)
+      val file: String = "93449322.ROTHENBE.20140408.AZMX.39471758.11171400.CSV"
+      val content: String = IOUtils.toString(this.getClass.getResourceAsStream(s"/de/salt/sce/mapper/parser/tof/$file"), UTF_8)
 
       val mapperRequest = MapperRequest(
         id = UUID.randomUUID().toString,
@@ -211,7 +291,7 @@ class RouteTrackSpec extends WordSpec with Matchers
         val line1: Option[String] = responseProtocol.csvResponse.get.success.get(file)
         val paketCSVs1 = ObjectSerializer.deserialize(Base64.decodeBase64(line1.get)).asInstanceOf[java.util.ArrayList[PaketCSV]]
 
-        paketCSVs1.size() should be(52)
+        paketCSVs1.size() should be(40)
         paketCSVs1.get(0).getSdgdatum should be("SDGDATUM")
         paketCSVs1.get(0).getLangreferenz should be("LANGREFERENZ        ")
         paketCSVs1.get(0).getTofsdgnr should be("TOFSDGNR")
@@ -221,14 +301,14 @@ class RouteTrackSpec extends WordSpec with Matchers
         paketCSVs1.get(0).getOrt should be("ORT                           ")
         paketCSVs1.get(0).getDienst2 should be("DIENST2                                      ")
 
-        paketCSVs1.get(51).getSdgdatum should be("20140630")
-        paketCSVs1.get(51).getLangreferenz should be("0080913281          ")
-        paketCSVs1.get(51).getTofsdgnr should be("44594647")
-        paketCSVs1.get(51).getEmpfaenger should be("BAUHAUS DEPOT GMBH            ")
-        paketCSVs1.get(51).getLkz should be("AT ")
-        paketCSVs1.get(51).getPlz should be("4400   ")
-        paketCSVs1.get(51).getOrt should be("STEYR                         ")
-        paketCSVs1.get(51).getDienst2 should be("Export CPT (Frei Haus)                       ")
+        paketCSVs1.get(39).getSdgdatum should be("20140331")
+        paketCSVs1.get(39).getLangreferenz should be("0080849179          ")
+        paketCSVs1.get(39).getTofsdgnr should be("44578974")
+        paketCSVs1.get(39).getEmpfaenger should be("TOP CENTRUM - Jaroslav Novak  ")
+        paketCSVs1.get(39).getLkz should be("CZ ")
+        paketCSVs1.get(39).getPlz should be("533 43 ")
+        paketCSVs1.get(39).getOrt should be("Rohovladova Bela              ")
+        paketCSVs1.get(39).getDienst2 should be("Export CPT (Frei Haus) Tschechien Zone 2     ")
 
         val line2: Option[String] = responseProtocol.csvResponse.get.success.get("Unknown")
         val paketCSVs2 = ObjectSerializer.deserialize(Base64.decodeBase64(line2.get)).asInstanceOf[java.util.ArrayList[PaketCSV]]
@@ -237,7 +317,7 @@ class RouteTrackSpec extends WordSpec with Matchers
       }
     }
 
-    s"testing is ups service returns correct response when becomes correct request [$path]" in {
+    s"testing is UPS_DE service returns correct response when becomes correct request [$path]" in {
       import de.heikoseeberger.akkahttpjson4s.Json4sSupport._ // should be visible only in this method where no deserialization to string is performed
 
       val file1: String = "20170516_093419_20160719_141122_ROTH-IFTSTA"
