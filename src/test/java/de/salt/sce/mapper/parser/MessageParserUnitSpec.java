@@ -28,6 +28,50 @@ public class MessageParserUnitSpec {
     public MessageParserUnitSpec() throws IOException {
     }
 
+    @Test
+    @DisplayName("EMO_DE testing.")
+    public void whenRecieveCorrectEmoDeFile_thenParseSuccessful() throws IOException, ParserFailedException {
+        String fileName = "emo_de/20201103_121247_EMONS_STATUS_20201103_115148_000000815188.txt";
+
+        Optional<String> encodedString = messageParser.parseFile(
+                "emo_de",
+                appHomePath+"/src/test/resources/smooks/emo_de/config-emons.xml",
+                "edifact",
+                fileName,
+                getResource(fileName, "windows-1252")
+        );
+
+        assertThat(encodedString).isPresent();
+
+        @SuppressWarnings("unchecked")
+        Transport transport = (Transport) deserialize(decodeBase64(encodedString.get()));
+
+        assertThat(transport.getShipments()).hasSize(1);
+        assertThat(transport.getShipments().get(0).getPakets()).hasSize(1);
+    }
+
+    @Test
+    @DisplayName("DHF_DE testing.")
+    public void whenRecieveCorrectDhfDeFile_thenParseSuccessful() throws IOException, ParserFailedException {
+        String fileName = "dhf_de/20201103_122230_UVEX_IFTSTA005951.txt";
+
+        Optional<String> encodedString = messageParser.parseFile(
+                "dhf_de",
+                appHomePath+"/src/test/resources/smooks/dhf_de/config-dhlf.xml",
+                "edifact",
+                fileName,
+                getResource(fileName, "windows-1252")
+        );
+
+        assertThat(encodedString).isPresent();
+
+        @SuppressWarnings("unchecked")
+        Transport transport = (Transport) deserialize(decodeBase64(encodedString.get()));
+
+        assertThat(transport.getShipments()).hasSize(1);
+        assertThat(transport.getShipments().get(0).getPakets()).hasSize(1);
+    }
+
 
     @Test
     @DisplayName("Testing unknown message type.")
