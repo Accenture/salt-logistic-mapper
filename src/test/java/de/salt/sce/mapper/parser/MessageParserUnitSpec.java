@@ -28,6 +28,30 @@ public class MessageParserUnitSpec {
     public MessageParserUnitSpec() throws IOException {
     }
 
+
+    @Test
+    @DisplayName("DBS testing.")
+    public void whenRecieveCorrectDBSFile_thenParseSuccessful() throws IOException, ParserFailedException {
+        String fileName = "dbs/logger_956_0021930100198443.arc";
+
+        Optional<String> encodedString = messageParser.parseFile(
+                "dbs",
+                appHomePath+"/src/test/resources/smooks/dbs/config-dbs.xml",
+                "edifact",
+                fileName,
+                getResource(fileName, "UTF-8")
+        );
+
+        assertThat(encodedString).isPresent();
+
+        @SuppressWarnings("unchecked")
+        Transport transport = (Transport) deserialize(decodeBase64(encodedString.get()));
+
+        assertThat(transport.getShipments()).hasSize(1);
+        assertThat(transport.getShipments().get(0).getPakets()).hasSize(1);
+    }
+
+
     @Test
     @DisplayName("EMO_DE testing.")
     public void whenRecieveCorrectEmoDeFile_thenParseSuccessful() throws IOException, ParserFailedException {
