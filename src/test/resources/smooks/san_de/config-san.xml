@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!DOCTYPE xml>
+<smooks-resource-list xmlns="http://www.milyn.org/xsd/smooks-1.1.xsd"
+                      xmlns:csv="http://www.milyn.org/xsd/smooks/csv-1.2.xsd">
+
+    <!--
+            01(Referenz-Kunde),02(Referenz-Sander),03(Statuscode),04(Zeitpunkt),05(Bemerkung),06(Quittungsgeber)
+    -->
+    <csv:reader fields="langreferenz,tofsdgnr,status,sdgdatum,$ignore$,empfaenger"
+                separator=";" skipLines="0">
+        <csv:listBinding beanId="shipment-bean" class="de.salt.sce.model.csv.PaketCSV"/>
+    </csv:reader>
+
+</smooks-resource-list>
