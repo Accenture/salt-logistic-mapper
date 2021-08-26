@@ -30,6 +30,28 @@ public class MessageParserUnitSpec {
 
 
     @Test
+    @DisplayName("DAN_DE testing.")
+    public void whenRecieveCorrectSANDEFile_thenParseSuccessful() throws IOException, ParserFailedException {
+        String fileName = "san_de/20201103_121919_5196_20201103115000.CSV";
+
+        Optional<String> encodedString = messageParser.parseFile(
+                "san_de",
+                appHomePath+"/src/test/resources/smooks/san_de/config-san.xml",
+                "csv",
+                fileName,
+                getResource(fileName, "UTF-8")
+        );
+
+        assertThat(encodedString).isPresent();
+
+        @SuppressWarnings("unchecked")
+        Transport transport = (Transport) deserialize(decodeBase64(encodedString.get()));
+
+        assertThat(transport.getShipments()).hasSize(1);
+        assertThat(transport.getShipments().get(0).getPakets()).hasSize(1);
+    }
+
+    @Test
     @DisplayName("DBS testing.")
     public void whenRecieveCorrectDBSFile_thenParseSuccessful() throws IOException, ParserFailedException {
         String fileName = "dbs/logger_956_0021930100198443.arc";
