@@ -30,7 +30,7 @@ public class MessageParserUnitSpec {
 
 
     @Test
-    @DisplayName("DAN_DE testing.")
+    @DisplayName("SAN_DE testing.")
     public void whenRecieveCorrectSANDEFile_thenParseSuccessful() throws IOException, ParserFailedException {
         String fileName = "san_de/20201103_121919_5196_20201103115000.CSV";
 
@@ -45,10 +45,9 @@ public class MessageParserUnitSpec {
         assertThat(encodedString).isPresent();
 
         @SuppressWarnings("unchecked")
-        Transport transport = (Transport) deserialize(decodeBase64(encodedString.get()));
+        List<PaketCSV> paketCSVs = (ArrayList<PaketCSV>) deserialize(decodeBase64(encodedString.get()));
 
-        assertThat(transport.getShipments()).hasSize(1);
-        assertThat(transport.getShipments().get(0).getPakets()).hasSize(1);
+        assertThat(paketCSVs).hasSize(5);
     }
 
     @Test
