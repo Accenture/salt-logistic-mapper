@@ -32,14 +32,42 @@
 	<!-- Package bean -->
 	<jb:bean beanId="package-bean" class="de.salt.sce.model.edifact.Paket"
 		createOnElement="Paket">
-		<jb:wiring property="cni" beanIdRef="cni-bean" />
-	    <jb:wiring property="sts" beanIdRef="sts-bean" />
+		<jb:wiring property="locs" beanIdRef="locs-list" />
+		<jb:wiring property="sts" beanIdRef="sts-bean" />
 		<jb:wiring property="rffs" beanIdRef="rff-list" />
 		<jb:wiring property="dtms" beanIdRef="dtm-list" />
-		<jb:wiring property="nads" beanIdRef="nad-list" />
-	    <jb:wiring property="tdt" beanIdRef="tdt-bean" />
-		<jb:wiring property="gid" beanIdRef="gid-bean" />
-		<jb:wiring property="pci" beanIdRef="pci-bean" />
+		<jb:wiring property="ftx" beanIdRef="ftx-bean" />
+	</jb:bean>
+
+
+	<!-- DTM -->
+	<jb:bean beanId="dtm-list" class="java.util.ArrayList"
+			 createOnElement="Paket">
+		<jb:wiring beanIdRef="dtm-bean" />
+	</jb:bean>
+	<jb:bean beanId="dtm-bean" class="de.salt.sce.model.edifact.Dtm"
+			 createOnElement="Date_time_period">
+		<jb:value property="dateTimePeriod" data="DATE_TIME_PERIOD/Date_time_period"
+				  decoder="String" />
+	</jb:bean>
+
+	<!--LOC-->
+	<jb:bean beanId="locs-list" class="java.util.ArrayList"
+			 createOnElement="Paket">
+		<jb:wiring beanIdRef="locs-bean" />
+	</jb:bean>
+	<jb:bean beanId="locs-bean" class="de.salt.sce.model.edifact.Loc"
+			 createOnElement="Place_location_identification">
+		<jb:value property="locFuncCodeQualifier" data="Place_location_qualifier" decoder="String" />
+		<jb:value property="locNameCode" data="LOCATION_IDENTIFICATION/Place_location_identification" decoder="String" />
+		<jb:value property="locName" data="LOCATION_IDENTIFICATION/Place_location" decoder="String" />
+	</jb:bean>
+
+	<!-- FTX -->
+	<jb:bean beanId="ftx-bean"
+			 class="de.salt.sce.model.edifact.Ftx"
+			 createOnElement="Free_text">
+		<jb:value property="freeText" data="TEXT_LITERAL/Free_text_-_-1" decoder="String" />
 	</jb:bean>
 
 	<jb:bean beanId="cni-bean" class="de.salt.sce.model.edifact.Cni"
@@ -65,20 +93,11 @@
 	</jb:bean>
 	<jb:bean beanId="rff-bean" class="de.salt.sce.model.edifact.Rff"
 		createOnElement="Reference">
-		<jb:value property="reference" data="Reference_number"
-			decoder="String" />
+		<jb:value property="qualifier" data="Reference_qualifier" decoder="String" />
+		<jb:value property="reference" data="Reference_number" decoder="String" />
 	</jb:bean>
 
-	<!-- DTM -->
-	<jb:bean beanId="dtm-list" class="java.util.ArrayList"
-		createOnElement="Paket">
-		<jb:wiring beanIdRef="dtm-bean" />
-	</jb:bean>	
-	<jb:bean beanId="dtm-bean" class="de.salt.sce.model.edifact.Dtm"
-		createOnElement="Date_time_period">
-		<jb:value property="dateTimePeriod" data="DATE_TIME_PERIOD/Date_time_period"
-			decoder="String" />
-	</jb:bean>
+
 	
 	<!-- NAD -->
  	<jb:bean beanId="nad-list" class="java.util.ArrayList"
