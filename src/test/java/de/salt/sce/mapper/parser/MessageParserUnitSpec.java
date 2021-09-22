@@ -4,6 +4,7 @@ import de.salt.sce.mapper.exception.ParserFailedException;
 import de.salt.sce.mapper.util.ObjectSerializer;
 import de.salt.sce.model.csv.PaketCSV;
 import de.salt.sce.model.edifact.Transport;
+import org.apache.commons.codec.Charsets;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.DisplayName;
@@ -11,11 +12,14 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static de.salt.sce.mapper.util.ObjectSerializer.deserialize;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.codec.binary.Base64.decodeBase64;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -28,6 +32,28 @@ public class MessageParserUnitSpec {
     public MessageParserUnitSpec() throws IOException {
     }
 
+
+    @Test
+    @DisplayName("HON_DE (HONOLD) testing.")
+    public void whenRecieveCorrectHonFile_thenParseSuccessful() throws IOException, ParserFailedException {
+        String fileName = "hon_de/IFTMI00000000000105.TXT";
+
+        Optional<String> encodedString = messageParser.parseFile(
+                "dbs",
+                appHomePath+"/src/test/resources/smooks/hon_de/config-hon.xml",
+                "edifact",
+                fileName,
+                getResource(fileName, "windows-1252")
+        );
+
+        assertThat(encodedString).isPresent();
+
+        @SuppressWarnings("unchecked")
+        Transport transport = (Transport) deserialize(decodeBase64(encodedString.get()));
+
+        assertThat(transport.getShipments()).hasSize(1);
+        assertThat(transport.getShipments().get(0).getPakets()).hasSize(1);
+    }
 
     @Test
     @DisplayName("DBS testing.")
@@ -344,9 +370,6 @@ public class MessageParserUnitSpec {
     }
 
     private byte[] getResource(String resourseName, String encoding) throws IOException {
-        return IOUtils.toString(
-                this.getClass().getResourceAsStream(resourseName),
-                encoding
-        ).getBytes(encoding);
+        return IOUtils.toString(this.getClass().getResourceAsStream(resourseName),encoding).getBytes(UTF_8);
     }
 }

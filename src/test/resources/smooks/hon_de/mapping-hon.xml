@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<medi:edimap xmlns:medi="http://www.milyn.org/schema/edi-message-mapping-1.4.xsd">
+	<medi:import namespace="UN" resource="modelset-definitions-d96a.xml" />
+	<medi:description name="HON" version="D:96A:UN" />
+
+	<medi:delimiters component=":" escape="?" field="+" segment="'!$" sub-component="~" />
+
+	<medi:segments xmltag="Transport">
+
+		<medi:segmentGroup maxOccurs="-1" minOccurs="0"
+						   xmltag="Shipment">
+
+			<medi:segment minOccurs="1" maxOccurs="1" segcode="UNA:"
+						  xmltag="UNA" truncatable="true" ignoreUnmappedFields="true">
+			</medi:segment>
+
+			<medi:segment minOccurs="1" maxOccurs="1" segcode="UNB"
+						  xmltag="UNB" truncatable="true" ignoreUnmappedFields="true">
+			</medi:segment>
+
+			<medi:segmentGroup maxOccurs="-1" minOccurs="0"
+							   xmltag="Paket">
+				<medi:documentation>1 Shipment may contain one or more
+					package(s)
+				</medi:documentation>
+
+				<medi:segment minOccurs="1" maxOccurs="1" segcode="UNH"
+							  xmltag="UNH" truncatable="true" ignoreUnmappedFields="true">
+				</medi:segment>
+
+				<medi:segment ignoreUnmappedFields="false" maxOccurs="1"
+							  minOccurs="1" nodeTypeRef="UN:BGM" segcode="BGM" truncatable="true"
+							  xmltag="Beginning_of_message">
+				</medi:segment>
+
+				<medi:segment ignoreUnmappedFields="false" maxOccurs="1"
+							  minOccurs="1" nodeTypeRef="UN:DTM" segcode="DTM" truncatable="true"
+							  xmltag="Date_time_period">
+				</medi:segment>
+
+				<medi:segment ignoreUnmappedFields="false" maxOccurs="1"
+							  minOccurs="1" nodeTypeRef="UN:TSR" segcode="TSR" truncatable="true"
+							  xmltag="Transport_Service_Requirements">
+				</medi:segment>
+
+				<medi:segment ignoreUnmappedFields="false" maxOccurs="1"
+							  minOccurs="1" nodeTypeRef="UN:TOD" segcode="TOD" truncatable="true"
+							  xmltag="Terms_Of_Delivery_Or_Transport">
+				</medi:segment>
+
+				<medi:segment ignoreUnmappedFields="false" maxOccurs="2"
+							  minOccurs="0" nodeTypeRef="UN:LOC" segcode="LOC" truncatable="true"
+							  xmltag="Place_location_identification">
+				</medi:segment>
+
+				<medi:segment ignoreUnmappedFields="false" maxOccurs="9"
+							  minOccurs="0" nodeTypeRef="UN:RFF" segcode="RFF" truncatable="true"
+							  xmltag="Reference">
+				</medi:segment>
+
+				<medi:segment ignoreUnmappedFields="true" maxOccurs="1"
+							  minOccurs="0" nodeTypeRef="UN:TDT" segcode="TDT" truncatable="true"
+							  xmltag="Transport_stage_qualifier">
+				</medi:segment>
+
+				<medi:segment ignoreUnmappedFields="false" maxOccurs="9"
+							  minOccurs="0" nodeTypeRef="UN:NAD" segcode="NAD" truncatable="true"
+							  xmltag="Name_and_address">
+				</medi:segment>
+
+				<medi:segment ignoreUnmappedFields="false" maxOccurs="9"
+							  minOccurs="0" nodeTypeRef="UN:GID" segcode="GID" truncatable="true"
+							  xmltag="Goods_Item_Details">
+				</medi:segment>
+
+				<medi:segment ignoreUnmappedFields="false" maxOccurs="1"
+							  minOccurs="0" nodeTypeRef="UN:FTX" segcode="FTX" truncatable="true"
+							  xmltag="Free_text">
+				</medi:segment>
+
+				<medi:segment ignoreUnmappedFields="false" maxOccurs="10"
+							  minOccurs="0" nodeTypeRef="UN:MEA" segcode="MEA" truncatable="true"
+							  xmltag="Measurements">
+				</medi:segment>
+
+				<medi:segment ignoreUnmappedFields="false" maxOccurs="1"
+							  minOccurs="0" nodeTypeRef="UN:DIM" segcode="DIM" truncatable="true"
+							  xmltag="Dimensions">
+				</medi:segment>
+
+				<medi:segment ignoreUnmappedFields="false" maxOccurs="1"
+							  minOccurs="0" nodeTypeRef="UN:PCI" segcode="PCI" truncatable="true"
+							  xmltag="Package_Identification">
+				</medi:segment>
+
+				<medi:segment ignoreUnmappedFields="false" maxOccurs="1"
+							  minOccurs="0" nodeTypeRef="UN:GIN" segcode="GIN" truncatable="true"
+							  xmltag="Goods_Identity_Number">
+				</medi:segment>
+
+				<medi:segment minOccurs="1" maxOccurs="1" segcode="UNT"
+							  xmltag="UNT" truncatable="true" ignoreUnmappedFields="true">
+				</medi:segment>
+
+			</medi:segmentGroup>
+
+			<medi:segment minOccurs="1" maxOccurs="1" segcode="UNZ"
+						  xmltag="UNZ" truncatable="true" ignoreUnmappedFields="true">
+			</medi:segment>
+
+		</medi:segmentGroup>
+
+	</medi:segments>
+
+</medi:edimap>
+
+
