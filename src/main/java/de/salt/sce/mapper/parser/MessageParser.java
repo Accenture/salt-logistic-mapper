@@ -14,8 +14,6 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
@@ -75,13 +73,11 @@ public class MessageParser {
             switch (messageType) {
                 case "edifact":
                     Transport transport = (Transport) result.getBean("transport-bean");
-                    log.info("Transport size: " + transport.getShipments().size());
                     return Optional.of(encodeBase64String(serialize(transport)));
-
                 case "csv":
                     @SuppressWarnings("unchecked")
-                    List<PaketCSV> shipment = (List<PaketCSV>) result.getBean("shipment-bean");
-                    return Optional.of(encodeBase64String(serialize(shipment)));
+                    List<PaketCSV> shipmentsCSV = (List<PaketCSV>) result.getBean("shipment-bean");
+                    return Optional.of(encodeBase64String(serialize(shipmentsCSV)));
                 default:
                     log.error(edcid + ": unknown message type");
                     return Optional.empty();

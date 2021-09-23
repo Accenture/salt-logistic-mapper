@@ -1,19 +1,14 @@
 package de.salt.sce.mapper.parser;
 
 import de.salt.sce.mapper.exception.ParserFailedException;
-import de.salt.sce.mapper.util.ObjectSerializer;
 import de.salt.sce.model.csv.PaketCSV;
 import de.salt.sce.model.edifact.Transport;
-import org.apache.commons.codec.Charsets;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -34,13 +29,34 @@ public class MessageParserUnitSpec {
 
 
     @Test
+    @DisplayName("GLS_IT testing.")
+    public void whenRecieveCorrectGlsItFile_thenParseSuccessful() throws IOException, ParserFailedException {
+        String fileName = "gls_it/003563ESITI120520211254.txt";
+
+        Optional<String> encodedString = messageParser.parseFile(
+                "gls_it",
+                appHomePath + "/src/test/resources/smooks/gls_it/config-gls.xml",
+                "csv",
+                fileName,
+                getResource(fileName, "UTF-8")
+        );
+
+        assertThat(encodedString).isPresent();
+
+        @SuppressWarnings("unchecked")
+        List<PaketCSV> paketCSVs = (ArrayList<PaketCSV>) deserialize(decodeBase64(encodedString.get()));
+
+        assertThat(paketCSVs).hasSize(70);
+    }
+
+    @Test
     @DisplayName("HON_DE (HONOLD) testing.")
     public void whenRecieveCorrectHonFile_thenParseSuccessful() throws IOException, ParserFailedException {
         String fileName = "hon_de/IFTMI00000000000105.TXT";
 
         Optional<String> encodedString = messageParser.parseFile(
                 "dbs",
-                appHomePath+"/src/test/resources/smooks/hon_de/config-hon.xml",
+                appHomePath + "/src/test/resources/smooks/hon_de/config-hon.xml",
                 "edifact",
                 fileName,
                 getResource(fileName, "windows-1252")
@@ -62,7 +78,7 @@ public class MessageParserUnitSpec {
 
         Optional<String> encodedString = messageParser.parseFile(
                 "dbs",
-                appHomePath+"/src/test/resources/smooks/dbs/config-dbs.xml",
+                appHomePath + "/src/test/resources/smooks/dbs/config-dbs.xml",
                 "edifact",
                 fileName,
                 getResource(fileName, "UTF-8")
@@ -84,7 +100,7 @@ public class MessageParserUnitSpec {
 
         Optional<String> encodedString = messageParser.parseFile(
                 "san_de",
-                appHomePath+"/src/test/resources/smooks/san_de/config-san.xml",
+                appHomePath + "/src/test/resources/smooks/san_de/config-san.xml",
                 "csv",
                 fileName,
                 getResource(fileName, "UTF-8")
@@ -105,7 +121,7 @@ public class MessageParserUnitSpec {
 
         Optional<String> encodedString = messageParser.parseFile(
                 "emo_de",
-                appHomePath+"/src/test/resources/smooks/emo_de/config-emons.xml",
+                appHomePath + "/src/test/resources/smooks/emo_de/config-emons.xml",
                 "edifact",
                 fileName,
                 getResource(fileName, "windows-1252")
@@ -127,7 +143,7 @@ public class MessageParserUnitSpec {
 
         Optional<String> encodedString = messageParser.parseFile(
                 "dhf_de",
-                appHomePath+"/src/test/resources/smooks/dhf_de/config-dhlf.xml",
+                appHomePath + "/src/test/resources/smooks/dhf_de/config-dhlf.xml",
                 "edifact",
                 fileName,
                 getResource(fileName, "windows-1252")
@@ -150,7 +166,7 @@ public class MessageParserUnitSpec {
 
         Optional<String> encodedString = messageParser.parseFile(
                 "ups",
-                appHomePath+"/src/test/resources/smooks/ups/config-ups.xml",
+                appHomePath + "/src/test/resources/smooks/ups/config-ups.xml",
                 "unknown",
                 fileName,
                 getResource(fileName, "windows-1252")
@@ -166,7 +182,7 @@ public class MessageParserUnitSpec {
 
         Optional<String> encodedString = messageParser.parseFile(
                 "ups",
-                appHomePath+"/src/test/resources/smooks/ups/config-ups.xml",
+                appHomePath + "/src/test/resources/smooks/ups/config-ups.xml",
                 "edifact",
                 fileName,
                 getResource(fileName, "windows-1252")
@@ -188,7 +204,7 @@ public class MessageParserUnitSpec {
 
         Optional<String> encodedString = messageParser.parseFile(
                 "ups",
-                appHomePath+"/src/test/resources/smooks/ups/config-ups.xml",
+                appHomePath + "/src/test/resources/smooks/ups/config-ups.xml",
                 "edifact",
                 fileName,
                 getResource(fileName, "windows-1252")
@@ -212,7 +228,7 @@ public class MessageParserUnitSpec {
                 () -> {
                     messageParser.parseFile(
                             "ups",
-                            appHomePath+"/src/test/resources/smooks/ups/config-ups.xml",
+                            appHomePath + "/src/test/resources/smooks/ups/config-ups.xml",
                             "edifact",
                             fileName,
                             getResource(fileName, "windows-1252")
@@ -227,7 +243,7 @@ public class MessageParserUnitSpec {
 
         Optional<String> encodedString = messageParser.parseFile(
                 "dpd",
-                appHomePath+"/src/test/resources/smooks/dpd/config-dpd.xml",
+                appHomePath + "/src/test/resources/smooks/dpd/config-dpd.xml",
                 "csv",
                 fileName,
                 getResource(fileName, "UTF-8")
@@ -248,7 +264,7 @@ public class MessageParserUnitSpec {
 
         Optional<String> encodedString = messageParser.parseFile(
                 "dachser",
-                appHomePath+"/src/test/resources/smooks/dachser/config-dachser.xml",
+                appHomePath + "/src/test/resources/smooks/dachser/config-dachser.xml",
                 "edifact",
                 fileName,
                 getResource(fileName, "UTF-8")
@@ -270,7 +286,7 @@ public class MessageParserUnitSpec {
 
         Optional<String> encodedString = messageParser.parseFile(
                 "amm",
-                appHomePath+"/src/test/resources/smooks/amm/config-amm.xml",
+                appHomePath + "/src/test/resources/smooks/amm/config-amm.xml",
                 "edifact",
                 fileName,
                 getResource(fileName, "UTF-8")
@@ -292,7 +308,7 @@ public class MessageParserUnitSpec {
 
         Optional<String> encodedString = messageParser.parseFile(
                 "tof",
-                appHomePath+"/src/test/resources/smooks/tof/config-tof.xml",
+                appHomePath + "/src/test/resources/smooks/tof/config-tof.xml",
                 "csv",
                 fileName,
                 getResource(fileName, "windows-1252")
@@ -313,7 +329,7 @@ public class MessageParserUnitSpec {
 
         Optional<String> encodedString = messageParser.parseFile(
                 "gls_de",
-                appHomePath+"/src/test/resources/smooks/gls_de/config-gls.xml",
+                appHomePath + "/src/test/resources/smooks/gls_de/config-gls.xml",
                 "csv",
                 fileName,
                 getResource(fileName, "windows-1252")
@@ -334,7 +350,7 @@ public class MessageParserUnitSpec {
 
         Optional<String> encodedString = messageParser.parseFile(
                 "gls_at",
-                appHomePath+"/src/test/resources/smooks/gls_at/config-gls.xml",
+                appHomePath + "/src/test/resources/smooks/gls_at/config-gls.xml",
                 "csv",
                 fileName,
                 getResource(fileName, "windows-1252")
@@ -355,7 +371,7 @@ public class MessageParserUnitSpec {
 
         Optional<String> encodedString = messageParser.parseFile(
                 "dhl_de",
-                appHomePath+"/src/test/resources/smooks/dhl_de/config-dhl.xml",
+                appHomePath + "/src/test/resources/smooks/dhl_de/config-dhl.xml",
                 "csv",
                 fileName,
                 getResource(fileName, "windows-1252")
@@ -370,6 +386,6 @@ public class MessageParserUnitSpec {
     }
 
     private byte[] getResource(String resourseName, String encoding) throws IOException {
-        return IOUtils.toString(this.getClass().getResourceAsStream(resourseName),encoding).getBytes(UTF_8);
+        return IOUtils.toString(this.getClass().getResourceAsStream(resourseName), encoding).getBytes(UTF_8);
     }
 }
