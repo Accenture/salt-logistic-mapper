@@ -4,7 +4,7 @@ SCE Mapper
 Mapper Service
 
 A service to mapping edifact or csv files to Transport and PacketCSV objects using Smooks library.
-It uses akka builin server.
+It uses akka builtin server.
 
 # API Docs
 
