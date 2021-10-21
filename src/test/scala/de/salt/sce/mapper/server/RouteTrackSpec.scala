@@ -317,7 +317,7 @@ class RouteTrackSpec extends WordSpec with Matchers
       }
     }
 
-    s"testing is UPS_DE service returns correct response when becomes correct request [$path]" in {
+    s"testing is UPS service returns correct response when becomes correct request [$path]" in {
       import de.heikoseeberger.akkahttpjson4s.Json4sSupport._ // should be visible only in this method where no deserialization to string is performed
 
       val file1: String = "20170516_093419_20160719_141122_ROTH-IFTSTA"
