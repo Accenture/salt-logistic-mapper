@@ -66,10 +66,12 @@ class AkkaHttpRestServer extends RestServer with LazyLogging with LazyConfig {
               complete(StatusCodes.OK)
             }
           } ~ path(mapperPath / mapperExt) {
+            withoutSizeLimit {
             post {
               authenticateBasic(realm = "sce", sceAuthenticator) { _ =>
                 handleMappingRequest()
               }
+            }
             }
           }
         }

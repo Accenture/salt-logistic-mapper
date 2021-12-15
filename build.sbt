@@ -2,7 +2,7 @@
 // = Metadata
 // =====================================================================================================================
 name := "mapper"
-version := "1.2.14"
+version := "1.3.0"
 organization := "de.salt.sce"
 scalaVersion := "2.12.11"
 
@@ -32,9 +32,11 @@ libraryDependencies += "com.typesafe.akka" %% "akka-slf4j" % akkaVersion
 libraryDependencies += "com.typesafe.akka" %% "akka-testkit" % akkaVersion % "test"
 libraryDependencies += "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion % "test"
 
-libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2"
-libraryDependencies += "org.apache.logging.log4j" % "log4j-slf4j-impl" % "2.13.3"
-libraryDependencies += "org.apache.logging.log4j" %% "log4j-api-scala" % "12.0"
+libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.4"
+libraryDependencies += "org.apache.logging.log4j" % "log4j-slf4j-impl" % "2.16.0"
+libraryDependencies += "org.slf4j" % "slf4j-ext" % "1.7.25"
+libraryDependencies += "org.apache.logging.log4j" % "log4j-api" % "2.16.0"
+libraryDependencies += "org.apache.logging.log4j" % "log4j-core" % "2.16.0"
 
 // Akka CORS :: https://github.com/lomigmegard/akka-http-cors
 libraryDependencies += "ch.megard" %% "akka-http-cors" % "1.0.0"
