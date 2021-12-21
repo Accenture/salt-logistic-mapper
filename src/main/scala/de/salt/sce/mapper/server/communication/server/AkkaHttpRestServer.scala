@@ -1,7 +1,6 @@
 package de.salt.sce.mapper.server.communication.server
 
 import java.util.concurrent.TimeUnit.SECONDS
-
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.model.StatusCodes.InternalServerError
 import akka.http.scaladsl.server.Directives._
@@ -16,6 +15,7 @@ import de.salt.sce.mapper.server.communication.model.MapperRequest
 import de.salt.sce.mapper.server.communication.model.MapperResponses.InternalResponse
 import de.salt.sce.mapper.server.util.LazyConfig
 import org.json4s.{DefaultFormats, Formats, Serialization, native}
+import de.salt.sce.mapper.BuildInfo
 
 import scala.concurrent.duration.Duration
 
@@ -63,7 +63,12 @@ class AkkaHttpRestServer extends RestServer with LazyLogging with LazyConfig {
         handleErrors {
           path("") { // default - GET on root
             get {
-              complete(StatusCodes.OK)
+              val buildInfo =
+                s"""Service is up and running.
+                   | Provider Name: ${BuildInfo.name}
+                   | Provider Version: ${BuildInfo.version}""".stripMargin
+              logger.info(buildInfo)
+              complete(StatusCodes.OK, buildInfo.replaceAll("\n","").replaceAll("\r",""))
             }
           } ~ path(mapperPath / mapperExt) {
             withoutSizeLimit {

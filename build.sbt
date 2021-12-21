@@ -2,11 +2,14 @@
 // = Metadata
 // =====================================================================================================================
 name := "mapper"
-version := "1.3.1"
+version := "1.3.2"
 organization := "de.salt.sce"
 scalaVersion := "2.12.11"
 
-lazy val root = project in file("")
+lazy val root = (project in file(""))
+  .enablePlugins(BuildInfoPlugin).settings(
+  buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
+  buildInfoPackage := "de.salt.sce.mapper")
 
 // Remove feature warning
 // Doc: http://stackoverflow.com/questions/27895790/sbt-0-12-4-there-were-x-feature-warnings-re-run-with-feature-for-details
@@ -33,10 +36,10 @@ libraryDependencies += "com.typesafe.akka" %% "akka-testkit" % akkaVersion % "te
 libraryDependencies += "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion % "test"
 
 libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.4"
-libraryDependencies += "org.apache.logging.log4j" % "log4j-slf4j-impl" % "2.16.0"
-libraryDependencies += "org.slf4j" % "slf4j-ext" % "1.7.25"
-libraryDependencies += "org.apache.logging.log4j" % "log4j-api" % "2.16.0"
-libraryDependencies += "org.apache.logging.log4j" % "log4j-core" % "2.16.0"
+libraryDependencies += "org.apache.logging.log4j" % "log4j-slf4j-impl" % "2.17.0"
+libraryDependencies += "org.slf4j" % "slf4j-ext" % "1.7.32"
+libraryDependencies += "org.apache.logging.log4j" % "log4j-api" % "2.17.0"
+libraryDependencies += "org.apache.logging.log4j" % "log4j-core" % "2.17.0"
 
 // Akka CORS :: https://github.com/lomigmegard/akka-http-cors
 libraryDependencies += "ch.megard" %% "akka-http-cors" % "1.0.0"
