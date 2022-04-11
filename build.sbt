@@ -2,7 +2,7 @@
 // = Metadata
 // =====================================================================================================================
 name := "mapper"
-version := "1.3.5"
+version := "1.3.6"
 organization := "de.salt.sce"
 scalaVersion := "2.12.11"
 
@@ -66,7 +66,7 @@ libraryDependencies += "org.milyn" % "milyn-smooks-fixed-length" % "1.7.1"
 //libraryDependencies ++= Seq(
 //  "org.milyn" % "milyn-smooks-all" % "1.7.0",
 //  "javax.jms" % "jms" % "1.1"
-//)
+//) 
 
 
 assemblyMergeStrategy in assembly := {
