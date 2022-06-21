@@ -5,6 +5,7 @@ import de.salt.sce.mapper.parser.MessageParser;
 import de.salt.sce.mapper.server.communication.model.MapperRequest;
 import de.salt.sce.mapper.server.communication.model.MapperResponses;
 import de.salt.sce.mapper.server.communication.model.MapperResponses.InternalResponse;
+import de.salt.sce.util.TextFileDetector;
 import scala.Option;
 import scala.collection.mutable.HashMap;
 import scala.collection.mutable.Map;
@@ -30,30 +31,34 @@ public class MapperServiceClientTrack {
         String serviceConfigurationName = requestData.serviceName().toLowerCase();
         String smooks_config = config.getString("sce.track.mapper.smooks.config-files-path") + "/" + serviceConfigurationName + "/" + requestData.configFile();
 
-        Map<String, String> mapSucess = new HashMap<>();
+        Map<String, String> mapSuccess = new HashMap<>();
         Map<String, String> mapErrors = new HashMap<>();
 
         mapAsJavaMapConverter(requestData.files()).asJava().forEach(
-                (k, v) -> {
+                (fileName, fileContent) -> {
                     try {
-                        if(!v.startsWith("Error")){
-                            Optional<String> smooksEncodedObject = messageParser.parseFile(
-                                    serviceConfigurationName,
-                                    smooks_config,
-                                    requestData.messageType(),
-                                    k,
-                                    v.getBytes(requestData.encoding())
-                            );
+                        if(!fileContent.startsWith("Error")){
+                            if(TextFileDetector.isText(fileContent)) {
+                                Optional<String> smooksEncodedObject = messageParser.parseFile(
+                                        serviceConfigurationName,
+                                        smooks_config,
+                                        requestData.messageType(),
+                                        fileName,
+                                        fileContent.getBytes(requestData.encoding())
+                                );
 
-                            smooksEncodedObject
-                                    .map(o -> mapSucess.put(k, o))
-                                    .orElseGet(() -> mapErrors.put(k, "Unknown message type"));
+                                smooksEncodedObject
+                                        .map(o -> mapSuccess.put(fileName, o))
+                                        .orElseGet(() -> mapErrors.put(fileName, "Unknown message type"));
+                            } else {
+                                mapErrors.put(fileName, String.format("Not able to map binary file %s",fileName));
+                            }
                         } else {
-                            mapErrors.put(k, v);
+                            mapErrors.put(fileName, fileContent);
                         }
 
                     } catch (Exception e) {
-                        mapErrors.put(k, e.getMessage());
+                        mapErrors.put(fileName, e.getMessage());
                     }
                 }
         );
@@ -62,7 +67,7 @@ public class MapperServiceClientTrack {
             return new InternalResponse(
                     requestData.id(),
                     Option.apply(new MapperResponses.MapperResponseProtocol(
-                            mapSucess,
+                            mapSuccess,
                             mapErrors
                     )),
                     Option.empty(),
@@ -73,7 +78,7 @@ public class MapperServiceClientTrack {
                     requestData.id(),
                     Option.empty(),
                     Option.apply(new MapperResponses.MapperResponseProtocol(
-                            mapSucess,
+                            mapSuccess,
                             mapErrors
                     )),
                     OK.intValue()

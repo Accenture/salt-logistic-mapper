@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<!DOCTYPE xml>
+<smooks-resource-list xmlns="http://www.milyn.org/xsd/smooks-1.1.xsd"
+                      xmlns:fl="http://www.milyn.org/xsd/smooks/fixed-length-1.3.xsd">
+
+    <fl:reader fields="$ignore$[38],langreferenz[35]?trim,$ignore$[35],status[3]?trim,sdgdatum[8],sdgzeit[6]?trim,$ignore$[72],tofsdgnr[70],$ignore$[245]" skipLines="2">
+        <fl:listBinding beanId="shipment-bean" class="de.salt.sce.model.csv.PaketCSV" />
+    </fl:reader>
+
+</smooks-resource-list>

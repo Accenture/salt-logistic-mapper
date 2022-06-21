@@ -29,6 +29,27 @@ public class MessageParserUnitSpec {
 
 
     @Test
+    @DisplayName("DPD_DE testing.")
+    public void whenRecieveCorrectDpdDeFile_thenParseSuccessful() throws IOException, ParserFailedException {
+        String fileName = "dpd_de/9D754EFB38616FE51A70BDF4562A2630_SCANINFO_2406033416_D20220430T015216";
+
+        Optional<String> encodedString = messageParser.parseFile(
+                "dpd_de",
+                appHomePath + "/src/test/resources/smooks/dpd_de/config-dpd.xml",
+                "csv",
+                fileName,
+                getResource(fileName, "UTF-8")
+        );
+
+        assertThat(encodedString).isPresent();
+
+        @SuppressWarnings("unchecked")
+        List<PaketCSV> paketCSVs = (ArrayList<PaketCSV>) deserialize(decodeBase64(encodedString.get()));
+
+        assertThat(paketCSVs).hasSize(85);
+    }
+
+    @Test
     @DisplayName("GLS_IT testing.")
     public void whenRecieveCorrectGlsItFile_thenParseSuccessful() throws IOException, ParserFailedException {
         String fileName = "gls_it/003563ESITI120520211254.txt";
@@ -234,27 +255,6 @@ public class MessageParserUnitSpec {
                             getResource(fileName, "windows-1252")
                     );
                 });
-    }
-
-    @Test
-    @DisplayName("DPD testing.")
-    public void whenRecieveCorrectDPDFile_thenParseSuccessful() throws IOException, ParserFailedException {
-        String fileName = "dpd/20160201_170112_STATUSDATA_KD2748208P_D20160201T021335";
-
-        Optional<String> encodedString = messageParser.parseFile(
-                "dpd",
-                appHomePath + "/src/test/resources/smooks/dpd/config-dpd.xml",
-                "csv",
-                fileName,
-                getResource(fileName, "UTF-8")
-        );
-
-        assertThat(encodedString).isPresent();
-
-        @SuppressWarnings("unchecked")
-        List<PaketCSV> paketCSVs = (ArrayList<PaketCSV>) deserialize(decodeBase64(encodedString.get()));
-
-        assertThat(paketCSVs).hasSize(85);
     }
 
     @Test
