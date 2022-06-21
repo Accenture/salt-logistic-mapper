@@ -60,7 +60,7 @@ public class TextFileDetectorUnitSpec {
     }
 
     @Test
-    public void whenIsPdfAAAAAAAAFile_thenIsBinary() throws Exception {
+    public void whenIsPdfFileContainstooMuchAlphabetical_thenIsBinary() throws Exception {
         String resourceName = "EasySpedDE VALIDATE - Manuale Utente.pdf";
         String file = getFileContent(resourceName);
 

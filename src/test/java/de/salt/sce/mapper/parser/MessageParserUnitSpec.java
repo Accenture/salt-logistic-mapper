@@ -31,7 +31,7 @@ public class MessageParserUnitSpec {
     @Test
     @DisplayName("DPD_DE testing.")
     public void whenRecieveCorrectDpdDeFile_thenParseSuccessful() throws IOException, ParserFailedException {
-        String fileName = "dpd_de/9D754EFB38616FE51A70BDF4562A2630_SCANINFO_2406033416_D20220430T015216";
+        String fileName = "dpd_de/9D754EFB38616FE51A70BDF4562A2630_SCANINFO_2406033416_D20220430T015216.csv";
 
         Optional<String> encodedString = messageParser.parseFile(
                 "dpd_de",
@@ -46,7 +46,7 @@ public class MessageParserUnitSpec {
         @SuppressWarnings("unchecked")
         List<PaketCSV> paketCSVs = (ArrayList<PaketCSV>) deserialize(decodeBase64(encodedString.get()));
 
-        assertThat(paketCSVs).hasSize(85);
+        assertThat(paketCSVs).hasSize(26);
     }
 
     @Test
