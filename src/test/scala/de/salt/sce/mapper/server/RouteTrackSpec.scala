@@ -173,7 +173,7 @@ class RouteTrackSpec extends WordSpec with Matchers
       import de.heikoseeberger.akkahttpjson4s.Json4sSupport._ // should be visible only in this method where no deserialization to string is performed
 
       val file: String = "20160201_170112_STATUSDATA_KD2748208P_D20160201T021335"
-      val content: String = IOUtils.toString(this.getClass.getResourceAsStream(s"/de/salt/sce/mapper/parser/dpd/$file"), UTF_8)
+      val content: String = IOUtils.toString(this.getClass.getResourceAsStream(s"/de/salt/sce/mapper/parser/dpd_de/$file"), UTF_8)
 
       val mapperRequest = MapperRequest(
         id = UUID.randomUUID().toString,
