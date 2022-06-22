@@ -9,6 +9,10 @@ public class TextFileDetector {
 
 
     public static boolean isText(String fileContent) throws Exception {
+        if(fileContent.length() == 0)  {
+            return true;
+        }
+
         if(fileContent.startsWith("%PDF-")) {
             return false;
         }
