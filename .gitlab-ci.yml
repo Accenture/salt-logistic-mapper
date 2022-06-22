@@ -33,7 +33,7 @@ build:
   script:
     - .gitlab/S-BUILD-build.sh
   tags:
-    - d4s-devbox-logistic-1
+    - sce
 
 unit-test:
   stage: QA-1
@@ -46,7 +46,7 @@ unit-test:
   script:
     - .gitlab/S-QA-1-unit-test.sh
   tags:
-    - d4s-devbox-logistic-1
+    - sce
 
 man-foss-analys:
   stage: QA-1
@@ -61,7 +61,7 @@ man-foss-analys:
   script:
     - .gitlab/S-QA-1-man-foss-analys.sh
   tags:
-    - d4s-devbox-logistic-1
+    - sce
   when:
     manual
 
@@ -78,7 +78,7 @@ foss-analysis:
   script:
     - .gitlab/S-QA-1-foss-analysis.sh
   tags:
-    - d4s-devbox-logistic-1
+    - sce
 
 man-code-analys:
   stage: QA-2
@@ -93,7 +93,7 @@ man-code-analys:
   script:
     - .gitlab/S-QA-2-man-code-analys.sh
   tags:
-    - d4s-devbox-logistic-1
+    - sce
   when:
     manual
 
@@ -113,7 +113,7 @@ code-analysis:
   script:
     - .gitlab/S-QA-2-code-analys.sh
   tags:
-    - d4s-devbox-logistic-1
+    - sce
 
 jar-push:
   stage: STASH
@@ -128,7 +128,7 @@ jar-push:
   script:
     - .gitlab/S-STASH-jar-push.sh
   tags:
-    - d4s-devbox-logistic-1
+    - sce
 
 image-push:
   stage: STASH
@@ -142,7 +142,7 @@ image-push:
   script:
     - .gitlab/S-STASH-image-push.sh
   tags:
-    - d4s-devbox-logistic-1
+    - sce
   timeout: 3m
 
 man-image-push:
@@ -157,7 +157,7 @@ man-image-push:
   script:
     - .gitlab/S-STASH-man-image-push.sh
   tags:
-    - d4s-devbox-logistic-1
+    - sce
   timeout: 3m
   when:
     manual
@@ -171,7 +171,7 @@ man-dev-deploy:
   script:
     - .gitlab/S-DEPLOY-man-dev-deploy.sh
   tags:
-    - d4s-devbox-logistic-1
+    - sce
   when:
     manual
 
@@ -183,7 +183,7 @@ dev-deploy:
   script:
     - .gitlab/S-DEPLOY-1-dev-deploy.sh
   tags:
-    - d4s-devbox-logistic-1
+    - sce
   when:
     manual
 
@@ -195,7 +195,7 @@ test-deploy:
   script:
     - .gitlab/S-DEPLOY-1-test-deploy.sh
   tags:
-    - d4s-devbox-logistic-1
+    - sce
 
 int-test:
   stage: QA-POST
@@ -204,7 +204,7 @@ int-test:
   script:
     - .gitlab/S-QA-POST-int-test.sh
   tags:
-    - d4s-devbox-logistic-1
+    - sce
 
 foss-report:
   stage: QA-POST
@@ -217,7 +217,7 @@ foss-report:
   script:
     - .gitlab/S-QA-POST-foss-report.sh
   tags:
-    - d4s-devbox-logistic-1
+    - sce
   allow_failure: true
 
 apidoc-release:
@@ -228,7 +228,7 @@ apidoc-release:
   script:
     - .gitlab/S-QA-POST-apidoc-release.sh
   tags:
-    - d4s-devbox-logistic-1
+    - sce
 
 man-demo-deploy:
   stage: DEPLOY-2
@@ -238,7 +238,7 @@ man-demo-deploy:
   script:
     - .gitlab/S-DEPLOY-2-man-demo-deploy.sh
   tags:
-    - d4s-devbox-logistic-1
+    - sce
   when:
     manual
 
@@ -251,6 +251,6 @@ publish:
   script:
     - .gitlab/S-PUBLISH-github.sh
   tags:
-    - d4s-devbox-logistic-1
+    - sce
   when:
     manual
