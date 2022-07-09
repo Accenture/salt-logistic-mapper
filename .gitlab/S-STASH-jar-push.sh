@@ -7,9 +7,8 @@ SCE_PROJECT=$(echo "$CI_PROJECT_NAME" | tr '[:upper:]' '[:lower:]')
 echo "$SCE_PROJECT"
 CREATED_JAR_FILE=$(find $SHAREPOINT_JAR_FILE_PATH -name '*assembly*.jar'|cut -d"/" -f3-)
 
-MAIN_FOLDER_NAME=$(cut -d'-' -f1 <<<$CREATED_JAR_FILE)
-JAR_VERSION=$(cut -d'-' -f3 <<<$CREATED_JAR_FILE)
-VERSION_FOLDER=${JAR_VERSION%%.jar*}
+MAIN_FOLDER_NAME="$SCE_PROJECT"
+VERSION_FOLDER="$CI_COMMIT_REF_NAME"
 
 
 grant_type="$SHAREPOINT_GRANT_TYPE"
