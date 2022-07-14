@@ -12,13 +12,12 @@ import org.xml.sax.SAXException;
 
 import javax.xml.transform.stream.StreamSource;
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
 import static de.salt.sce.mapper.util.ObjectSerializer.serialize;
-import static java.nio.file.Paths.*;
+import static java.nio.file.Paths.get;
 import static org.apache.commons.codec.binary.Base64.encodeBase64String;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -43,7 +42,7 @@ public class MessageParser {
     public JavaResult getBean(byte[] data, String config) throws SmooksException, IOException, SAXException {
         JavaResult javaResult = new JavaResult();
 
-        Smooks smooks = new Smooks(buildRelativePathToConfig(config));
+        Smooks smooks = new Smooks(get(config).toUri().getRawPath());
         ExecutionContext executionContext = smooks.createExecutionContext();
         smooks.filterSource(executionContext, new StreamSource(new ByteArrayInputStream(data)), javaResult);
 
@@ -89,20 +88,4 @@ public class MessageParser {
             throw new ParserFailedException(error);
         }
     }
-
-    private String buildRelativePathToConfig(String configPath) throws IOException {
-
-        // if the SMOOKS_CONFIG_HOME is not an absolute path. And we need it pro local unit/integration tests
-        if(configPath.startsWith("smooks") || configPath.startsWith("classpath")) {
-            return configPath;
-        }
-
-        String appHomePath = new File(".").getCanonicalPath();
-
-        return get(appHomePath).relativize(get(configPath))
-                .toString()
-                .replace(" ", "%20")
-                .replace("\\", "/");
-    }
-
 }

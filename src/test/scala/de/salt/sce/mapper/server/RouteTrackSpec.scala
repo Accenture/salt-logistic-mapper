@@ -47,7 +47,6 @@ class RouteTrackSpec extends WordSpec with Matchers
 
   "AkkaHttpRestServer" should {
 
-
     s"testing is EMO_DE service returns correct response when becomes correct request [$path]" in {
       import de.heikoseeberger.akkahttpjson4s.Json4sSupport._ // should be visible only in this method where no deserialization to string is performed
 
@@ -177,7 +176,7 @@ class RouteTrackSpec extends WordSpec with Matchers
 
       val mapperRequest = MapperRequest(
         id = UUID.randomUUID().toString,
-        serviceName = "dpd",
+        serviceName = "dpd_de",
         configFile = "config-dpd.xml",
         messageType = "csv",
         encoding = "UTF-8",
@@ -201,11 +200,11 @@ class RouteTrackSpec extends WordSpec with Matchers
 
         paketCSVs1.size() should be(85)
 
-        paketCSVs1.get(0).getSdgdatum should be("20160130023900")
+        paketCSVs1.get(0).getSdgdatum should be("Depot 0145")
         paketCSVs1.get(0).getLangreferenz should be("09445744184617")
         paketCSVs1.get(0).getStatus should be("18")
 
-        paketCSVs1.get(84).getSdgdatum should be("20160130054905")
+        paketCSVs1.get(84).getSdgdatum should be("Depot 0189")
         paketCSVs1.get(84).getLangreferenz should be("09445744184916")
         paketCSVs1.get(84).getStatus should be("02")
 
