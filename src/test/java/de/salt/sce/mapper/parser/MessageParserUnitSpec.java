@@ -9,15 +9,12 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static de.salt.sce.mapper.util.ObjectSerializer.deserialize;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.nio.file.Paths.get;
 import static org.apache.commons.codec.binary.Base64.decodeBase64;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -30,27 +27,6 @@ public class MessageParserUnitSpec {
     public MessageParserUnitSpec() throws IOException {
     }
 
-    public static final URI DEFAULT_BASE_URI = URI.create("./");
-    @Test
-    public void aaaaaaaaaaa() {
-        String configPath = "C:/projects/mapper/src/test/resources/smooks/dpd_de/config-dpd.xml";
-
-        //get(configPath).toUri().toString()
-        URI resourceURI = URI.create(configPath);
-        File resFile = new File(resourceURI.getPath());
-        URI uri = null;
-            try {
-                File configFolder = resFile.getParentFile();
-                if(configFolder != null) {
-                   uri  = new URI(resourceURI.getScheme(), resourceURI.getUserInfo(), resourceURI.getHost(), resourceURI.getPort(), configFolder.getPath().replace('\\', '/'), resourceURI.getQuery(), resourceURI.getFragment());
-                }
-            } catch (URISyntaxException e) {
-                e.printStackTrace();
-            }
-
-            System.out.println("DEFAULT_BASE_URI="+DEFAULT_BASE_URI);
-
-    }
 
     @Test
     @DisplayName("DPD_DE testing.")
