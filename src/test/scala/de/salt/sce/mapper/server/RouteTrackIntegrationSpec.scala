@@ -19,7 +19,7 @@ class RouteTrackIntegrationSpec extends IntegrationTester {
 
   "Mapper" should {
 
-    s"return a transports response for authenticated POST requests [$mapperUri] for UPS" in {
+   /* s"return a transports response for authenticated POST requests [$mapperUri] for UPS" in {
       val file1: String = "20170516_093419_20160719_141122_ROTH-IFTSTA"
       val file2: String = "20160123_181643_ROTH-IFTSTA.399"
       val file3: String = "Unknown"
@@ -68,6 +68,8 @@ class RouteTrackIntegrationSpec extends IntegrationTester {
       line3 should be ('defined)
       line3.get should be(s"File Parsing Exception:Failed to filter source. - $file3")
     }
+
+    */
 
     s"return a transports response for authenticated POST requests [$mapperUri] for GLS_DE" in {
       val file1: String = "20200923_133501_pakstat.018"
