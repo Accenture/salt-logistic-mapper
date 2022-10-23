@@ -39,6 +39,8 @@ public class ConfigCopy {
         );
         String username = config.getString("username");
         String password = config.getString("password");
+        String parsingContent = "";
+
 
         ConfigClient configClient = new ConfigClient(actorMaterializer, requestTimeoutMills);
         Optional<String> result = configClient.send(
@@ -47,11 +49,24 @@ public class ConfigCopy {
                 host
         );
 
+
+        // enable dynamic mappingModel Path
+        // TODO: This step could be done with Smooks library. This is only a temporary solution.
+        if(result.isPresent()) {
+            String internMessage = result.get();
+            if (internMessage.contains("mappingModel=\\\"")) {
+                String mappingPath = rootFolder.replaceAll("\\\\", "/") + "/" + microserviceName + "/";
+                parsingContent = result.get().replace("mappingModel=\\\"", "mappingModel=\\\"" + mappingPath).replace("resource=\\\"modelset", "resource=\\\"" + mappingPath + "modelset");
+            } else {
+                parsingContent = result.get();
+            }
+        }
         try {
+
             if (result.isPresent()) {
                 write(
                         rootFolder,
-                        parseResponse(result.get())
+                        parseResponse(parsingContent)
                 );
             } else {
                 log.error("Could not create smooks config for " + microserviceName);
