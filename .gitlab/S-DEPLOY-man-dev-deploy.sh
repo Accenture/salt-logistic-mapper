@@ -1,4 +1,5 @@
 #!/bin/bash
 
 source .gitlab/common.sh
-deploy logistic-dev master-snapshot
+preflight-check-service
+deploy distribution-development-system master-snapshot

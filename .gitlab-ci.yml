@@ -1,4 +1,4 @@
-# Version S32
+# Version S33
 
 #########################################################################################################
 ### PLEASE NOTE:                                                                                      ###
@@ -14,8 +14,7 @@ cache:
 
 stages:
   - BUILD
-  - QA-1
-  - QA-2
+  - QA
   - STASH
   - DEPLOY
   - DEPLOY-1
@@ -33,10 +32,10 @@ build:
   script:
     - .gitlab/S-BUILD-build.sh
   tags:
-    - sce
+    - sce-v2
 
 unit-test:
-  stage: QA-1
+  stage: QA
   artifacts:
     expire_in: '1 day'
     paths:
@@ -44,12 +43,12 @@ unit-test:
       - "target/scala-2.12/coverage-report"
       - "target/scala-2.12/scoverage-report"
   script:
-    - .gitlab/S-QA-1-unit-test.sh
+    - .gitlab/S-QA-unit-test.sh
   tags:
-    - sce
+    - sce-v2
 
 man-foss-analys:
-  stage: QA-1
+  stage: QA
   cache:
     paths:
       - "sbt-cache"
@@ -59,14 +58,14 @@ man-foss-analys:
   except:
     - tags
   script:
-    - .gitlab/S-QA-1-man-foss-analys.sh
+    - .gitlab/S-QA-man-foss-analys.sh
   tags:
-    - sce
+    - sce-v2
   when:
     manual
 
 foss-analysis:
-  stage: QA-1
+  stage: QA
   cache:
     paths:
       - "sbt-cache"
@@ -76,44 +75,9 @@ foss-analysis:
   only:
     - tags
   script:
-    - .gitlab/S-QA-1-foss-analysis.sh
+    - .gitlab/S-QA-foss-analysis.sh
   tags:
-    - sce
-
-man-code-analys:
-  stage: QA-2
-  cache:
-    paths:
-      - "sbt-cache"
-    policy: pull
-  dependencies:
-    - unit-test
-  except:
-    - tags
-  script:
-    - .gitlab/S-QA-2-man-code-analys.sh
-  tags:
-    - sce
-  when:
-    manual
-
-code-analysis:
-  stage: QA-2
-  cache:
-    paths:
-      - "sbt-cache"
-    policy: pull
-  dependencies:
-    - unit-test
-  needs:
-    - build
-    - unit-test
-  only:
-    - tags
-  script:
-    - .gitlab/S-QA-2-code-analys.sh
-  tags:
-    - sce
+    - sce-v2
 
 jar-push:
   stage: STASH
@@ -128,7 +92,7 @@ jar-push:
   script:
     - .gitlab/S-STASH-jar-push.sh
   tags:
-    - sce
+    - sce-v2
 
 image-push:
   stage: STASH
@@ -142,7 +106,7 @@ image-push:
   script:
     - .gitlab/S-STASH-image-push.sh
   tags:
-    - sce
+    - sce-v2
   timeout: 3m
 
 man-image-push:
@@ -157,7 +121,7 @@ man-image-push:
   script:
     - .gitlab/S-STASH-man-image-push.sh
   tags:
-    - sce
+    - sce-v2
   timeout: 3m
   when:
     manual
@@ -171,7 +135,7 @@ man-dev-deploy:
   script:
     - .gitlab/S-DEPLOY-man-dev-deploy.sh
   tags:
-    - sce
+    - sce-v2
   when:
     manual
 
@@ -183,19 +147,7 @@ dev-deploy:
   script:
     - .gitlab/S-DEPLOY-1-dev-deploy.sh
   tags:
-    - sce
-  when:
-    manual
-
-test-deploy:
-  stage: DEPLOY-1
-  cache: {}
-  only:
-    - tags
-  script:
-    - .gitlab/S-DEPLOY-1-test-deploy.sh
-  tags:
-    - sce
+    - sce-v2
 
 int-test:
   stage: QA-POST
@@ -204,7 +156,7 @@ int-test:
   script:
     - .gitlab/S-QA-POST-int-test.sh
   tags:
-    - sce
+    - sce-v2
 
 foss-report:
   stage: QA-POST
@@ -217,7 +169,7 @@ foss-report:
   script:
     - .gitlab/S-QA-POST-foss-report.sh
   tags:
-    - sce
+    - sce-v2
   allow_failure: true
 
 apidoc-release:
@@ -228,7 +180,7 @@ apidoc-release:
   script:
     - .gitlab/S-QA-POST-apidoc-release.sh
   tags:
-    - sce
+    - sce-v2
 
 man-demo-deploy:
   stage: DEPLOY-2
@@ -238,7 +190,7 @@ man-demo-deploy:
   script:
     - .gitlab/S-DEPLOY-2-man-demo-deploy.sh
   tags:
-    - sce
+    - sce-v2
   when:
     manual
 
@@ -251,6 +203,6 @@ publish:
   script:
     - .gitlab/S-PUBLISH-github.sh
   tags:
-    - sce
+    - sce-v2
   when:
     manual

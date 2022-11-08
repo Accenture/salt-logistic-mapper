@@ -1,8 +1,8 @@
 // =====================================================================================================================
 // = Publisher
 // =====================================================================================================================
-publishTo := Some("Artifactory Realm" at "http://artifactory.apps.d4s.salt-solutions.de/artifactory/{{artifactory-realm}}")
-credentials += Credentials("Artifactory Realm", "artifactory.apps.d4s.salt-solutions.de", "{{artifactory-user}}", "{{artifactory-token}}")
+publishTo := Some("Sonatype Nexus Repository Manager" at "https://dfors-repository-nexus.apps.nur-okd.salt-solutions.de/repository/distribution-maven-release/")
+credentials += Credentials("Sonatype Nexus Repository Manager", "dfors-repository-nexus.apps.nur-okd.salt-solutions.de", "{{nexus-user}}", "{{nexus-token}}")
 publishConfiguration := publishConfiguration.value.withOverwrite(true)
 publishLocalConfiguration := publishLocalConfiguration.value.withOverwrite(true)
 publishArtifact in Test := false

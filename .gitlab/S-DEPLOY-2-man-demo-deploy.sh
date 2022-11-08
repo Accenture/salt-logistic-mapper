@@ -1,4 +1,5 @@
 #!/bin/bash
 
 source .gitlab/common.sh
-deploy logistic-demo "$CI_COMMIT_TAG"
+preflight-check-service
+deploy distribution-demo-system "$CI_COMMIT_TAG"

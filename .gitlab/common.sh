@@ -6,52 +6,28 @@ ERROR=0
 if [ -z "$SBT_OPTS" ]; then
     printf "%s\n" "Variable SBT_OPTS is unset"; ERROR=1
 fi
-if [ -z "$ARTIFACTORY_REALM" ]; then
-    printf "%s\n" "Variable ARTIFACTORY_REALM is unset"; ERROR=1
+if [ -z "$NEXUS_TOKEN" ]; then
+    printf "%s\n" "Variable NEXUS_TOKEN is unset"; ERROR=1
 fi
-if [ -z "$ARTIFACTORY_TOKEN" ]; then
-    printf "%s\n" "Variable ARTIFACTORY_TOKEN is unset"; ERROR=1
-fi
-if [ -z "$ARTIFACTORY_USER" ]; then
-    printf "%s\n" "Variable ARTIFACTORY_USER is unset"; ERROR=1
+if [ -z "$NEXUS_USER" ]; then
+    printf "%s\n" "Variable NEXUS_USER is unset"; ERROR=1
 fi
 if [ -z "$FOSSA_API_KEY" ]; then
     printf "%s\n" "Variable FOSSA_API_KEY is unset"; ERROR=1
 fi
-if [ -z "$SONAR_TOKEN" ]; then
-    printf "%s\n" "Variable SONAR_TOKEN is unset"; ERROR=1
-fi
-if [ -z "$SONAR_URL" ]; then
-    printf "%s\n" "Variable SONAR_URL is unset"; ERROR=1
-fi
-if [ -z "$OWNCLOUD_ENDPOINT" ]; then
-    printf "%s\n" "Variable OWNCLOUD_ENDPOINT is unset"; ERROR=1
-fi
-if [ -z "$OWNCLOUD_USER" ]; then
-    printf "%s\n" "Variable OWNCLOUD_USER is unset"; ERROR=1
-fi
-if [ -z "$OWNCLOUD_TOKEN" ]; then
-    printf "%s\n" "Variable OWNCLOUD_TOKEN is unset"; ERROR=1
-fi
 if [ -z "$PIPELINE_SERVICE_TOKEN" ]; then
     printf "%s\n" "Variable PIPELINE_SERVICE_TOKEN is unset"; ERROR=1
-fi
-if [ -z "$GITHUB_TOKEN" ]; then
-    printf "%s\n" "Variable GITHUB_TOKEN is unset"; ERROR=1
-fi
-if [ -z "$GITHUB_URL" ]; then
-    printf "%s\n" "Variable GITHUB_URL is unset"; ERROR=1
-fi
-if [ -z "$GITHUB_USER" ]; then
-    printf "%s\n" "Variable GITHUB_USER is unset"; ERROR=1
-fi
-if [ -z "$GITHUB_USER_EMAIL" ]; then
-    printf "%s\n" "Variable GITHUB_USER_EMAIL is unset"; ERROR=1
 fi
 # shellcheck disable=SC2181
 if [[ $ERROR -ne 0 ]]; then
     printf "%s\n" "Please set all variables mentioned above on GitLab CI/CD Settings"; exit 1
 fi
+
+function preflight-check-service() {
+  if [ -z "$DISTRIBUTION_PIPELINE_MANAGER_TOKEN" ]; then
+      printf "%s\n" "Variable DISTRIBUTION_PIPELINE_MANAGER_TOKEN is unset"; exit 1
+  fi
+}
 
 function prepare-image-configuration() {
   EXECUTABLE_SCRIPT_NAME=$1
@@ -71,14 +47,9 @@ function prepare-plugins-common() {
   # sbt-dependency-graph
   sed -i.original '/sbt-dependency-graph/d' project/plugins.sbt
   printf "%s\n" "Add sbt-dependency-graph into plugins.sbt"
-  printf "\n%s" 'addSbtPlugin("net.virtual-void" % "sbt-dependency-graph" % "HEAD+20191104-1352")' >> project/plugins.sbt
+  printf "\n%s" 'libraryDependencies += ("net.virtual-void" % "sbt-dependency-graph_2.12_1.0" % "HEAD+20191104-1352")' >> project/plugins.sbt
   # sbt-assembly
   printf "\n%s" 'addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.14.10")' >> project/plugins.sbt
-
-  # sbt-sonar-scanner-plugin
-  sed -i.original '/sbt-sonar-scanner-plugin/d' project/plugins.sbt
-  printf "%s\n" "Add sbt-sonar-scanner-plugin into plugins.sbt"
-  printf "\n%s" 'addSbtPlugin("com.olaq" % "sbt-sonar-scanner-plugin" % "1.3.0")' >> project/plugins.sbt
 
   # JUnit 5 Jupiter sbt interface
   sed -i.original '/sbt-jupiter-interface/d' project/plugins.sbt
@@ -126,29 +97,15 @@ function foss-analysis() {
   fossa analyze --verbose -T "SSG Logistik"
 }
 
-function prepare-sonarqube() {
-  printf "Prepare SonarQube\n"
-  sed -i "s+{{sonar-url}}+$SONAR_URL+g" .gitlab/sonar.txt
-  sed -i "s+{{sonar-token}}+$SONAR_TOKEN+g" .gitlab/sonar.txt
-  sed -i "s+{{sonar-project-key}}+${CI_PROJECT_PATH//\//-}+g" .gitlab/sonar.txt
-  cat .gitlab/sonar.txt >> build.sbt
-}
-
-function code-analysis() {
-  prepare-sonarqube
-  sbt -v sonar
-}
-
-function prepare-artifactory() {
-  printf "Prepare Artifactory\n"
-  sed -i "s+{{artifactory-realm}}+$ARTIFACTORY_REALM+g" .gitlab/publisher.txt
-  sed -i "s+{{artifactory-user}}+$ARTIFACTORY_USER+g" .gitlab/publisher.txt
-  sed -i "s+{{artifactory-token}}+$ARTIFACTORY_TOKEN+g" .gitlab/publisher.txt
+function prepare-nexus() {
+  printf "Prepare Nexus\n"
+  sed -i "s+{{nexus-user}}+$NEXUS_USER+g" .gitlab/publisher.txt
+  sed -i "s+{{nexus-token}}+$NEXUS_TOKEN+g" .gitlab/publisher.txt
   cat .gitlab/publisher.txt >> build.sbt
 }
 
 function code-push() {
-  prepare-artifactory
+  prepare-nexus
   sbt -v publish
 }
 
@@ -176,113 +133,90 @@ function deploy() {
   IMAGE_TAG=$2
   SCE_PROJECT=$(echo "$CI_PROJECT_NAME" | tr '[:upper:]' '[:lower:]' | tr '\_' '\-')
   SCE_NAMESPACE=$(echo "$CI_PROJECT_NAMESPACE" | tr '[:upper:]' '[:lower:]')
-  oc login https://cluster.d4s.salt-solutions.de:8443 --certificate-authority .gitlab/d4s-openshift-ca.crt --token="$SCE_OPENSHIFT_SERVICE_ACCOUNT_TOKEN"
-  oc delete deploymentconfig "$SCE_PROJECT" -n "$OPENSHIFT_NAMESPACE" || true
-  oc delete imagestream "$SCE_PROJECT" -n "$OPENSHIFT_NAMESPACE" || true
-  oc delete service "$SCE_PROJECT" -n "$OPENSHIFT_NAMESPACE" || true
-  printf "%s\n" "Fetching all port(s) needed from configmap service-$SCE_PROJECT (namespace: $OPENSHIFT_NAMESPACE)"
-  SCESERVICES=$(curl -k -H "Authorization: Bearer $SCE_OPENSHIFT_SERVICE_ACCOUNT_TOKEN" https://cluster.d4s.salt-solutions.de:8443/api/v1/namespaces/"$OPENSHIFT_NAMESPACE"/configmaps/service-"$SCE_PROJECT" | jq '. | .data')
-  if [[ -z "${SCESERVICES}" ]] || [[ $SCESERVICES == "null" ]]; then
-    echo "ConfigMap service-$SCE_PROJECT is not set, creating service skipped"
+  oc login $CLUSTER_ADDRESS --token=$DISTRIBUTION_PIPELINE_MANAGER_TOKEN
+  oc delete deployment $SCE_PROJECT -n $OPENSHIFT_NAMESPACE || true
+  oc delete service $SCE_PROJECT -n $OPENSHIFT_NAMESPACE || true
+
+  # Service Creating
+  echo "Fetching all port(s) needed from configmap service-$SCE_PROJECT (namespace: $OPENSHIFT_NAMESPACE)"
+  SCESERVICES=`curl -k -H "Authorization: Bearer $DISTRIBUTION_PIPELINE_MANAGER_TOKEN" https://api.nur-okd.salt-solutions.de:6443/api/v1/namespaces/$OPENSHIFT_NAMESPACE/configmaps/service-$SCE_PROJECT | jq '. | .data'`
+  echo "Services: $SCESERVICES"
+  if [ "$SCESERVICES" = "null" ]; then
+  echo "ConfigMap service-$SCE_PROJECT is not set, creating service skipped"
   else
-    # Service
-    echo "ConfigMap service-$SCE_PROJECT is set, creating service"
-    printf "%s\n" "Service: $SCESERVICES"
-    cat <<EOF > service.yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: $SCE_PROJECT
-spec:
-  selector:
-    deploymentconfig: $SCE_PROJECT
-  sessionAffinity: None
-  type: ClusterIP
-  ports:
+  echo "ConfigMap service-$SCE_PROJECT is set, creating service"
+  cat <<EOF > service.yaml
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name: $SCE_PROJECT
+  spec:
+    selector:
+      app: $SCE_PROJECT
+    type: ClusterIP
+    ports:
 EOF
-    for entry in $(echo "$SCESERVICES" | jq -r "to_entries|map(\"\(.)\")|.[]" ); do
-      unset key && unset value;
-      printf "%s\n" "Entry: $entry"
-      key=$(echo "$entry" | jq '. | .key')
-      value=$(echo "$entry" | jq '. | (.value)|tonumber')
-    cat <<EOF >> service.yaml
-  - name: $key
-    port: $value
-    targetPort: $value
-    protocol: TCP
-EOF
-    done
-    printf "\nContent of service.yaml: \n"
-    cat service.yaml
-    oc create -f service.yaml -n "$OPENSHIFT_NAMESPACE"
+
+  for entry in $(echo $SCESERVICES | jq -r "to_entries|map(\"\(.)\")|.[]" ); do
+  unset KEY && unset VALUE;
+  echo $entry;
+  KEY=`echo $entry | jq '. | .key'`;
+  VALUE=`echo $entry | jq '. | (.value)|tonumber'`;
+  cat <<EOF2 >> service.yaml
+    - name: $KEY
+      port: $VALUE
+      protocol: TCP
+EOF2
+  done
+  cat service.yaml
+  oc apply -f service.yaml -n $OPENSHIFT_NAMESPACE
+  rm service.yaml
   fi
-
-
-  # ImageStream
-  cat <<EOF >> imagestream.yaml
-apiVersion: image.openshift.io/v1
-kind: ImageStream
-metadata:
-  labels:
-    app: $SCE_PROJECT
-  name: $SCE_PROJECT
-  namespace: $OPENSHIFT_NAMESPACE
-spec:
-  lookupPolicy:
-    local: false
-  tags:
-    - from:
-        kind: DockerImage
-        name: $CI_REGISTRY/$SCE_NAMESPACE/$CI_PROJECT_NAME:$IMAGE_TAG
-      generation: 2
-      importPolicy: {}
-      name: $IMAGE_TAG
-      referencePolicy:
-        type: Source
-EOF
-  printf "\nContent of imagestream.yaml: \n"
-  cat imagestream.yaml
-  oc create -f imagestream.yaml -n "$OPENSHIFT_NAMESPACE"
-
-  # Deployment
-  cat <<EOF >> deployment.yaml
-apiVersion: v1
-kind: DeploymentConfig
-metadata:
-  labels:
-    app: $SCE_PROJECT
-  name: $SCE_PROJECT
-  namespace: $OPENSHIFT_NAMESPACE
-spec:
-  minReadySeconds: 0
-  paused: false
-  replicas: 1
-  revisionHistoryLimit: 2
-  strategy:
-    activeDeadlineSeconds: 21600
-    recreateParams:
-      timeoutSeconds: 600
-    resources: {}
-    type: Recreate
-  template:
-    metadata:
-      labels:
-        name: $SCE_PROJECT
-    spec:
-      containers:
-      - args:
-        - /bin/sh
-        - -c
-        envFrom:
-        - configMapRef:
-            name: sce-environment
-        image: $CI_REGISTRY/$SCE_NAMESPACE/$CI_PROJECT_NAME:$IMAGE_TAG
-        imagePullPolicy: IfNotPresent
-        name: $SCE_PROJECT
-EOF
+  
+  cat <<EOF3 > deployment.yaml
+  kind: Deployment
+  apiVersion: apps/v1
+  metadata:
+    name: $SCE_PROJECT
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: $SCE_PROJECT
+    template:
+      metadata:
+        labels:
+          app: $SCE_PROJECT
+      spec:
+        imagePullSecrets:
+          - name: "swugit1-image-puller"
+        containers:
+          - name: $SCE_PROJECT
+            image: $CI_REGISTRY/$SCE_NAMESPACE/$SCE_PROJECT:$IMAGE_TAG
+            imagePullPolicy: IfNotPresent
+            envFrom:
+              - configMapRef:
+                  name: sce-environment
+            resources:
+              requests:
+                cpu: "50m"
+                memory: "250Mi"
+              limits:
+                cpu: "2000m"
+                memory: "4000Mi"
+            volumeMounts:
+              - name: tls-bundle
+                mountPath: /etc/pki/ca-trust/extracted/pem
+        restartPolicy: Always
+        volumes:
+          - name: tls-bundle
+            configMap:
+              name: redhat-ca-bundle
+EOF3
   printf "\nContent of deployment.yaml: \n"
   cat deployment.yaml
   oc create -f deployment.yaml -n "$OPENSHIFT_NAMESPACE"
+  rm deployment.yaml
 }
 
 change_timezone_to_berlin() {
