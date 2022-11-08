@@ -34,14 +34,6 @@ build:
   tags:
     - sce-v2
 
-dev-deploy:
-  stage: QA
-  cache: {}
-  script:
-    - .gitlab/S-DEPLOY-1-dev-deploy.sh
-  tags:
-    - sce-v2
-
 unit-test:
   stage: QA
   artifacts:
@@ -146,6 +138,16 @@ man-dev-deploy:
     - sce-v2
   when:
     manual
+
+dev-deploy:
+  stage: DEPLOY-1
+  cache: {}
+  only:
+    - tags
+  script:
+    - .gitlab/S-DEPLOY-1-dev-deploy.sh
+  tags:
+    - sce-v2
 
 int-test:
   stage: QA-POST
