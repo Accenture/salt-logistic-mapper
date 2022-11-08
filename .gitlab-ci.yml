@@ -1,8 +1,8 @@
-# Version S33
+# Version S34
 
 #########################################################################################################
 ### PLEASE NOTE:                                                                                      ###
-### This file and .gitlab folder are managed by sce-pipeline-template.                                ###
+### This file and .gitlab folder are managed by pipeline-template.                                    ###
 ### Don't make changes here - they will be overwritten.                                               ###
 #########################################################################################################
 
@@ -19,7 +19,6 @@ stages:
   - DEPLOY
   - DEPLOY-1
   - QA-POST
-  - PUBLISH
   - DEPLOY-2
 
 build:
@@ -170,7 +169,6 @@ foss-report:
     - .gitlab/S-QA-POST-foss-report.sh
   tags:
     - sce-v2
-  allow_failure: true
 
 apidoc-release:
   stage: QA-POST
@@ -189,19 +187,6 @@ man-demo-deploy:
     - tags
   script:
     - .gitlab/S-DEPLOY-2-man-demo-deploy.sh
-  tags:
-    - sce-v2
-  when:
-    manual
-
-publish:
-  stage: PUBLISH
-  dependencies:
-    - int-test
-  only:
-    - tags
-  script:
-    - .gitlab/S-PUBLISH-github.sh
   tags:
     - sce-v2
   when:
