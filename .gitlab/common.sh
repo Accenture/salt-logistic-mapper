@@ -131,7 +131,7 @@ function check-deploy-prerequisite() {
 function deploy() {
   OPENSHIFT_NAMESPACE=$1
   IMAGE_TAG=$2
-  SCE_PROJECT=$(echo "$CI_PROJECT_NAME" | tr '[:upper:]' '[:lower:]' | tr '\_' '\-')
+  SCE_PROJECT=$(echo "$CI_PROJECT_NAME" | tr '[:upper:]' '[:lower:]')
   SCE_NAMESPACE=$(echo "$CI_PROJECT_NAMESPACE" | tr '[:upper:]' '[:lower:]')
   oc login $CLUSTER_ADDRESS --token=$DISTRIBUTION_PIPELINE_MANAGER_TOKEN
   oc delete deployment $SCE_PROJECT -n $OPENSHIFT_NAMESPACE || true
@@ -190,6 +190,7 @@ EOF2
       spec:
         imagePullSecrets:
           - name: "swugit1-image-puller"
+        serviceAccountName: anyuid
         containers:
           - name: $SCE_PROJECT
             image: $CI_REGISTRY/$SCE_NAMESPACE/$SCE_PROJECT:$IMAGE_TAG
