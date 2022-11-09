@@ -131,7 +131,7 @@ function check-deploy-prerequisite() {
 function deploy() {
   OPENSHIFT_NAMESPACE=$1
   IMAGE_TAG=$2
-  SCE_PROJECT=$(echo "$CI_PROJECT_NAME" | tr '[:upper:]' '[:lower:]')
+  SCE_PROJECT=$(echo "$CI_PROJECT_NAME" | tr '[:upper:]' '[:lower:]' | tr '\_' '\-')
   SCE_NAMESPACE=$(echo "$CI_PROJECT_NAMESPACE" | tr '[:upper:]' '[:lower:]')
   oc login $CLUSTER_ADDRESS --token=$DISTRIBUTION_PIPELINE_MANAGER_TOKEN
   oc delete deployment $SCE_PROJECT -n $OPENSHIFT_NAMESPACE || true
