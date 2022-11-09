@@ -193,7 +193,7 @@ EOF2
         serviceAccountName: anyuid
         containers:
           - name: $SCE_PROJECT
-            image: $CI_REGISTRY/$SCE_NAMESPACE/$SCE_PROJECT:$IMAGE_TAG
+            image: $CI_REGISTRY/$SCE_NAMESPACE/$CI_PROJECT_NAME:$IMAGE_TAG
             imagePullPolicy: IfNotPresent
             envFrom:
               - configMapRef:
