@@ -170,6 +170,7 @@ foss-report:
     - .gitlab/S-QA-POST-foss-report.sh
   tags:
     - sce-v2
+  allow_failure: true
 
 apidoc-release:
   stage: QA-POST
