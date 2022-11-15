@@ -20,6 +20,7 @@ stages:
   - DEPLOY-1
   - QA-POST
   - DEPLOY-2
+  - PUBLISH
 
 build:
   stage: BUILD
@@ -169,6 +170,7 @@ foss-report:
     - .gitlab/S-QA-POST-foss-report.sh
   tags:
     - sce-v2
+  allow_failure: true
 
 apidoc-release:
   stage: QA-POST
@@ -189,5 +191,18 @@ man-demo-deploy:
     - .gitlab/S-DEPLOY-2-man-demo-deploy.sh
   tags:
     - sce-v2
+  when:
+    manual
+
+publish:
+  stage: PUBLISH
+  dependencies:
+    - int-test
+  only:
+    - tags
+  script:
+    - .gitlab/S-PUBLISH-github.sh
+  tags:
+    - sce
   when:
     manual

@@ -52,7 +52,7 @@ public class ConfigCopy {
 
         // enable dynamic mappingModel Path
         // TODO: This step could be done with Smooks library. This is only a temporary solution.
-  /*      if(result.isPresent()) {
+        if(result.isPresent()) {
             String internMessage = result.get();
             if (internMessage.contains("mappingModel=\\\"")) {
                 String mappingPath = rootFolder.replaceAll("\\\\", "/") + "/" + microserviceName + "/";
@@ -60,13 +60,13 @@ public class ConfigCopy {
             } else {
                 parsingContent = result.get();
             }
-        }*/
+        }
         try {
 
             if (result.isPresent()) {
                 write(
                         rootFolder,
-                        parseResponse(result.get())
+                        parseResponse(parsingContent)
                 );
             } else {
                 log.error("Could not create smooks config for " + microserviceName);
