@@ -55,6 +55,7 @@ public class ConfigCopy {
         if(result.isPresent()) {
             String internMessage = result.get();
             if (internMessage.contains("mappingModel=\\\"") && rootFolder != "/opt/docker/smooks") {
+                log.error("rootFolder" + rootFolder);
                 String mappingPath = rootFolder.replaceAll("\\\\", "/") + "/" + microserviceName + "/";
                 parsingContent = result.get().replace("mappingModel=\\\"", "mappingModel=\\\"" + mappingPath).replace("resource=\\\"modelset", "resource=\\\"" + mappingPath + "modelset");
             } else {
