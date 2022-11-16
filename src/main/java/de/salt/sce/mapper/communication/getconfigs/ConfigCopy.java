@@ -54,7 +54,7 @@ public class ConfigCopy {
         // TODO: This step could be done with Smooks library. This is only a temporary solution.
         if(result.isPresent()) {
             String internMessage = result.get();
-            if (internMessage.contains("mappingModel=\\\"")) {
+            if (internMessage.contains("mappingModel=\\\"") && rootFolder != "/opt/docker/smooks") {
                 String mappingPath = rootFolder.replaceAll("\\\\", "/") + "/" + microserviceName + "/";
                 parsingContent = result.get().replace("mappingModel=\\\"", "mappingModel=\\\"" + mappingPath).replace("resource=\\\"modelset", "resource=\\\"" + mappingPath + "modelset");
             } else {
