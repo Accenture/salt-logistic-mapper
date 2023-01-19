@@ -196,10 +196,6 @@ man-demo-deploy:
 
 publish:
   stage: PUBLISH
-  dependencies:
-    - int-test
-  only:
-    - tags
   script:
     - .gitlab/S-PUBLISH-github.sh
   tags:
