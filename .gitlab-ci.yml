@@ -203,6 +203,6 @@ publish:
   script:
     - .gitlab/S-PUBLISH-github.sh
   tags:
-    - sce
+    - sce-v2
   when:
     manual
