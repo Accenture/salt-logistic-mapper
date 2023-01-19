@@ -196,6 +196,7 @@ man-demo-deploy:
 
 publish:
   stage: PUBLISH
+  cache: {}
   script:
     - .gitlab/S-PUBLISH-github.sh
   tags:
