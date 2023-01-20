@@ -14,12 +14,12 @@ cache:
 
 stages:
   - BUILD
-  - PUBLISH
   - QA
   - STASH
   - DEPLOY
   - DEPLOY-1
   - QA-POST
+  - PUBLISH
   - DEPLOY-2
 
 build:
@@ -196,6 +196,10 @@ man-demo-deploy:
 
 publish:
   stage: PUBLISH
+  dependencies:
+    - int-test
+  only:
+    - tags
   script:
     - .gitlab/S-PUBLISH-github.sh
   tags:
