@@ -196,9 +196,11 @@ man-demo-deploy:
 
 publish:
   stage: PUBLISH
-  cache:
-    paths:
-      - "sbt-cache"
+  cache: { }
+  dependencies:
+      - build
+  image:
+      name: registry.hub.docker.com/griffinplus/gitlab-kaniko
   script:
     - .gitlab/S-PUBLISH-github.sh
   tags:
