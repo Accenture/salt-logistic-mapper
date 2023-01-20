@@ -196,9 +196,6 @@ man-demo-deploy:
 
 publish:
   stage: PUBLISH
-  cache:
-    paths:
-      - "sbt-cache"
   script:
     - .gitlab/S-PUBLISH-github.sh
   tags:
