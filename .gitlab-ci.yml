@@ -14,13 +14,13 @@ cache:
 
 stages:
   - BUILD
+  - PUBLISH
   - QA
   - STASH
   - DEPLOY
   - DEPLOY-1
   - QA-POST
   - DEPLOY-2
-  - PUBLISH
 
 build:
   stage: BUILD
