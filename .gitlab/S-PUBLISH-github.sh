@@ -1,5 +1,6 @@
 #!/bin/bash
 
+#variables
 PROJECT="https://swugit1.salt-solutions.de/sce/common/mapper.git"
 PROJECT_NAME="mapper"
 GITHUB_COMMIT_MESSAGE="Publish in GitHub."
