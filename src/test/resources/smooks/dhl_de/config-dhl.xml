@@ -10,7 +10,7 @@
 	,22(n/a),23(n/a),24(n/a),25(n/a),26(Leitcode/Routingcode),27(n/a),28(n/a),29(n/a),30(Rücksendung J/N),31(n/a)
     -->
             <csv:reader fields="$ignore$3,sdgdatum,ort,$ignore$3,langreferenz,$ignore$5,status,$ignore$4,empfaenger,$ignore$11"
-    					separator=";" skipLines="4">
+    					separator=";" skipLines="1">
         <csv:listBinding beanId="shipment-bean" class="de.salt.sce.model.csv.PaketCSV"/>
     </csv:reader>
 
