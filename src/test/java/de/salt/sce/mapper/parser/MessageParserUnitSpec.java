@@ -382,7 +382,7 @@ public class MessageParserUnitSpec {
         @SuppressWarnings("unchecked")
         List<PaketCSV> paketCSVs = (ArrayList<PaketCSV>) deserialize(decodeBase64(encodedString.get()));
 
-        assertThat(paketCSVs).hasSize(178);
+        assertThat(paketCSVs).hasSize(181);
     }
 
     private byte[] getResource(String resourseName, String encoding) throws IOException {

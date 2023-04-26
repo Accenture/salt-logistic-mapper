@@ -155,10 +155,10 @@ class RouteTrackIntegrationSpec extends IntegrationTester {
       val line1: Option[String] = internalResponse.csvResponse.get.success.get(file1)
       val packages = deserialize(decodeBase64(line1.get)).asInstanceOf[java.util.ArrayList[PaketCSV]]
 
-      packages.size should be(2)
-      packages.get(0).getLangreferenz should be("00340036920033290150")
+      packages.size should be(5)
+      packages.get(0).getLangreferenz should be("00340036920033289451")
       packages.get(0).getEmpfaenger should be("")
-      packages.get(0).getSdgdatum should be("2020-11-03 03:06:42")
+      packages.get(0).getSdgdatum should be("2020-11-03 03:00:53")
       packages.get(0).getStatus should be("EE")
     }
   }
