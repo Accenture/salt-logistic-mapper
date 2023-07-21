@@ -2,7 +2,7 @@
 // = Metadata
 // =====================================================================================================================
 name := "mapper"
-version := "2023.1.10"
+version := "2023.1.14"
 organization := "de.salt.sce"
 scalaVersion := "2.12.11"
 
@@ -14,6 +14,7 @@ lazy val root = (project in file(""))
 // Remove feature warning
 // Doc: http://stackoverflow.com/questions/27895790/sbt-0-12-4-there-were-x-feature-warnings-re-run-with-feature-for-details
 scalacOptions in ThisBuild ++= Seq("-feature")
+scalacOptions in ThisBuild ++= Seq("-unchecked", "-deprecation")
 
 // =====================================================================================================================
 // = Unit Test Settings
@@ -25,40 +26,37 @@ logBuffered in Test := false
 // = Dependencies
 // =====================================================================================================================
 
-val akkaVersion = "2.5.26"
-val akkaHttpVersion = "10.1.12"
+val akkaVersion = "2.6.21"
+val akkaHttpVersion = "10.2.10"
 
 libraryDependencies += "com.typesafe.akka" %% "akka-http" % akkaHttpVersion
 libraryDependencies += "com.typesafe.akka" %% "akka-actor" % akkaVersion
 libraryDependencies += "com.typesafe.akka" %% "akka-stream" % akkaVersion
 libraryDependencies += "com.typesafe.akka" %% "akka-slf4j" % akkaVersion
-libraryDependencies += "com.typesafe.akka" %% "akka-testkit" % akkaVersion % "test"
-libraryDependencies += "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion % "test"
+libraryDependencies += "com.typesafe.akka" %% "akka-testkit" % akkaVersion % Test
+libraryDependencies += "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion % Test
 
-libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.4"
-libraryDependencies += "org.apache.logging.log4j" % "log4j-slf4j-impl" % "2.17.1"
-libraryDependencies += "org.slf4j" % "slf4j-ext" % "1.7.32"
-libraryDependencies += "org.apache.logging.log4j" % "log4j-api" % "2.17.1"
-libraryDependencies += "org.apache.logging.log4j" % "log4j-core" % "2.17.1"
+libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.5"
+libraryDependencies += "org.apache.logging.log4j" % "log4j-slf4j-impl" % "2.20.0"
+libraryDependencies += "org.slf4j" % "slf4j-ext" % "1.7.36" // sic: org.apache.logging 2.20.0 depends on 1.7.36
+libraryDependencies += "org.apache.logging.log4j" % "log4j-api" % "2.20.0"
+libraryDependencies += "org.apache.logging.log4j" % "log4j-core" % "2.20.0"
 
 // Akka CORS :: https://github.com/lomigmegard/akka-http-cors
-libraryDependencies += "ch.megard" %% "akka-http-cors" % "1.0.0"
+libraryDependencies += "ch.megard" %% "akka-http-cors" % "1.2.0"
 
-libraryDependencies += "commons-codec" % "commons-codec" % "1.13"
-libraryDependencies += "org.json4s" %% "json4s-native" % "3.6.7"
-libraryDependencies += "de.heikoseeberger" %% "akka-http-json4s" % "1.28.0"
+libraryDependencies += "commons-codec" % "commons-codec" % "1.15"
+libraryDependencies += "org.json4s" %% "json4s-native" % "4.0.6"
+libraryDependencies += "de.heikoseeberger" %% "akka-http-json4s" % "1.39.2"
 
-libraryDependencies += "com.google.code.gson" % "gson" % "2.8.6"
+libraryDependencies += "com.google.code.gson" % "gson" % "2.10.1"
 
 // Scalatest :: http://www.scalatest.org
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % "test"
-libraryDependencies += "org.junit.jupiter" % "junit-jupiter-engine" % "5.0.0" % "test"
-libraryDependencies += "org.mockito" % "mockito-junit-jupiter" % "2.23.0" % "test"
-libraryDependencies += "org.assertj" % "assertj-core" % "3.11.1" % "test"
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.16" % Test
+libraryDependencies += "org.junit.jupiter" % "junit-jupiter-engine" % "5.9.3" % Test
+libraryDependencies += "org.assertj" % "assertj-core" % "3.24.2" % Test
 
-libraryDependencies += "commons-io" % "commons-io" % "2.5"
-libraryDependencies += "commons-validator" % "commons-validator" % "1.6"
-libraryDependencies += "org.apache.commons" % "commons-lang3" % "3.4"
+libraryDependencies += "commons-io" % "commons-io" % "2.13.0" // used in ConfigResponseWriter
 
 libraryDependencies += "org.milyn" % "milyn-smooks-edi" % "1.7.1"
 libraryDependencies += "org.milyn" % "milyn-smooks-csv" % "1.7.1"

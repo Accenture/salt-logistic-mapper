@@ -2,7 +2,6 @@ package de.salt.sce.mapper
 
 import akka.actor.{ActorRef, ActorSystem}
 import akka.http.scaladsl.Http
-import akka.stream.ActorMaterializer
 import com.typesafe.scalalogging.LazyLogging
 import de.salt.sce.mapper.server.ActorService
 import de.salt.sce.mapper.server.communication.server.AkkaHttpRestServer
@@ -14,7 +13,7 @@ import scala.concurrent.{Await, ExecutionContextExecutor, Future}
 
 object Bootstrap extends App with LazyLogging with LazyConfig {
 
-  protected var bindingFuture: Future[Http.ServerBinding] = _
+   private var bindingFuture: Future[Http.ServerBinding] = _
 
   System.getProperties.setProperty("sce.service.name", "mapper")
 
@@ -26,7 +25,6 @@ object Bootstrap extends App with LazyLogging with LazyConfig {
 
   implicit val system: ActorSystem = ActorSystem(config.getString("sce.track.mapper.actor-system.name"))
   ActorService.setActorSystem(system)
-  implicit val materializer: ActorMaterializer = ActorMaterializer()
   implicit val ec: ExecutionContextExecutor = system.dispatcher
 
   logger.debug("Creating manager actors")
@@ -36,7 +34,8 @@ object Bootstrap extends App with LazyLogging with LazyConfig {
   configActor ! "INIT_CONFIG"
 
   val restServer = AkkaHttpRestServer.getServer
-  bindingFuture = Http().bindAndHandle(restServer.getRoute, endpoint, endpointPort)
+//  bindingFuture = Http().bindAndHandle(restServer.getRoute, endpoint, endpointPort)
+  bindingFuture = Http().newServerAt(endpoint, endpointPort).bind(restServer.getRoute)
   logPID()
   logger.info(s"SALT Software mapper Track Server online at: $protocol://$endpoint:$endpointPort/")
 

@@ -1,7 +1,7 @@
 package de.salt.sce.mapper.communication.getconfigs;
 
 import akka.http.javadsl.Http;
-import akka.stream.ActorMaterializer;
+import akka.stream.Materializer;
 import com.google.gson.JsonSyntaxException;
 import com.typesafe.config.Config;
 import org.slf4j.Logger;
@@ -24,13 +24,13 @@ public class ConfigCopy {
      * Getting smooks files from Microservice and writing in local filesystem.
      *
      * @param httpClient          {@link Http}
-     * @param actorMaterializer   {@link ActorMaterializer}
+     * @param materializer   {@link Materializer}
      * @param config              {@link Config}
      * @param microserviceName    String
      * @param rootFolder          String
      * @param requestTimeoutMills int
      */
-    public static void copy(Http httpClient, ActorMaterializer actorMaterializer, Config config, String microserviceName, String rootFolder, int requestTimeoutMills) {
+    public static void copy(Http httpClient, Materializer materializer, Config config, String microserviceName, String rootFolder, int requestTimeoutMills) {
         String host = format("%s://%s:%s/%s",
                 config.getString("protocol"),
                 config.getString("endpoint"),
@@ -42,7 +42,7 @@ public class ConfigCopy {
         String parsingContent = "";
 
 
-        ConfigClient configClient = new ConfigClient(actorMaterializer, requestTimeoutMills);
+        ConfigClient configClient = new ConfigClient(materializer, requestTimeoutMills);
         Optional<String> result = configClient.send(
                 ConfigRequestBuilder.buildRequest(host, username, password),
                 httpClient,

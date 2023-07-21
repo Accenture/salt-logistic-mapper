@@ -1,6 +1,5 @@
 package de.salt.sce.mapper.server.communication.server
 
-import java.util.concurrent.TimeUnit.SECONDS
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.model.StatusCodes.InternalServerError
 import akka.http.scaladsl.server.Directives._
@@ -10,13 +9,14 @@ import akka.pattern.ask
 import akka.util.Timeout
 import com.typesafe.scalalogging.LazyLogging
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
+import de.salt.sce.mapper.BuildInfo
 import de.salt.sce.mapper.server.ActorService
 import de.salt.sce.mapper.server.communication.model.MapperRequest
 import de.salt.sce.mapper.server.communication.model.MapperResponses.InternalResponse
 import de.salt.sce.mapper.server.util.LazyConfig
 import org.json4s.{DefaultFormats, Formats, Serialization, native}
-import de.salt.sce.mapper.BuildInfo
 
+import java.util.concurrent.TimeUnit.SECONDS
 import scala.concurrent.duration.Duration
 
 /**
@@ -102,7 +102,7 @@ class AkkaHttpRestServer extends RestServer with LazyLogging with LazyConfig {
 
           case x: Any =>
             logger.error(s"Internal error: Got unexpected response ${x.toString}")
-            complete(InternalServerError, x)
+            complete(InternalServerError, x.toString)
         }
     }
   }

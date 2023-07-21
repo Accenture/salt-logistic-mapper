@@ -3,7 +3,7 @@ package de.salt.sce.mapper.communication.getconfigs;
 import akka.http.javadsl.Http;
 import akka.http.javadsl.model.HttpRequest;
 import akka.http.javadsl.model.HttpResponse;
-import akka.stream.ActorMaterializer;
+import akka.stream.Materializer;
 import org.slf4j.Logger;
 
 import java.util.Optional;
@@ -16,15 +16,12 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class ConfigClient {
     private static final Logger log = getLogger(ConfigClient.class);
 
-    private ActorMaterializer actorMaterializer;
-    private int requestTimeoutMills;
+    private final Materializer materializer;
+    private final int requestTimeoutMills;
 
-    public ConfigClient(ActorMaterializer actorMaterializer, int requestTimeoutMills) {
-        this.actorMaterializer = actorMaterializer;
+    public ConfigClient(Materializer materializer, int requestTimeoutMills) {
+        this.materializer = materializer;
         this.requestTimeoutMills = requestTimeoutMills;
-    }
-
-    private ConfigClient() {
     }
 
     /**
@@ -44,7 +41,7 @@ public class ConfigClient {
             }
             return Optional.of(response
                     .entity()
-                    .toStrict(this.requestTimeoutMills, actorMaterializer)
+                    .toStrict(this.requestTimeoutMills, materializer)
                     .toCompletableFuture()
                     .get()
                     .getData()

@@ -10,14 +10,15 @@ import de.salt.sce.mapper.server.communication.model.MapperRequest
 import de.salt.sce.mapper.server.communication.model.MapperResponses.InternalResponse
 import de.salt.sce.mapper.server.util.LazyConfig
 import org.json4s.{DefaultFormats, Formats, Serialization, native}
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
 import scala.concurrent.Await
 import scala.concurrent.duration.{Duration, SECONDS, _}
 import scala.language.postfixOps
 import scala.util.{Failure, Success, Try}
 
-trait IntegrationTester extends WordSpec with Matchers with ScalatestRouteTest with LazyConfig with LazyLogging {
+trait IntegrationTester extends AnyWordSpec with Matchers with ScalatestRouteTest with LazyConfig with LazyLogging {
 
   implicit val s: Serialization = native.Serialization
   implicit val formats: Formats = DefaultFormats
