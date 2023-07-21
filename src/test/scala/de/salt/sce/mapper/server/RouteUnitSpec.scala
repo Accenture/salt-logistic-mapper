@@ -8,9 +8,10 @@ import com.typesafe.scalalogging.LazyLogging
 import de.salt.sce.mapper.server.communication.server.AkkaHttpRestServer
 import de.salt.sce.mapper.server.util.LazyConfig
 import org.json4s.{DefaultFormats, Formats, Serialization, native}
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
-class RouteUnitSpec extends WordSpec with Matchers
+class RouteUnitSpec extends AnyWordSpec with Matchers
   with ScalatestRouteTest with LazyConfig
   with LazyLogging {
 

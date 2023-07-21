@@ -9,6 +9,12 @@ SALT_LOG_LEVEL      - Log level (Default: INFO)
 SALT_ROOT_LOG_LEVEL - Root log level (Default: INFO)
 
 # Changelogs
+## Version 4
+* Compress archived files as zip instead of gz
+* Time-based roll-over once a day
+* Add date on timestamp in log file
+* Add charset of log file
+
 ## Version 3
 * Add Zulu timezone
 
@@ -34,10 +40,10 @@ SALT_ROOT_LOG_LEVEL - Root log level (Default: INFO)
         <RollingFile
                 name="FILE"
                 fileName="${env:SALT_LOG_DIR:-logs}/${sys:sce.service.name:-sce-service}/application.log"
-                filePattern="${env:SALT_LOG_DIR:-logs}/${sys:sce.service.name:-sce-service}/archived/application.%d{yyyy-MM-dd.HH.mm}.log.gz"
+                filePattern="${env:SALT_LOG_DIR:-logs}/${sys:sce.service.name:-sce-service}/archived/application.%d{yyyy-MM-dd}-%i.log.zip"
                 ignoreExceptions="false">
-            <PatternLayout disableAnsi="true">
-                <Pattern>%d{HH:mm:ss.SSS}{GMT+0}Z %-5level [%.70thread] %c{1.} %n> %msg%n</Pattern>
+            <PatternLayout disableAnsi="true" charset="UTF-8">
+                <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}{GMT+0}Z %-5level [%.70thread] %X{akkaSource} %c{1.} %n> %msg%n</Pattern>
             </PatternLayout>
             <Policies>
                 <OnStartupTriggeringPolicy/>

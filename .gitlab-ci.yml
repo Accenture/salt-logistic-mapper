@@ -149,6 +149,17 @@ dev-deploy:
   tags:
     - sce-v2
 
+man-int-test:
+  stage: QA-POST
+  except:
+    - tags
+  script:
+    - .gitlab/S-QA-POST-int-test.sh
+  tags:
+    - sce-v2
+  when:
+    manual
+
 int-test:
   stage: QA-POST
   only:

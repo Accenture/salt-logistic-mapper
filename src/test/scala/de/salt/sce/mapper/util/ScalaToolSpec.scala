@@ -1,9 +1,11 @@
 package de.salt.sce.mapper.util
 
 import de.salt.sce.mapper.util.ScalaTool.truncate
-import org.scalatest.{BeforeAndAfterAll, FlatSpec, Matchers}
+import org.scalatest.BeforeAndAfterAll
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-class ScalaToolSpec extends FlatSpec
+class ScalaToolSpec extends AnyFlatSpec
   with Matchers with BeforeAndAfterAll {
 
   "ScalaTool" should "truncate correctly" in {

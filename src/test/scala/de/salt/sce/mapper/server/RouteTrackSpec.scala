@@ -1,7 +1,5 @@
 package de.salt.sce.mapper.server
 
-import java.nio.charset.StandardCharsets.UTF_8
-import java.util.UUID
 import akka.actor.ActorSystem
 import akka.http.scaladsl.model.headers.BasicHttpCredentials
 import akka.http.scaladsl.model.{HttpRequest, StatusCodes}
@@ -18,12 +16,14 @@ import de.salt.sce.model.edifact.Transport
 import org.apache.commons.codec.binary.Base64
 import org.apache.commons.io.IOUtils
 import org.json4s.{DefaultFormats, Formats, Serialization, native}
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
-import java.io.File
+import java.nio.charset.StandardCharsets.UTF_8
+import java.util.UUID
 import scala.concurrent.duration.DurationInt
 
-class RouteTrackSpec extends WordSpec with Matchers
+class RouteTrackSpec extends AnyWordSpec with Matchers
   with ScalatestRouteTest with LazyConfig
   with LazyLogging {
 
@@ -75,7 +75,7 @@ class RouteTrackSpec extends WordSpec with Matchers
         responseProtocol.csvResponse should be(Option.empty)
 
         val line1: Option[String] = responseProtocol.edifactResponse.get.success.get(file)
-        val transport = ObjectSerializer.deserialize(Base64.decodeBase64(line1.get)).asInstanceOf[Transport];
+        val transport = ObjectSerializer.deserialize(Base64.decodeBase64(line1.get)).asInstanceOf[Transport]
 
         transport.getShipments.get(0).getPakets.get(0).getCni.getDocumentMessageNumber should be("1324207")
         transport.getShipments.get(0).getPakets.get(0).getSts.getEvent should be("360")
@@ -115,7 +115,7 @@ class RouteTrackSpec extends WordSpec with Matchers
         responseProtocol.csvResponse should be(Option.empty)
 
         val line1: Option[String] = responseProtocol.edifactResponse.get.success.get(file)
-        val transport = ObjectSerializer.deserialize(Base64.decodeBase64(line1.get)).asInstanceOf[Transport];
+        val transport = ObjectSerializer.deserialize(Base64.decodeBase64(line1.get)).asInstanceOf[Transport]
 
         transport.getShipments.get(0).getPakets.get(0).getCni.getDocumentMessageNumber should be("751447566")
         transport.getShipments.get(0).getPakets.get(0).getSts.getEvent should be("20")
@@ -156,7 +156,7 @@ class RouteTrackSpec extends WordSpec with Matchers
         responseProtocol.csvResponse should be(Option.empty)
 
         val line1: Option[String] = responseProtocol.edifactResponse.get.success.get(file)
-        val transport = ObjectSerializer.deserialize(Base64.decodeBase64(line1.get)).asInstanceOf[Transport];
+        val transport = ObjectSerializer.deserialize(Base64.decodeBase64(line1.get)).asInstanceOf[Transport]
 
         transport.getShipments.get(0).getPakets.get(0).getCni.getDocumentMessageNumber should be("279289")
         transport.getShipments.get(0).getPakets.get(0).getSts.getEvent should be("50")
@@ -244,9 +244,9 @@ class RouteTrackSpec extends WordSpec with Matchers
         responseProtocol.csvResponse should be(Option.empty)
 
         val line1: Option[String] = responseProtocol.edifactResponse.get.success.get(file)
-        val transport = ObjectSerializer.deserialize(Base64.decodeBase64(line1.get)).asInstanceOf[Transport];
+        val transport = ObjectSerializer.deserialize(Base64.decodeBase64(line1.get)).asInstanceOf[Transport]
 
-        transport.getShipments.size() should be(1);
+        transport.getShipments.size() should be(1)
         transport.getShipments.get(0).getPakets.size() should be(9)
 
         transport.getShipments.get(0).getPakets.get(0).getRffs.get(0).getReference should be("01092352456")
@@ -349,7 +349,7 @@ class RouteTrackSpec extends WordSpec with Matchers
         val line1: Option[String] = responseProtocol.edifactResponse.get.success.get(file1)
         val transport1 = ObjectSerializer.deserialize(Base64.decodeBase64(line1.get)).asInstanceOf[Transport]
 
-        transport1.getShipments.size() should be(1);
+        transport1.getShipments.size() should be(1)
         transport1.getShipments.get(0).getPakets.size() should be(2)
         transport1.getShipments.get(0).getPakets.get(0).getRffs.get(0).getReference should be("1Z3F4W576807747148")
         transport1.getShipments.get(0).getPakets.get(0).getRffs.get(1).getReference should be("WALCH")
@@ -360,7 +360,7 @@ class RouteTrackSpec extends WordSpec with Matchers
         val line2: Option[String] = responseProtocol.edifactResponse.get.success.get(file2)
         val transport2 = ObjectSerializer.deserialize(Base64.decodeBase64(line2.get)).asInstanceOf[Transport]
 
-        transport2.getShipments.size() should be(1);
+        transport2.getShipments.size() should be(1)
         transport2.getShipments.get(0).getPakets.size() should be(2)
         transport2.getShipments.get(0).getPakets.get(0).getSts.getEvent should be("101")
         transport2.getShipments.get(0).getPakets.get(0).getRffs.get(0).getReference should be("1Z3F4W576807071118")
