@@ -1,7 +1,9 @@
 #!/bin/bash
 
 printf "Run sbt without tests...\n"
-sbt 'set test in assembly := {}' -v assembly
+# remove duplicate file module-info (usually in META-INF) https://stackoverflow.com/questions/54834125/sbt-assembly-deduplicate-module-info-class
+sbt 'set Seq(assembly/test := {}, assembly/assemblyMergeStrategy := { case x if x.endsWith("module-info.class") => MergeStrategy.discard; case x => val oldStrategy = (assemblyMergeStrategy in assembly).value; oldStrategy(x);})' -v assembly
+
 
 SCE_PROJECT=$(echo "$CI_PROJECT_NAME" | tr '[:upper:]' '[:lower:]')
 echo "$SCE_PROJECT"
