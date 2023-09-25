@@ -13,14 +13,13 @@ lazy val root = (project in file(""))
 
 // Remove feature warning
 // Doc: http://stackoverflow.com/questions/27895790/sbt-0-12-4-there-were-x-feature-warnings-re-run-with-feature-for-details
-scalacOptions in ThisBuild ++= Seq("-feature")
-scalacOptions in ThisBuild ++= Seq("-unchecked", "-deprecation")
+ThisBuild / scalacOptions ++= Seq("-feature", "-unchecked", "-deprecation")
 
 // =====================================================================================================================
 // = Unit Test Settings
 // =====================================================================================================================
-parallelExecution in Test := false // Execute unit tests one by one
-logBuffered in Test := false
+Test / parallelExecution := false // Execute unit tests one by one
+Test / logBuffered       := false
 
 // =====================================================================================================================
 // = Dependencies
@@ -67,7 +66,7 @@ libraryDependencies += "org.milyn" % "milyn-smooks-fixed-length" % "1.7.1"
 //) 
 
 
-assemblyMergeStrategy in assembly := {
+assembly / assemblyMergeStrategy := {
   case PathList("META-INF", "MANIFEST.MF") => MergeStrategy.discard
   case PathList("META-INF", "data-decoders.inf") => MergeStrategy.concat
   case PathList("reference.conf") => MergeStrategy.concat
