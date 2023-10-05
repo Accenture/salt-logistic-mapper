@@ -12,8 +12,8 @@ dockerApiVersion := Some(DockerApiVersion(1, 40))
 dockerPermissionStrategy := DockerPermissionStrategy.CopyChown
 
 //dockerChmodType := DockerChmodType.Custom
-daemonUserUid in Docker := None
-daemonUser in Docker    := "root"
+Docker / daemonUserUid := None
+Docker / daemonUser    := "root"
 // TODO: Check this to make non root: https://github.com/sbt/sbt-native-packager/issues/1189
 dockerCommands ++= Seq(
   Cmd("ARG", s"script=${executableScriptName.value}"),
@@ -29,15 +29,15 @@ dockerCommands ++= Seq(
 //}
 
 // application.conf
-mappings in Universal += {
-  val conf = (resourceDirectory in Compile).value / "application.conf"
+Universal / mappings += {
+  val conf = (Compile / resourceDirectory).value / "application.conf"
   conf -> "conf/application.conf"
 }
 bashScriptExtraDefines += """addJava "-Dconfig.file=${app_home}/../conf/application.conf""""
 
 // logback.xml
-//mappings in Universal += {
-//  val log = (resourceDirectory in Compile).value / "logback.xml"
+//Universal / mappings  += {
+//  val log = (Compile / resourceDirectory).value / "logback.xml"
 //  log -> "conf/logback.xml"
 //}
 //bashScriptExtraDefines += """addJava "-Dlogback.configurationFile=${app_home}/../conf/logback.xml""""

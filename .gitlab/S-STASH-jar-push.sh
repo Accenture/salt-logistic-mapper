@@ -10,7 +10,11 @@ echo "$SCE_PROJECT"
 CREATED_JAR_FILE=$(find $SHAREPOINT_JAR_FILE_PATH -name '*assembly*.jar'|cut -d"/" -f3-)
 
 MAIN_FOLDER_NAME="$SCE_PROJECT"
-VERSION_FOLDER="$CI_COMMIT_REF_NAME"
+# version folder should be the project's buildVersion. This is more precise than the tag name https://gist.github.com/marianogappa/265876f9e69505b4635e
+# version string used to have some color markup with it (2023.1.19&#x1B;[0m), so omit everyting but digits and points. Option -no-colors didn't work.
+VERSION_FOLDER=$(sbt 'inspect actual version' | grep "Setting: java.lang.String" | cut -d '=' -f2 | sed 's/\[0//'| tr -cd '[:digit:].' )
+printf "\nVersion folder: "
+echo "$VERSION_FOLDER"
 
 
 grant_type="$SHAREPOINT_GRANT_TYPE"

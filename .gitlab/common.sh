@@ -44,10 +44,14 @@ function prepare-image-configuration() {
 }
 
 function prepare-plugins-common() {
-  # sbt-dependency-graph
-  sed -i.original '/sbt-dependency-graph/d' project/plugins.sbt
-  printf "%s\n" "Add sbt-dependency-graph into plugins.sbt"
-  printf "\n%s" 'libraryDependencies += ("net.virtual-void" % "sbt-dependency-graph_2.12_1.0" % "HEAD+20191104-1352")' >> project/plugins.sbt
+  sed -i.original '/sbt-dependency-graph/d' project/plugins.sbt # remove line for dependency-graph (old) from plugins.sbt
+  sed -i.original '/addDependencyTreePlugin/d' project/plugins.sbt # remove line for dependencyTreePlugin from plugins.sbt
+  printf "\n%s" 'addDependencyTreePlugin' >> project/plugins.sbt # as of sbt 1.4
+
+  # create synonym task dependencyGraphMl: task was renamed in sbt 1.4, fossa uses old name
+  printf "\n%s" 'lazy val dependencyGraphMl = taskKey[Unit]("dependencyGraphML")' >> build.sbt
+  printf "\n%s" 'dependencyGraphMl := { (Provided / sbt.plugins.DependencyTreeKeys.dependencyGraphML).value}' >> build.sbt
+
   # sbt-assembly
   printf "\n%s" 'addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.14.10")' >> project/plugins.sbt
 
